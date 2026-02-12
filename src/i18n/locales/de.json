@@ -1,0 +1,211 @@
+{
+  "nav": {
+    "buy": "Kaufen",
+    "sell": "Verkaufen",
+    "maintain": "Wartung",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "services": "Leistungen",
+    "login": "Anmelden",
+    "search": "Suchen"
+  },
+  "hero": {
+    "title": "Geprüfte und garantierte Gebrauchtwagen — der MCD AUTO Service",
+    "subtitle": "Große Auswahl an überprüften Gebrauchtwagen zu fairen Preisen",
+    "searchPlaceholder": "Marke, Modell...",
+    "searchButton": "Suchen"
+  },
+  "trust": {
+    "reconditioned": "Aufbereitete und garantierte Fahrzeuge",
+    "reconditionedDesc": "Jedes Fahrzeug wird gründlich geprüft und aufbereitet",
+    "satisfaction": "Zufrieden oder Geld zurück (14 Tage)",
+    "satisfactionDesc": "Sie haben 14 Tage Zeit, um das Fahrzeug zurückzugeben",
+    "inspection": "Kostenlose TÜV-Prüfung auf Lebenszeit",
+    "inspectionDesc": "Der TÜV ist bei jedem Kauf inklusive"
+  },
+  "actions": {
+    "title": "Was möchten Sie tun?",
+    "searchVehicle": "Gebrauchtwagen suchen",
+    "searchVehicleDesc": "Durchsuchen Sie unseren Bestand",
+    "finance": "Fahrzeug finanzieren",
+    "financeDesc": "Flexible Finanzierungslösungen",
+    "estimate": "Fahrzeug bewerten lassen",
+    "estimateDesc": "Kostenlose Fahrzeugbewertung",
+    "maintenance": "Wartung & Reparatur",
+    "maintenanceDesc": "Professioneller Werkstattservice"
+  },
+  "categories": {
+    "title": "Kategorien",
+    "sedan": "Limousine",
+    "suv": "SUV",
+    "wagon": "Kombi",
+    "utility": "Nutzfahrzeug",
+    "offroad": "Geländewagen",
+    "convertible": "Cabriolet",
+    "minivan": "Van",
+    "coupe": "Coupé",
+    "seeMore": "Mehr anzeigen"
+  },
+  "featured": {
+    "title": "Ausgewählte Fahrzeuge",
+    "perMonth": "/Monat",
+    "seeDetail": "Details anzeigen",
+    "from": "Ab",
+    "seeAll": "Alle Fahrzeuge anzeigen"
+  },
+  "brands": {
+    "title": "Beliebte Marken"
+  },
+  "reviews": {
+    "title": "Kundenbewertungen"
+  },
+  "search": {
+    "title": "Suchergebnisse",
+    "filters": "Filter",
+    "clearAll": "Alles löschen",
+    "results": "Gebrauchtfahrzeug-Anzeigen",
+    "sortBy": "Sortieren nach",
+    "popularity": "Beliebtheit",
+    "priceAsc": "Preis aufsteigend",
+    "priceDesc": "Preis absteigend",
+    "mileageLabel": "Kilometerstand",
+    "yearLabel": "Jahr",
+    "brand": "Marke",
+    "model": "Modell",
+    "energy": "Kraftstoff",
+    "price": "Preis",
+    "transmission": "Getriebe",
+    "category": "Kategorie",
+    "location": "Standort",
+    "automatic": "Automatik",
+    "manual": "Schaltgetriebe",
+    "seeMore": "Mehr anzeigen",
+    "km": "km",
+    "guarantee12": "12 Monate Garantie",
+    "satisfactionBadge": "Zufrieden oder Geld zurück"
+  },
+  "vehicle": {
+    "contact": "Kontaktieren",
+    "reserve": "Dieses Fahrzeug reservieren",
+    "addFavorite": "Zu Favoriten hinzufügen",
+    "specs": "Technische Daten",
+    "description": "Beschreibung",
+    "equipment": "Ausstattung",
+    "similar": "Ähnliche Fahrzeuge",
+    "year": "Baujahr",
+    "mileage": "Kilometerstand",
+    "energy": "Kraftstoff",
+    "transmission": "Getriebe",
+    "power": "Leistung",
+    "doors": "Türen",
+    "color": "Farbe",
+    "co2": "CO2",
+    "euroNorm": "Euro-Norm",
+    "location": "Standort",
+    "perMonth": "/Monat",
+    "noDeposit": "ohne Anzahlung",
+    "from": "Ab",
+    "breadcrumbHome": "Startseite",
+    "breadcrumbSearch": "Suche"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Wir sind für Sie da",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "subject": "Betreff",
+    "message": "Nachricht",
+    "send": "Absenden",
+    "address": "Adresse",
+    "hours": "Öffnungszeiten",
+    "hoursWeekday": "Mo-Fr: 9:00 - 19:00",
+    "hoursSaturday": "Sa: 9:00 - 17:00",
+    "hoursSunday": "So: Geschlossen",
+    "success": "Nachricht erfolgreich gesendet"
+  },
+  "about": {
+    "title": "Über MCD AUTO",
+    "history": "Unsere Geschichte",
+    "historyText": "Seit über 15 Jahren ist MCD AUTO Ihr vertrauenswürdiger Partner für hochwertige Gebrauchtwagen. Was als kleines Familienunternehmen begann, ist heute einer der führenden Gebrauchtwagenhändler der Region.",
+    "mission": "Unsere Mission",
+    "missionText": "Wir möchten jedem Kunden das perfekte Fahrzeug zu einem fairen Preis anbieten — mit voller Transparenz, umfassender Garantie und erstklassigem Service.",
+    "values": "Unsere Werte",
+    "valuesTransparency": "Transparenz",
+    "valuesQuality": "Qualität",
+    "valuesTrust": "Vertrauen",
+    "valuesService": "Service",
+    "stats": {
+      "vehicles": "Fahrzeuge verkauft",
+      "years": "Jahre Erfahrung",
+      "customers": "Zufriedene Kunden",
+      "guarantee": "Monate Garantie"
+    }
+  },
+  "services": {
+    "title": "Unsere Leistungen",
+    "financing": "Fahrzeugfinanzierung",
+    "financingDesc": "Flexible Finanzierungslösungen, die zu Ihrem Budget passen. Wir arbeiten mit führenden Banken zusammen, um Ihnen die besten Konditionen zu bieten.",
+    "tradein": "Fahrzeugankauf",
+    "tradeinDesc": "Wir kaufen Ihr altes Fahrzeug zu einem fairen Preis. Kostenlose Bewertung und sofortige Auszahlung.",
+    "maintenance": "Wartung & Reparatur",
+    "maintenanceDesc": "Unser erfahrenes Werkstatt-Team kümmert sich um Ihr Fahrzeug — von der Inspektion bis zur Reparatur.",
+    "warranty": "Umfassende Garantie",
+    "warrantyDesc": "Bis zu 24 Monate Garantie auf alle unsere Fahrzeuge. Fahren Sie sorgenfrei.",
+    "afterSales": "Kundendienst",
+    "afterSalesDesc": "Auch nach dem Kauf sind wir für Sie da. Unser Kundendienst steht Ihnen jederzeit zur Verfügung."
+  },
+  "footer": {
+    "about": "Über uns",
+    "services": "Leistungen",
+    "legal": "Impressum",
+    "privacy": "Datenschutz",
+    "cgv": "AGB",
+    "contact": "Kontakt",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Ihre E-Mail",
+    "subscribe": "Abonnieren",
+    "rights": "Alle Rechte vorbehalten",
+    "followUs": "Folgen Sie uns",
+    "description": "Ihr Spezialist für geprüfte und garantierte Gebrauchtwagen."
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "back": "Zurück",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "seeAll": "Alle anzeigen",
+    "currency": "€"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "loginButton": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "noAccount": "Noch kein Konto?",
+    "signup": "Registrieren",
+    "signupButton": "Registrieren",
+    "hasAccount": "Bereits ein Konto?",
+    "logout": "Abmelden"
+  },
+  "legal": {
+    "title": "Impressum",
+    "company": "Unternehmensangaben",
+    "publisher": "Verantwortlicher",
+    "hosting": "Hosting",
+    "data": "Datenschutz"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "intro": "Der Schutz Ihrer persönlichen Daten ist uns wichtig."
+  },
+  "cgv": {
+    "title": "Allgemeine Geschäftsbedingungen",
+    "intro": "Es gelten die folgenden allgemeinen Geschäftsbedingungen."
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "nav": {
+    "buy": "Acheter",
+    "sell": "Vendre",
+    "maintain": "Entretenir",
+    "about": "À propos",
+    "contact": "Contact",
+    "services": "Services",
+    "login": "Connexion",
+    "search": "Rechercher"
+  },
+  "hero": {
+    "title": "Véhicules d'occasion garantis et révisés — le service MCD AUTO en plus",
+    "subtitle": "Large choix de véhicules d'occasion contrôlés à prix juste",
+    "searchPlaceholder": "Marque, modèle...",
+    "searchButton": "Rechercher"
+  },
+  "trust": {
+    "reconditioned": "Véhicules reconditionnés et garantis",
+    "reconditionedDesc": "Chaque véhicule est minutieusement inspecté et reconditionné",
+    "satisfaction": "Satisfait ou remboursé (14 jours)",
+    "satisfactionDesc": "Vous avez 14 jours pour retourner le véhicule",
+    "inspection": "Contrôle technique offert à vie",
+    "inspectionDesc": "Le contrôle technique est inclus à chaque achat"
+  },
+  "actions": {
+    "title": "Que souhaitez-vous faire ?",
+    "searchVehicle": "Rechercher un véhicule d'occasion",
+    "searchVehicleDesc": "Parcourez notre inventaire",
+    "finance": "Financer votre véhicule",
+    "financeDesc": "Solutions de financement flexibles",
+    "estimate": "Estimer votre véhicule",
+    "estimateDesc": "Estimation gratuite de votre véhicule",
+    "maintenance": "Entretien et réparation",
+    "maintenanceDesc": "Service d'atelier professionnel"
+  },
+  "categories": {
+    "title": "Catégories",
+    "sedan": "Berline",
+    "suv": "SUV",
+    "wagon": "Break",
+    "utility": "Utilitaire",
+    "offroad": "4x4",
+    "convertible": "Cabriolet",
+    "minivan": "Monospace",
+    "coupe": "Coupé",
+    "seeMore": "Voir plus"
+  },
+  "featured": {
+    "title": "Véhicules en vedette",
+    "perMonth": "/mois",
+    "seeDetail": "Voir détail",
+    "from": "À partir de",
+    "seeAll": "Voir tous les véhicules"
+  },
+  "brands": {
+    "title": "Marques populaires"
+  },
+  "reviews": {
+    "title": "Avis clients"
+  },
+  "search": {
+    "title": "Résultats de recherche",
+    "filters": "Filtres",
+    "clearAll": "Tout effacer",
+    "results": "annonces de véhicules d'occasion",
+    "sortBy": "Trier par",
+    "popularity": "Popularité",
+    "priceAsc": "Prix croissant",
+    "priceDesc": "Prix décroissant",
+    "mileageLabel": "Kilométrage",
+    "yearLabel": "Année",
+    "brand": "Marque",
+    "model": "Modèle",
+    "energy": "Énergie",
+    "price": "Prix",
+    "transmission": "Boîte de vitesses",
+    "category": "Catégorie",
+    "location": "Localisation",
+    "automatic": "Automatique",
+    "manual": "Manuelle",
+    "seeMore": "Voir plus",
+    "km": "km",
+    "guarantee12": "Garantie 12 mois",
+    "satisfactionBadge": "Satisfait ou remboursé"
+  },
+  "vehicle": {
+    "contact": "Contacter",
+    "reserve": "Réserver ce véhicule",
+    "addFavorite": "Ajouter aux favoris",
+    "specs": "Caractéristiques techniques",
+    "description": "Description",
+    "equipment": "Équipements",
+    "similar": "Véhicules similaires",
+    "year": "Année",
+    "mileage": "Kilométrage",
+    "energy": "Énergie",
+    "transmission": "Boîte de vitesses",
+    "power": "Puissance",
+    "doors": "Portes",
+    "color": "Couleur",
+    "co2": "CO2",
+    "euroNorm": "Norme Euro",
+    "location": "Localisation",
+    "perMonth": "/mois",
+    "noDeposit": "sans apport",
+    "from": "À partir de",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbSearch": "Recherche"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Nous sommes à votre écoute",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "subject": "Objet",
+    "message": "Message",
+    "send": "Envoyer",
+    "address": "Adresse",
+    "hours": "Horaires d'ouverture",
+    "hoursWeekday": "Lun-Ven : 9h00 - 19h00",
+    "hoursSaturday": "Sam : 9h00 - 17h00",
+    "hoursSunday": "Dim : Fermé",
+    "success": "Message envoyé avec succès"
+  },
+  "about": {
+    "title": "À propos de MCD AUTO",
+    "history": "Notre histoire",
+    "historyText": "Depuis plus de 15 ans, MCD AUTO est votre partenaire de confiance pour les véhicules d'occasion de qualité. Ce qui a commencé comme une petite entreprise familiale est aujourd'hui l'un des principaux concessionnaires de la région.",
+    "mission": "Notre mission",
+    "missionText": "Nous souhaitons offrir à chaque client le véhicule parfait à un prix juste — avec une transparence totale, une garantie complète et un service de premier ordre.",
+    "values": "Nos valeurs",
+    "valuesTransparency": "Transparence",
+    "valuesQuality": "Qualité",
+    "valuesTrust": "Confiance",
+    "valuesService": "Service",
+    "stats": {
+      "vehicles": "Véhicules vendus",
+      "years": "Années d'expérience",
+      "customers": "Clients satisfaits",
+      "guarantee": "Mois de garantie"
+    }
+  },
+  "services": {
+    "title": "Nos services",
+    "financing": "Financement automobile",
+    "financingDesc": "Solutions de financement flexibles adaptées à votre budget. Nous travaillons avec les principales banques pour vous offrir les meilleures conditions.",
+    "tradein": "Reprise de véhicule",
+    "tradeinDesc": "Nous rachetons votre ancien véhicule à un prix juste. Estimation gratuite et paiement immédiat.",
+    "maintenance": "Entretien et réparation",
+    "maintenanceDesc": "Notre équipe d'atelier expérimentée s'occupe de votre véhicule — de l'inspection à la réparation.",
+    "warranty": "Garantie complète",
+    "warrantyDesc": "Jusqu'à 24 mois de garantie sur tous nos véhicules. Roulez l'esprit tranquille.",
+    "afterSales": "Service après-vente",
+    "afterSalesDesc": "Même après l'achat, nous sommes là pour vous. Notre SAV est à votre disposition à tout moment."
+  },
+  "footer": {
+    "about": "À propos",
+    "services": "Services",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "cgv": "CGV",
+    "contact": "Contact",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Votre email",
+    "subscribe": "S'abonner",
+    "rights": "Tous droits réservés",
+    "followUs": "Suivez-nous",
+    "description": "Votre spécialiste des véhicules d'occasion garantis et révisés."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "back": "Retour",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "seeAll": "Voir tout",
+    "currency": "€"
+  },
+  "auth": {
+    "login": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "loginButton": "Se connecter",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "signup": "Créer un compte",
+    "signupButton": "S'inscrire",
+    "hasAccount": "Déjà un compte ?",
+    "logout": "Déconnexion"
+  },
+  "legal": {
+    "title": "Mentions légales",
+    "company": "Informations sur l'entreprise",
+    "publisher": "Directeur de publication",
+    "hosting": "Hébergement",
+    "data": "Protection des données"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "intro": "La protection de vos données personnelles est notre priorité."
+  },
+  "cgv": {
+    "title": "Conditions générales de vente",
+    "intro": "Les conditions générales de vente suivantes s'appliquent."
+  }
+}
