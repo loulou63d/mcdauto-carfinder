@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       contact_requests: {
         Row: {
           created_at: string
@@ -46,6 +67,68 @@ export type Database = {
           subject?: string | null
         }
         Relationships: []
+      }
+      products: {
+        Row: {
+          brand: string | null
+          category_id: string | null
+          condition: string | null
+          created_at: string
+          description: string | null
+          description_translations: Json | null
+          id: string
+          images: string[] | null
+          price: number
+          source_url: string | null
+          status: string | null
+          stock: number | null
+          title: string
+          title_translations: Json | null
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          category_id?: string | null
+          condition?: string | null
+          created_at?: string
+          description?: string | null
+          description_translations?: Json | null
+          id?: string
+          images?: string[] | null
+          price?: number
+          source_url?: string | null
+          status?: string | null
+          stock?: number | null
+          title: string
+          title_translations?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          category_id?: string | null
+          condition?: string | null
+          created_at?: string
+          description?: string | null
+          description_translations?: Json | null
+          id?: string
+          images?: string[] | null
+          price?: number
+          source_url?: string | null
+          status?: string | null
+          stock?: number | null
+          title?: string
+          title_translations?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
