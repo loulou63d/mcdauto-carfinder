@@ -151,6 +151,81 @@ const Index = () => {
         </div>
       </section>
 
+      {/* PROMO CAROUSEL — autosphere style */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="relative">
+            {(() => {
+              const slide = promoSlides[promoSlide];
+              const isDark = slide.dark;
+              return (
+                <div className={`${slide.bg} rounded-2xl overflow-hidden h-52 md:h-64 flex items-stretch relative`}>
+                  <div className="flex-1 flex flex-col justify-center px-6 md:px-12 py-6 z-10">
+                    {slide.topLabel && (
+                      <span className={`text-xs md:text-sm font-semibold mb-1 ${isDark ? 'text-foreground' : 'text-white/90'}`}>
+                        {slide.topLabel}
+                      </span>
+                    )}
+                    {slide.bigText && (
+                      <div className={`text-5xl md:text-7xl font-heading font-extrabold leading-none ${isDark ? 'text-foreground' : 'text-white'}`}>
+                        {slide.bigText}
+                      </div>
+                    )}
+                    <div className={`text-lg md:text-2xl font-heading font-bold mt-1 ${isDark ? 'text-primary' : 'text-white'}`}>
+                      {slide.midText}
+                    </div>
+                    {slide.subText && (
+                      <p className={`text-xs md:text-sm mt-1 ${isDark ? 'text-muted-foreground' : 'text-white/80'}`}>
+                        {slide.subText}
+                      </p>
+                    )}
+                    {slide.extraBadge && (
+                      <span className="mt-2 inline-block w-fit px-3 py-1 rounded-md bg-[hsl(142,60%,80%)] text-[hsl(142,50%,20%)] text-xs font-bold uppercase">
+                        {slide.extraBadge}
+                      </span>
+                    )}
+                    {slide.footnote && (
+                      <span className={`text-[10px] mt-2 underline ${isDark ? 'text-muted-foreground' : 'text-white/60'}`}>
+                        {slide.footnote}
+                      </span>
+                    )}
+                  </div>
+                  {slide.badge && (
+                    <div className="absolute top-4 right-4 md:top-6 md:right-8 text-right">
+                      <span className="text-white font-heading font-extrabold text-sm md:text-lg uppercase leading-tight block">
+                        {slide.badge}
+                      </span>
+                      <span className="text-white/70 text-xs font-medium">MCD AUTO</span>
+                    </div>
+                  )}
+                  <div className="absolute bottom-5 right-5 md:bottom-8 md:right-10">
+                    <Button
+                      className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${
+                        isDark
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : 'bg-white text-foreground hover:bg-white/90'
+                      }`}
+                    >
+                      {slide.cta}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })()}
+            <button onClick={() => setPromoSlide((promoSlide - 1 + promoSlides.length) % promoSlides.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={() => setPromoSlide((promoSlide + 1) % promoSlides.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            <div className="flex justify-center gap-2 mt-4">
+              {promoSlides.map((_, i) => (
+                <button key={i} onClick={() => setPromoSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-colors ${i === promoSlide ? 'bg-primary' : 'bg-border'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* TRUST STRIP — autosphere style (horizontal) */}
       <section className="border-y">
