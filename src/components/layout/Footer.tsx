@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Car, Facebook, Instagram, ChevronDown, Star, Handshake, HeartHandshake, MapPin, SlidersHorizontal } from 'lucide-react';
@@ -8,11 +8,11 @@ interface FooterSection {
   links: { label: string; to: string }[];
 }
 
-const FooterAccordion = ({ title, links }: FooterSection) => {
+const FooterAccordion = forwardRef<HTMLDivElement, FooterSection>(({ title, links }, ref) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-b border-border">
+    <div ref={ref} className="border-b border-border">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-4 px-1 text-left"
@@ -33,7 +33,7 @@ const FooterAccordion = ({ title, links }: FooterSection) => {
       )}
     </div>
   );
-};
+});
 
 const Footer = () => {
   const { t } = useTranslation();
