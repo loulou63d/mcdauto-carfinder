@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -25,6 +25,14 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'maintain'>('buy');
   const [promoSlide, setPromoSlide] = useState(0);
+
+  // Auto-scroll carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPromoSlide((prev) => (prev + 1) % 4);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSearch = () => {
     navigate(`/${lang}/search${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`);
