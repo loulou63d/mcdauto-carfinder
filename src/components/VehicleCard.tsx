@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, MapPin, Calendar, Gauge, Fuel, Settings2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
 
 interface VehicleCardProps {
@@ -41,7 +42,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </Badge>
           )}
           <button
-            onClick={(e) => { e.preventDefault(); }}
+            onClick={(e) => { e.preventDefault(); toast.success(t('vehicle.favoriteAdded')); }}
             className="absolute top-3 right-3 w-9 h-9 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center hover:bg-card transition-colors shadow-sm"
           >
             <Heart className="w-4 h-4 text-muted-foreground" />

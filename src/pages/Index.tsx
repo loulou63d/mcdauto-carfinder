@@ -111,6 +111,7 @@ const Index = () => {
       midText: t('promo.slide1MidText'),
       subText: t('promo.slide1SubText'),
       cta: t('promo.slide1Cta'),
+      ctaLink: `/${lang}/search`,
       footnote: t('promo.legalNote'),
       badge: t('promo.goodDeals'),
     },
@@ -122,6 +123,7 @@ const Index = () => {
       midText: t('promo.slide2MidText'),
       subText: t('promo.slide2SubText'),
       cta: t('promo.slide2Cta'),
+      ctaLink: `/${lang}/search?brand=Peugeot`,
       footnote: t('promo.legalNoteFull'),
       badge: t('promo.goodDeals'),
       extraBadge: t('promo.noDeposit'),
@@ -134,6 +136,7 @@ const Index = () => {
       midText: t('promo.slide3Title'),
       subText: t('promo.slide3Sub'),
       cta: t('promo.slide3Cta'),
+      ctaLink: `/${lang}/services`,
       dark: true,
     },
     {
@@ -144,13 +147,14 @@ const Index = () => {
       midText: t('promo.slide4Title'),
       subText: '',
       cta: t('promo.slide4Cta'),
+      ctaLink: `/${lang}/cgv`,
     },
   ];
 
   const reviews = [
-    { name: 'Thomas M.', rating: 5, text: 'Excellent service, véhicule conforme à la description. Livraison rapide et équipe très professionnelle.', date: '15.12.2025' },
-    { name: 'Sophie L.', rating: 5, text: 'Très satisfaite de mon achat. La garantie 12 mois est un vrai plus. Je recommande vivement.', date: '22.11.2025' },
-    { name: 'Marc D.', rating: 4, text: 'Bon rapport qualité/prix. Le processus d\'achat est simple et transparent.', date: '08.10.2025' },
+    { name: 'Thomas M.', rating: 5, text: t('reviews.review1'), date: '15.12.2025' },
+    { name: 'Sophie L.', rating: 5, text: t('reviews.review2'), date: '22.11.2025' },
+    { name: 'Marc D.', rating: 4, text: t('reviews.review3'), date: '08.10.2025' },
   ];
 
   return (
@@ -277,15 +281,17 @@ const Index = () => {
                     </div>
                   )}
                   <div className="absolute bottom-5 right-5 md:bottom-8 md:right-10">
-                    <Button
-                      className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${
-                        isDark
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                          : 'bg-white text-foreground hover:bg-white/90'
-                      }`}
-                    >
-                      {slide.cta}
-                    </Button>
+                    <Link to={slide.ctaLink}>
+                      <Button
+                        className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${
+                          isDark
+                            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                            : 'bg-white text-foreground hover:bg-white/90'
+                        }`}
+                      >
+                        {slide.cta}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               );

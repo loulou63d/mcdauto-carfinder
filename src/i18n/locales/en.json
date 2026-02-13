@@ -55,7 +55,7 @@
     "seeAll": "View all vehicles"
   },
   "brands": { "title": "Popular Brands" },
-  "reviews": { "title": "Customer Reviews" },
+  "reviews": { "title": "Customer Reviews", "review1": "Excellent service, vehicle exactly as described. Fast delivery and a very professional team.", "review2": "Very happy with my purchase. The 12-month warranty is a real bonus. Highly recommended.", "review3": "Great value for money. The buying process is simple and transparent." },
   "promo": {
     "slide1TopLabel": "Up to",
     "slide1MidText": "OFF THE NEW PRICE*",
@@ -120,9 +120,10 @@
     "perMonth": "/month",
     "noDeposit": "no deposit",
     "from": "From",
-    "breadcrumbHome": "Home",
-    "breadcrumbSearch": "Search"
-  },
+     "breadcrumbHome": "Home",
+     "breadcrumbSearch": "Search",
+     "favoriteAdded": "Vehicle added to favorites"
+   },
   "contact": {
     "title": "Contact Us",
     "subtitle": "We are here for you",

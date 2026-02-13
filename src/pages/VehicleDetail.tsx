@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, MapPin } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { mockVehicles } from '@/data/mockVehicles';
@@ -125,14 +126,18 @@ const VehicleDetail = () => {
               </div>
 
               <div className="mt-6 space-y-3">
-                <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-                  <Phone className="w-4 h-4 mr-2" />
-                  {t('vehicle.contact')}
-                </Button>
-                <Button variant="outline" className="w-full">
-                  {t('vehicle.reserve')}
-                </Button>
-                <Button variant="ghost" className="w-full">
+                <Link to={`/${lang}/contact`}>
+                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+                    <Phone className="w-4 h-4 mr-2" />
+                    {t('vehicle.contact')}
+                  </Button>
+                </Link>
+                <Link to={`/${lang}/contact`}>
+                  <Button variant="outline" className="w-full mt-3">
+                    {t('vehicle.reserve')}
+                  </Button>
+                </Link>
+                <Button variant="ghost" className="w-full" onClick={() => toast.success(t('vehicle.favoriteAdded'))}>
                   <Heart className="w-4 h-4 mr-2" />
                   {t('vehicle.addFavorite')}
                 </Button>

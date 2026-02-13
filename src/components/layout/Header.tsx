@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Car, ChevronDown, Search, User, ShoppingCart, BookmarkCheck } from 'lucide-react';
+import { Menu, X, Car, ChevronDown, Search, User, BookmarkCheck } from 'lucide-react';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -68,16 +68,13 @@ const Header = () => {
           <Link to={`/${lang}/search`} className="p-2 text-white hover:text-white/80 transition-colors">
             <Search className="w-6 h-6" />
           </Link>
-          <button className="p-2 text-white hover:text-white/80 transition-colors">
-            <ShoppingCart className="w-6 h-6" />
-          </button>
           <Link to="/auth" className="p-2 text-white hover:text-white/80 transition-colors">
             <User className="w-6 h-6" />
           </Link>
-          <button className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors">
+          <Link to={`/${lang}/search`} className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors">
             <BookmarkCheck className="w-5 h-5" />
             <span className="text-sm">{t('nav.favorites')}</span>
-          </button>
+          </Link>
         </div>
       </div>
 
