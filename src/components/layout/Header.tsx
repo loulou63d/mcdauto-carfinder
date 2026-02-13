@@ -74,8 +74,9 @@ const Header = () => {
           <Link to="/auth" className="p-2 text-white hover:text-white/80 transition-colors">
             <User className="w-6 h-6" />
           </Link>
-          <button className="p-2 text-white hover:text-white/80 transition-colors">
-            <BookmarkCheck className="w-6 h-6" />
+          <button className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors">
+            <BookmarkCheck className="w-5 h-5" />
+            <span className="text-sm">{t('nav.favorites')}</span>
           </button>
         </div>
       </div>
