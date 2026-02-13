@@ -153,6 +153,7 @@ const AdminImport = () => {
       if (!data?.success) throw new Error(data?.error || 'Generation failed');
 
       setter({ ...item, generated: data.data, status: 'ready' });
+      toast({ title: '✅ Contenu IA généré', description: 'Les traductions et descriptions sont prêtes.' });
     } catch (e: any) {
       toast({ title: 'Erreur IA', description: e.message, variant: 'destructive' });
       setter({ ...item, status: 'pending', error: e.message });
@@ -226,7 +227,7 @@ const AdminImport = () => {
       }
 
       setter({ ...item, status: 'imported' });
-      toast({ title: 'Importé !', description: item.generated?.title || item.scraped.title });
+      toast({ title: '✅ Véhicule importé avec succès !', description: `${item.scraped.brand || ''} ${item.scraped.title} a été ajouté au catalogue.` });
     } catch (e: any) {
       setter({ ...item, status: 'error', error: e.message });
       toast({ title: 'Erreur import', description: e.message, variant: 'destructive' });
@@ -395,7 +396,13 @@ const AdminImport = () => {
     }
 
     setBatchProcessing(false);
-    toast({ title: 'Import terminé !' });
+    const importedCount = batchProducts.filter((p) => p.status === 'imported').length;
+    const errorCount = batchProducts.filter((p) => p.status === 'error').length;
+    const dupCount = batchProducts.filter((p) => p.status === 'duplicate').length;
+    toast({
+      title: '✅ Import en masse terminé !',
+      description: `${importedCount} importé(s), ${dupCount} doublon(s), ${errorCount} erreur(s)`,
+    });
   };
 
   const toggleBatchSelect = (index: number) => {
@@ -523,6 +530,12 @@ const AdminImport = () => {
                   </div>
                 )}
 
+                {singleProduct.status === 'imported' && (
+                  <div className="flex items-center gap-2 p-4 rounded-lg bg-accent/50 border border-accent">
+                    <Check className="w-5 h-5 text-primary" />
+                    <p className="text-sm font-medium text-foreground">Véhicule importé avec succès ! Il est maintenant visible dans le catalogue.</p>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   {singleProduct.status === 'pending' && (
                     <Button onClick={() => handleGenerateAI(singleProduct, setSingleProduct)} variant="secondary">
@@ -539,6 +552,12 @@ const AdminImport = () => {
                   )}
                   {singleProduct.status === 'importing' && (
                     <Button disabled><Loader2 className="w-4 h-4 animate-spin mr-2" />Import...</Button>
+                  )}
+                  {singleProduct.status === 'ready' && (
+                    <div className="flex items-center gap-2 text-sm text-primary">
+                      <Check className="w-4 h-4" />
+                      <span>Contenu IA prêt</span>
+                    </div>
                   )}
                 </div>
               </CardContent>
