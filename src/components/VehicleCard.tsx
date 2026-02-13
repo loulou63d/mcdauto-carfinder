@@ -1,9 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Heart, MapPin, Calendar, Gauge, Fuel, Settings2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
+import { useCart } from '@/contexts/CartContext';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -12,6 +12,7 @@ interface VehicleCardProps {
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
+  const { addToCart, isInCart } = useCart();
 
   const firstImage = vehicle.images?.[0];
 
@@ -76,10 +77,31 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
              <span className="flex items-center gap-1"><Settings2 className="w-3.5 h-3.5" />{t(`transmissionValues.${vehicle.transmission}`, { defaultValue: vehicle.transmission })}</span>
            </div>
 
-          {/* Guarantee badges */}
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.guarantee12')}</span>
-            <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.satisfactionBadge')}</span>
+          {/* Guarantee badges + cart button */}
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.guarantee12')}</span>
+              <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.satisfactionBadge')}</span>
+            </div>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                if (isInCart(vehicle.id)) {
+                  toast.info(t('cart.alreadyInCart'));
+                } else {
+                  addToCart(vehicle);
+                  toast.success(t('cart.addedToCart'));
+                }
+              }}
+              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                isInCart(vehicle.id)
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              }`}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              {isInCart(vehicle.id) ? '✓' : t('cart.addToCart')}
+            </button>
           </div>
         </div>
       </div>
