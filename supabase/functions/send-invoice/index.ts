@@ -31,70 +31,108 @@ function generateInvoiceHTML(order: {
   });
   const invoiceNumber = `MCD-${order.id.substring(0, 8).toUpperCase()}`;
 
+  const LOGO_URL = "https://ctcekfsvvmwcirogpipk.supabase.co/storage/v1/object/public/vehicle-images/brand%2Flogo-mcd.png";
+
   const vehicleRows = order.vehicle_details
     .map(
       (v) => `
       <tr>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;">${v.brand} ${v.model} (${v.year})</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">${Number(v.price).toLocaleString("de-DE")} €</td>
+        <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;font-size:14px;color:#333;">${v.brand} ${v.model} <span style="color:#888;">(${v.year})</span></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;text-align:right;font-weight:600;color:#0A1F3F;font-size:14px;">${Number(v.price).toLocaleString("de-DE")} €</td>
       </tr>`
     )
     .join("");
 
   return `
   <!DOCTYPE html>
-  <html>
-  <head><meta charset="utf-8" /></head>
-  <body style="font-family:Arial,sans-serif;color:#1a1a1a;max-width:600px;margin:0 auto;padding:20px;">
-    <div style="text-align:center;margin-bottom:30px;">
-      <h1 style="color:#c8102e;margin:0;font-size:28px;">MCD AUTO</h1>
-      <p style="color:#666;margin:4px 0;">Salon-de-Provence</p>
-    </div>
-    
-    <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:20px;">
-      <h2 style="margin:0 0 10px;font-size:20px;">FACTURE</h2>
-      <p style="margin:2px 0;color:#666;font-size:14px;">N° ${invoiceNumber}</p>
-      <p style="margin:2px 0;color:#666;font-size:14px;">Date : ${date}</p>
-    </div>
+  <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/></head>
+  <body style="margin:0;padding:0;background-color:#f0f2f5;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f2f5;padding:32px 16px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+          
+          <!-- Header -->
+          <tr><td style="background:linear-gradient(135deg,#0A1F3F 0%,#132d54 100%);padding:28px 32px;text-align:center;border-radius:12px 12px 0 0;">
+            <img src="${LOGO_URL}" alt="MCD AUTO" width="160" style="display:block;margin:0 auto;max-width:160px;height:auto;" />
+          </td></tr>
+          <tr><td style="background:#E63946;height:4px;font-size:0;line-height:0;">&nbsp;</td></tr>
+          
+          <!-- Invoice header -->
+          <tr><td style="background:white;padding:28px 32px 0;">
+            <h2 style="margin:0;font-size:22px;font-weight:700;color:#0A1F3F;">FACTURE</h2>
+            <div style="width:48px;height:3px;background:#E63946;margin-top:12px;border-radius:2px;"></div>
+          </td></tr>
 
-    <div style="margin-bottom:20px;">
-      <h3 style="font-size:14px;color:#666;margin:0 0 8px;">CLIENT</h3>
-      <p style="margin:2px 0;font-weight:bold;">${order.customer_name}</p>
-      <p style="margin:2px 0;">${order.customer_email}</p>
-      ${order.customer_phone ? `<p style="margin:2px 0;">${order.customer_phone}</p>` : ""}
-    </div>
+          <!-- Invoice meta -->
+          <tr><td style="background:white;padding:16px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="vertical-align:top;width:50%;">
+                  <p style="margin:0 0 4px;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">N° Facture</p>
+                  <p style="margin:0;font-size:15px;font-weight:700;color:#0A1F3F;">${invoiceNumber}</p>
+                  <p style="margin:8px 0 0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</p>
+                  <p style="margin:0;font-size:14px;color:#333;">${date}</p>
+                </td>
+                <td style="vertical-align:top;width:50%;text-align:right;">
+                  <p style="margin:0 0 4px;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Client</p>
+                  <p style="margin:0;font-size:15px;font-weight:700;color:#0A1F3F;">${order.customer_name}</p>
+                  <p style="margin:4px 0 0;font-size:13px;color:#555;">${order.customer_email}</p>
+                  ${order.customer_phone ? `<p style="margin:2px 0 0;font-size:13px;color:#555;">${order.customer_phone}</p>` : ""}
+                </td>
+              </tr>
+            </table>
+          </td></tr>
 
-    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-      <thead>
-        <tr style="background:#c8102e;color:white;">
-          <th style="padding:10px 12px;text-align:left;">Véhicule</th>
-          <th style="padding:10px 12px;text-align:right;">Prix</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${vehicleRows}
-      </tbody>
+          <!-- Vehicle table -->
+          <tr><td style="background:white;padding:8px 32px;">
+            <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;">
+              <thead><tr style="background:linear-gradient(135deg,#0A1F3F,#132d54);">
+                <th style="padding:12px 14px;text-align:left;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Véhicule</th>
+                <th style="padding:12px 14px;text-align:right;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Prix</th>
+              </tr></thead>
+              <tbody>${vehicleRows}</tbody>
+            </table>
+          </td></tr>
+
+          <!-- Totals -->
+          <tr><td style="background:white;padding:16px 32px 28px;">
+            <div style="background:#f7f9fb;border-radius:10px;padding:18px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:6px 0;font-size:14px;color:#555;">Total TTC</td>
+                  <td style="padding:6px 0;font-size:14px;color:#0A1F3F;font-weight:700;text-align:right;">${Number(order.total_price).toLocaleString("de-DE")} €</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;font-size:14px;color:#E63946;font-weight:700;">Acompte versé (20%)</td>
+                  <td style="padding:6px 0;font-size:14px;color:#E63946;font-weight:700;text-align:right;">${Number(order.deposit_amount).toLocaleString("de-DE")} €</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding:0;"><div style="border-top:1px solid #dde2e8;margin:8px 0;"></div></td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;font-size:16px;color:#0A1F3F;font-weight:700;">Solde restant</td>
+                  <td style="padding:6px 0;font-size:16px;color:#0A1F3F;font-weight:700;text-align:right;">${(Number(order.total_price) - Number(order.deposit_amount)).toLocaleString("de-DE")} €</td>
+                </tr>
+              </table>
+            </div>
+          </td></tr>
+          
+          <!-- Footer -->
+          <tr><td style="background:#0A1F3F;padding:24px 32px;border-radius:0 0 12px 12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="text-align:center;">
+                <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,0.9);font-weight:600;">MCD AUTO — Dortmund</p>
+                <p style="margin:0 0 12px;font-size:12px;color:rgba(255,255,255,0.6);">Südwall 23, 44137 Dortmund</p>
+                <div style="border-top:1px solid rgba(255,255,255,0.15);padding-top:12px;">
+                  <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.5);">Merci pour votre confiance.</p>
+                </div>
+              </td></tr>
+            </table>
+          </td></tr>
+          
+        </table>
+      </td></tr>
     </table>
-
-    <div style="background:#f8f8f8;border-radius:8px;padding:16px;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span>Total TTC</span>
-        <strong>${Number(order.total_price).toLocaleString("de-DE")} €</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;color:#c8102e;font-weight:bold;">
-        <span>Acompte versé (20%)</span>
-        <span>${Number(order.deposit_amount).toLocaleString("de-DE")} €</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #ddd;">
-        <span>Solde restant</span>
-        <strong>${(Number(order.total_price) - Number(order.deposit_amount)).toLocaleString("de-DE")} €</strong>
-      </div>
-    </div>
-
-    <div style="margin-top:30px;padding-top:20px;border-top:1px solid #eee;font-size:12px;color:#999;text-align:center;">
-      <p>MCD AUTO — Salon-de-Provence</p>
-      <p>Merci pour votre confiance.</p>
-    </div>
   </body>
   </html>`;
 }

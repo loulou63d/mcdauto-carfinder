@@ -183,23 +183,51 @@ function t(lang: Lang, key: string): string {
   return translations[lang]?.[key] || translations["de"][key] || key;
 }
 
+const LOGO_URL = "https://ctcekfsvvmwcirogpipk.supabase.co/storage/v1/object/public/vehicle-images/brand%2Flogo-mcd.png";
+
 function baseTemplate(lang: Lang, title: string, content: string): string {
   return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"/></head>
-<body style="font-family:Arial,sans-serif;color:#1a1a1a;max-width:600px;margin:0 auto;padding:20px;background:#f5f5f5;">
-  <div style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-    <div style="background:#c8102e;padding:24px;text-align:center;">
-      <h1 style="color:white;margin:0;font-size:24px;">MCD AUTO</h1>
-    </div>
-    <div style="padding:24px;">
-      <h2 style="color:#c8102e;margin:0 0 16px;font-size:20px;">${title}</h2>
-      ${content}
-    </div>
-    <div style="background:#f8f8f8;padding:16px;text-align:center;font-size:12px;color:#999;">
-      <p style="margin:4px 0;">${t(lang, "footer")}</p>
-      <p style="margin:4px 0;">${t(lang, "footer_thanks")}</p>
-    </div>
-  </div>
+<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/></head>
+<body style="margin:0;padding:0;background-color:#f0f2f5;font-family:'Segoe UI',Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f2f5;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        
+        <!-- Header with logo -->
+        <tr><td style="background:linear-gradient(135deg,#0A1F3F 0%,#132d54 100%);padding:28px 32px;text-align:center;border-radius:12px 12px 0 0;">
+          <img src="${LOGO_URL}" alt="MCD AUTO" width="160" style="display:block;margin:0 auto;max-width:160px;height:auto;" />
+        </td></tr>
+        
+        <!-- Red accent bar -->
+        <tr><td style="background:#E63946;height:4px;font-size:0;line-height:0;">&nbsp;</td></tr>
+        
+        <!-- Title section -->
+        <tr><td style="background:white;padding:28px 32px 0;">
+          <h2 style="margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:22px;font-weight:700;color:#0A1F3F;letter-spacing:-0.3px;">${title}</h2>
+          <div style="width:48px;height:3px;background:#E63946;margin-top:12px;border-radius:2px;"></div>
+        </td></tr>
+        
+        <!-- Content -->
+        <tr><td style="background:white;padding:20px 32px 28px;">
+          ${content}
+        </td></tr>
+        
+        <!-- Footer -->
+        <tr><td style="background:#0A1F3F;padding:24px 32px;border-radius:0 0 12px 12px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr><td style="text-align:center;">
+              <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,0.9);font-weight:600;">${t(lang, "footer")}</p>
+              <p style="margin:0 0 12px;font-size:12px;color:rgba(255,255,255,0.6);">Südwall 23, 44137 Dortmund</p>
+              <div style="border-top:1px solid rgba(255,255,255,0.15);padding-top:12px;margin-top:4px;">
+                <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.5);">${t(lang, "footer_thanks")}</p>
+              </div>
+            </td></tr>
+          </table>
+        </td></tr>
+        
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
 }
 
@@ -207,17 +235,23 @@ function welcomeEmail(lang: Lang, data: Record<string, unknown>): { subject: str
   const name = (data.name as string) || "";
   const siteUrl = (data.siteUrl as string) || "https://mcdauto-carfinder.lovable.app";
   const content = `
-    <p style="color:#333;line-height:1.6;">${name ? `${name}, ` : ""}${t(lang, "welcome_body")}</p>
-    <div style="background:#f8f8f8;border-radius:8px;padding:16px;margin:16px 0;">
-      <p style="font-weight:bold;margin:0 0 8px;">${t(lang, "welcome_features_title")}</p>
-      <ul style="margin:0;padding-left:20px;color:#555;line-height:2;">
-        <li>${t(lang, "welcome_f1")}</li>
-        <li>${t(lang, "welcome_f2")}</li>
-        <li>${t(lang, "welcome_f3")}</li>
-      </ul>
+    <p style="color:#444;line-height:1.7;font-size:15px;">${name ? `${name}, ` : ""}${t(lang, "welcome_body")}</p>
+    <div style="background:#f7f9fb;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #E63946;">
+      <p style="font-weight:700;margin:0 0 10px;color:#0A1F3F;font-size:14px;">${t(lang, "welcome_features_title")}</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#E63946;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "welcome_f1")}
+        </td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#E63946;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "welcome_f2")}
+        </td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#E63946;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "welcome_f3")}
+        </td></tr>
+      </table>
     </div>
-    <div style="text-align:center;margin:24px 0;">
-      <a href="${siteUrl}/${lang}/customer-auth" style="display:inline-block;background:#c8102e;color:white;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:bold;">${t(lang, "welcome_cta")}</a>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${siteUrl}/${lang}/customer-auth" style="display:inline-block;background:linear-gradient(135deg,#E63946,#c62833);color:white;text-decoration:none;padding:14px 40px;border-radius:8px;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(230,57,70,0.3);">${t(lang, "welcome_cta")}</a>
     </div>`;
   return { subject: t(lang, "welcome_subject"), html: baseTemplate(lang, t(lang, "welcome_title"), content) };
 }
@@ -230,45 +264,53 @@ function orderEmail(lang: Lang, data: Record<string, unknown>): { subject: strin
 
   const vehicleRows = vehicles.map(v => `
     <tr>
-      <td style="padding:8px 12px;border-bottom:1px solid #eee;">${v.brand} ${v.model} (${v.year})</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">${Number(v.price).toLocaleString("de-DE")} €</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;font-size:14px;color:#333;">${v.brand} ${v.model} <span style="color:#888;">(${v.year})</span></td>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;text-align:right;font-weight:600;color:#0A1F3F;font-size:14px;">${Number(v.price).toLocaleString("de-DE")} €</td>
     </tr>`).join("");
 
   const content = `
-    <p style="color:#333;line-height:1.6;">${t(lang, "order_body")}</p>
+    <p style="color:#444;line-height:1.7;font-size:15px;">${t(lang, "order_body")}</p>
     
-    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-      <thead><tr style="background:#c8102e;color:white;">
-        <th style="padding:10px 12px;text-align:left;">Véhicule</th>
-        <th style="padding:10px 12px;text-align:right;">Prix</th>
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border-radius:8px;overflow:hidden;">
+      <thead><tr style="background:linear-gradient(135deg,#0A1F3F,#132d54);">
+        <th style="padding:12px 14px;text-align:left;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Véhicule</th>
+        <th style="padding:12px 14px;text-align:right;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Prix</th>
       </tr></thead>
       <tbody>${vehicleRows}</tbody>
     </table>
 
-    <div style="background:#f8f8f8;border-radius:8px;padding:16px;margin:16px 0;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span>${t(lang, "order_total")}</span>
-        <strong>${Number(totalPrice).toLocaleString("de-DE")} €</strong>
+    <div style="background:#f7f9fb;border-radius:10px;padding:18px;margin:20px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#555;">${t(lang, "order_total")}</td>
+          <td style="padding:6px 0;font-size:14px;color:#0A1F3F;font-weight:700;text-align:right;">${Number(totalPrice).toLocaleString("de-DE")} €</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:15px;color:#E63946;font-weight:700;">${t(lang, "order_deposit")}</td>
+          <td style="padding:6px 0;font-size:15px;color:#E63946;font-weight:700;text-align:right;">${Number(depositAmount).toLocaleString("de-DE")} €</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="margin:24px 0;">
+      <div style="background:#f7f9fb;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:4px solid #E63946;">
+        <h3 style="color:#0A1F3F;font-size:14px;font-weight:700;margin:0 0 4px;">${t(lang, "order_step1_title")}</h3>
+        <p style="color:#666;font-size:13px;margin:0;line-height:1.5;">${t(lang, "order_step1_body")}</p>
       </div>
-      <div style="display:flex;justify-content:space-between;color:#c8102e;font-weight:bold;">
-        <span>${t(lang, "order_deposit")}</span>
-        <span>${Number(depositAmount).toLocaleString("de-DE")} €</span>
+      <div style="background:#f7f9fb;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:4px solid #E6A839;">
+        <h3 style="color:#0A1F3F;font-size:14px;font-weight:700;margin:0 0 4px;">${t(lang, "order_step2_title")}</h3>
+        <p style="color:#666;font-size:13px;margin:0;line-height:1.5;">${t(lang, "order_step2_body")}</p>
+      </div>
+      <div style="background:#f7f9fb;border-radius:10px;padding:16px 18px;border-left:4px solid #39B54A;">
+        <h3 style="color:#0A1F3F;font-size:14px;font-weight:700;margin:0 0 4px;">${t(lang, "order_step3_title")}</h3>
+        <p style="color:#666;font-size:13px;margin:0;line-height:1.5;">${t(lang, "order_step3_body")}</p>
       </div>
     </div>
 
-    <div style="margin:20px 0;">
-      <h3 style="color:#c8102e;font-size:15px;">${t(lang, "order_step1_title")}</h3>
-      <p style="color:#555;font-size:14px;margin:4px 0 12px;">${t(lang, "order_step1_body")}</p>
-      <h3 style="color:#c8102e;font-size:15px;">${t(lang, "order_step2_title")}</h3>
-      <p style="color:#555;font-size:14px;margin:4px 0 12px;">${t(lang, "order_step2_body")}</p>
-      <h3 style="color:#c8102e;font-size:15px;">${t(lang, "order_step3_title")}</h3>
-      <p style="color:#555;font-size:14px;margin:4px 0 12px;">${t(lang, "order_step3_body")}</p>
-    </div>
+    <p style="color:#777;font-size:13px;font-style:italic;text-align:center;margin:16px 0;">${t(lang, "order_tracking")}</p>
 
-    <p style="color:#555;font-size:14px;font-style:italic;">${t(lang, "order_tracking")}</p>
-
-    <div style="text-align:center;margin:24px 0;">
-      <a href="${siteUrl}/${lang}/account" style="display:inline-block;background:#c8102e;color:white;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:bold;">${t(lang, "order_cta")}</a>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${siteUrl}/${lang}/account" style="display:inline-block;background:linear-gradient(135deg,#E63946,#c62833);color:white;text-decoration:none;padding:14px 40px;border-radius:8px;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(230,57,70,0.3);">${t(lang, "order_cta")}</a>
     </div>`;
   return { subject: t(lang, "order_subject"), html: baseTemplate(lang, t(lang, "order_title"), content) };
 }
@@ -276,13 +318,15 @@ function orderEmail(lang: Lang, data: Record<string, unknown>): { subject: strin
 function contactEmail(lang: Lang, data: Record<string, unknown>): { subject: string; html: string } {
   const name = (data.name as string) || "";
   const message = (data.message as string) || "";
-  const subject = (data.subject as string) || "";
+  const subjectText = (data.subject as string) || "";
   const content = `
-    <p style="color:#333;line-height:1.6;">${name ? `${name}, ` : ""}${t(lang, "contact_body")}</p>
-    <div style="background:#f8f8f8;border-radius:8px;padding:16px;margin:16px 0;">
-      <p style="font-weight:bold;margin:0 0 8px;">${t(lang, "contact_summary")}</p>
-      ${subject ? `<p style="color:#555;margin:4px 0;"><strong>Sujet :</strong> ${subject}</p>` : ""}
-      <p style="color:#555;margin:4px 0;white-space:pre-wrap;">${message}</p>
+    <p style="color:#444;line-height:1.7;font-size:15px;">${name ? `${name}, ` : ""}${t(lang, "contact_body")}</p>
+    <div style="background:#f7f9fb;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #E63946;">
+      <p style="font-weight:700;margin:0 0 10px;color:#0A1F3F;font-size:14px;">${t(lang, "contact_summary")}</p>
+      ${subjectText ? `<p style="color:#555;margin:6px 0;font-size:14px;"><strong style="color:#0A1F3F;">Sujet :</strong> ${subjectText}</p>` : ""}
+      <div style="background:white;border-radius:6px;padding:14px;margin-top:10px;">
+        <p style="color:#555;margin:0;font-size:14px;line-height:1.6;white-space:pre-wrap;">${message}</p>
+      </div>
     </div>`;
   return { subject: t(lang, "contact_subject"), html: baseTemplate(lang, t(lang, "contact_title"), content) };
 }
