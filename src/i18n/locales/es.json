@@ -431,5 +431,23 @@
     "adminInspection": "Inspección técnica",
     "adminServiceBook": "Libro de mantenimiento del fabricante",
     "adminInvoices": "Facturas de mantenimiento"
+  },
+  "checkout": {
+    "title": "Completar el pedido",
+    "customerInfo": "Sus datos",
+    "depositTitle": "Anticipo obligatorio (20%)",
+    "depositInfo": "Se requiere un anticipo del 20% para confirmar su pedido",
+    "depositInstruction": "Realice la transferencia bancaria del importe indicado abajo y suba el comprobante de pago.",
+    "depositAmount": "Anticipo a pagar",
+    "reference": "Referencia",
+    "receiptTitle": "Comprobante de pago",
+    "receiptDesc": "Suba una foto o PDF de su recibo de transferencia bancaria",
+    "receiptRequired": "Por favor suba el comprobante de pago",
+    "fillRequired": "Por favor complete los campos obligatorios",
+    "uploadCta": "Haga clic o arrastre su comprobante aquí",
+    "uploadHint": "Imagen (JPG, PNG) o PDF aceptado",
+    "submitOrder": "Confirmar pedido",
+    "successTitle": "¡Pedido enviado!",
+    "successMessage": "Su pedido ha sido registrado. Nuestro equipo verificará su pago y le contactará en un plazo de 24 horas."
   }
 }

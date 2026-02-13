@@ -644,5 +644,23 @@
     "adminInspection": "Technische Inspektion",
     "adminServiceBook": "Hersteller-Serviceheft",
     "adminInvoices": "Wartungsrechnungen"
+  },
+  "checkout": {
+    "title": "Bestellung abschließen",
+    "customerInfo": "Ihre Daten",
+    "depositTitle": "Pflichtanzahlung (20%)",
+    "depositInfo": "Eine Anzahlung von 20% ist erforderlich, um Ihre Bestellung zu bestätigen",
+    "depositInstruction": "Überweisen Sie den unten angegebenen Betrag per Banküberweisung und laden Sie den Zahlungsbeleg hoch.",
+    "depositAmount": "Zu zahlende Anzahlung",
+    "reference": "Referenz",
+    "receiptTitle": "Zahlungsbeleg",
+    "receiptDesc": "Laden Sie ein Foto oder PDF Ihres Überweisungsbelegs hoch",
+    "receiptRequired": "Bitte laden Sie den Zahlungsbeleg hoch",
+    "fillRequired": "Bitte füllen Sie die Pflichtfelder aus",
+    "uploadCta": "Klicken oder ziehen Sie Ihren Beleg hierher",
+    "uploadHint": "Bild (JPG, PNG) oder PDF akzeptiert",
+    "submitOrder": "Bestellung bestätigen",
+    "successTitle": "Bestellung gesendet!",
+    "successMessage": "Ihre Bestellung wurde registriert. Unser Team wird Ihre Zahlung überprüfen und Sie innerhalb von 24 Stunden kontaktieren."
   }
 }
