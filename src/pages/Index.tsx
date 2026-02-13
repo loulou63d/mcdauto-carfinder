@@ -181,14 +181,16 @@ const Index = () => {
         <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover" loading="eager" />
         <div className="absolute inset-0 hero-gradient" />
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl md:text-4xl lg:text-[2.6rem] font-heading font-bold text-primary-foreground max-w-4xl leading-tight"
-          >
-            {t('hero.title')}
-          </motion.h1>
+          {activeTab === 'buy' && (
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-2xl md:text-4xl lg:text-[2.6rem] font-heading font-bold text-primary-foreground max-w-4xl leading-tight"
+            >
+              {t('hero.title')}
+            </motion.h1>
+          )}
 
           {/* Tabs — Acheter / Vendre / Entretenir */}
           <motion.div
