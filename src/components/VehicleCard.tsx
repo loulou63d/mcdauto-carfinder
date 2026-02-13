@@ -72,8 +72,8 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{vehicle.year}</span>
             <span className="flex items-center gap-1"><Gauge className="w-3.5 h-3.5" />{vehicle.mileage.toLocaleString('de-DE')} km</span>
-            <span className="flex items-center gap-1"><Fuel className="w-3.5 h-3.5" />{vehicle.energy}</span>
-            <span className="flex items-center gap-1"><Settings2 className="w-3.5 h-3.5" />{vehicle.transmission}</span>
+            <span className="flex items-center gap-1"><Fuel className="w-3.5 h-3.5" />{t(`energyValues.${vehicle.energy}`, { defaultValue: vehicle.energy })}</span>
+            <span className="flex items-center gap-1"><Settings2 className="w-3.5 h-3.5" />{t(`transmissionValues.${vehicle.transmission}`, { defaultValue: vehicle.transmission })}</span>
             {vehicle.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{vehicle.location}</span>}
           </div>
 
