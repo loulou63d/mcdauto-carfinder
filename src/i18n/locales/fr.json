@@ -14,7 +14,16 @@
     "title": "Véhicules d'occasion garantis et révisés — le service MCD AUTO en plus",
     "subtitle": "Large choix de véhicules d'occasion contrôlés à prix juste",
     "searchPlaceholder": "Marque, modèle...",
-    "searchButton": "Rechercher"
+    "searchButton": "Rechercher",
+    "estimate": "Estimer",
+    "unknownPlate": "Plaque inconnue ? Remplissez le formulaire",
+    "vinLabel": "Numéro VIN",
+    "vinPlaceholder": "Ex : VF1XXXXXX00000000",
+    "brandLabel": "Marque",
+    "brandPlaceholder": "Ex : Renault",
+    "mileageLabel": "Kilométrage",
+    "mileagePlaceholder": "Ex : 85 000 km",
+    "bookAppointment": "Prendre rendez-vous"
   },
   "trust": {
     "reconditioned": "Véhicules reconditionnés et garantis",

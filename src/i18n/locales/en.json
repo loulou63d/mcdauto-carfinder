@@ -10,12 +10,21 @@
     "favorites": "Favorites",
     "search": "Search"
   },
-  "hero": {
-    "title": "Guaranteed and inspected used vehicles — the MCD AUTO service",
-    "subtitle": "Wide selection of inspected used cars at fair prices",
-    "searchPlaceholder": "Brand, model...",
-    "searchButton": "Search"
-  },
+   "hero": {
+     "title": "Guaranteed and inspected used vehicles — the MCD AUTO service",
+     "subtitle": "Wide selection of inspected used cars at fair prices",
+     "searchPlaceholder": "Brand, model...",
+     "searchButton": "Search",
+     "estimate": "Estimate",
+     "unknownPlate": "Unknown plate? Fill in the form",
+     "vinLabel": "VIN Number",
+     "vinPlaceholder": "e.g. VF1XXXXXX00000000",
+     "brandLabel": "Brand",
+     "brandPlaceholder": "e.g. Ford",
+     "mileageLabel": "Mileage",
+     "mileagePlaceholder": "e.g. 85,000 km",
+     "bookAppointment": "Book an appointment"
+   },
   "trust": {
     "reconditioned": "Reconditioned and guaranteed vehicles",
     "reconditionedDesc": "Each vehicle is thoroughly inspected and reconditioned",
