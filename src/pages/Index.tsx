@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import actionSearchImg from '@/assets/action-search.jpg';
@@ -96,6 +96,7 @@ const Index = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'maintain'>('buy');
   const [promoSlide, setPromoSlide] = useState(0);
@@ -103,13 +104,15 @@ const Index = () => {
   const [showFullForm, setShowFullForm] = useState(false);
   const [plateForm, setPlateForm] = useState({ vin: '', brand: '', mileage: '' });
 
-  // Read hash on mount and set active tab
+  // Read hash and set active tab
   useEffect(() => {
-    const hash = window.location.hash.slice(1) as 'buy' | 'sell' | 'maintain';
+    const hash = location.hash.slice(1) as 'buy' | 'sell' | 'maintain';
     if (hash === 'sell' || hash === 'maintain') {
       setActiveTab(hash);
+    } else {
+      setActiveTab('buy');
     }
-  }, []);
+  }, [location.hash]);
 
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
