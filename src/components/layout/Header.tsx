@@ -95,7 +95,7 @@ const Header = () => {
 
       {/* Mobile nav overlay */}
       {mobileOpen && (
-        <div className="bg-card/95 backdrop-blur-md border-t shadow-lg">
+        <div className="fixed inset-0 top-16 bg-card z-40 overflow-y-auto">
           <div className="px-4 py-3 border-b">
             <div className="relative">
               <Input placeholder={t('hero.searchPlaceholder')} className="pr-10 h-10 rounded-full bg-secondary" />
