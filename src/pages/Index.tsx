@@ -36,6 +36,23 @@ import brandToyota from '@/assets/brand-toyota.png';
 import brandVolkswagen from '@/assets/brand-volkswagen.png';
 import brandVolvo from '@/assets/brand-volvo.png';
 import brandTesla from '@/assets/brand-tesla.png';
+import brandNissan from '@/assets/brand-nissan.png';
+import brandOpel from '@/assets/brand-opel.png';
+import brandSeat from '@/assets/brand-seat.png';
+import brandSkoda from '@/assets/brand-skoda.png';
+import brandDs from '@/assets/brand-ds.png';
+import brandJeep from '@/assets/brand-jeep.png';
+import brandMazda from '@/assets/brand-mazda.png';
+import brandMitsubishi from '@/assets/brand-mitsubishi.png';
+import brandSuzuki from '@/assets/brand-suzuki.png';
+import brandLandrover from '@/assets/brand-landrover.png';
+import brandAlfaromeo from '@/assets/brand-alfaromeo.png';
+import brandJaguar from '@/assets/brand-jaguar.png';
+import brandPorsche from '@/assets/brand-porsche.png';
+import brandMini from '@/assets/brand-mini.png';
+import brandLexus from '@/assets/brand-lexus.png';
+import brandInfiniti from '@/assets/brand-infiniti.png';
+import brandMaserati from '@/assets/brand-maserati.png';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -78,6 +95,11 @@ const Index = () => {
     Fiat: brandFiat, Ford: brandFord, Honda: brandHonda, Hyundai: brandHyundai,
     Kia: brandKia, Mercedes: brandMercedes, Peugeot: brandPeugeot, Renault: brandRenault,
     Toyota: brandToyota, Volkswagen: brandVolkswagen, Volvo: brandVolvo, Tesla: brandTesla,
+    Nissan: brandNissan, Opel: brandOpel, Seat: brandSeat, Skoda: brandSkoda,
+    DS: brandDs, Jeep: brandJeep, Mazda: brandMazda, Mitsubishi: brandMitsubishi,
+    Suzuki: brandSuzuki, 'Land Rover': brandLandrover, 'Alfa Romeo': brandAlfaromeo,
+    Jaguar: brandJaguar, Porsche: brandPorsche, Mini: brandMini, Lexus: brandLexus,
+    Infiniti: brandInfiniti, Maserati: brandMaserati,
   };
 
   const promoSlides = [
@@ -381,7 +403,7 @@ const Index = () => {
             style={{ width: 'max-content' }}
           >
             {/* Duplicate list twice for seamless loop */}
-            {[...popularBrands.slice(0, 16), ...popularBrands.slice(0, 16)].map((brand, i) => (
+            {[...popularBrands, ...popularBrands].map((brand, i) => (
               <Link
                 key={`${brand}-${i}`}
                 to={`/${lang}/search?brand=${brand}`}

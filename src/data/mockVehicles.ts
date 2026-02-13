@@ -218,6 +218,9 @@ export const popularBrands = [
   'Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Ford',
   'Honda', 'Hyundai', 'Kia', 'Mercedes', 'Peugeot', 'Renault',
   'Toyota', 'Volkswagen', 'Volvo', 'Tesla',
+  'Nissan', 'Opel', 'Seat', 'Skoda', 'DS', 'Jeep',
+  'Mazda', 'Mitsubishi', 'Suzuki', 'Land Rover',
+  'Alfa Romeo', 'Jaguar', 'Porsche', 'Mini', 'Lexus', 'Infiniti', 'Maserati',
 ];
 
 export const energyTypes = [
