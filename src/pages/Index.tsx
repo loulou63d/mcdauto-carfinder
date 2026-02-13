@@ -20,6 +20,22 @@ import cat4x4 from '@/assets/cat-4x4.jpg';
 import catCabriolet from '@/assets/cat-cabriolet.jpg';
 import catMonospace from '@/assets/cat-monospace.jpg';
 import catCoupe from '@/assets/cat-coupe.jpg';
+import brandAudi from '@/assets/brand-audi.png';
+import brandBmw from '@/assets/brand-bmw.png';
+import brandCitroen from '@/assets/brand-citroen.png';
+import brandDacia from '@/assets/brand-dacia.png';
+import brandFiat from '@/assets/brand-fiat.png';
+import brandFord from '@/assets/brand-ford.png';
+import brandHonda from '@/assets/brand-honda.png';
+import brandHyundai from '@/assets/brand-hyundai.png';
+import brandKia from '@/assets/brand-kia.png';
+import brandMercedes from '@/assets/brand-mercedes.png';
+import brandPeugeot from '@/assets/brand-peugeot.png';
+import brandRenault from '@/assets/brand-renault.png';
+import brandToyota from '@/assets/brand-toyota.png';
+import brandVolkswagen from '@/assets/brand-volkswagen.png';
+import brandVolvo from '@/assets/brand-volvo.png';
+import brandTesla from '@/assets/brand-tesla.png';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -53,6 +69,13 @@ const Index = () => {
   const categoryImages: Record<string, string> = {
     berline: catBerline, break: catBreak, suv: catSuv, utilitaire: catUtilitaire,
     '4x4': cat4x4, cabriolet: catCabriolet, monospace: catMonospace, 'coupé': catCoupe,
+  };
+
+  const brandImages: Record<string, string> = {
+    Audi: brandAudi, BMW: brandBmw, Citroën: brandCitroen, Dacia: brandDacia,
+    Fiat: brandFiat, Ford: brandFord, Honda: brandHonda, Hyundai: brandHyundai,
+    Kia: brandKia, Mercedes: brandMercedes, Peugeot: brandPeugeot, Renault: brandRenault,
+    Toyota: brandToyota, Volkswagen: brandVolkswagen, Volvo: brandVolvo, Tesla: brandTesla,
   };
 
   const promoSlides = [
@@ -346,17 +369,21 @@ const Index = () => {
       <section className="section-padding bg-secondary">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-8">{t('brands.title')}</h2>
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
-            {popularBrands.slice(0, 16).map((brand) => (
-              <Link
-                key={brand}
-                to={`/${lang}/search?brand=${brand}`}
-                className="flex items-center justify-center p-3 bg-card rounded-xl border card-hover aspect-square"
-              >
-                <span className="font-heading font-bold text-xs text-center text-foreground">{brand}</span>
-              </Link>
-            ))}
-          </div>
+           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
+             {popularBrands.slice(0, 16).map((brand) => (
+               <Link
+                 key={brand}
+                 to={`/${lang}/search?brand=${brand}`}
+                 className="flex items-center justify-center p-0 bg-card rounded-xl border card-hover aspect-square overflow-hidden"
+               >
+                 <img 
+                   src={brandImages[brand] || ''} 
+                   alt={brand} 
+                   className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                 />
+               </Link>
+             ))}
+           </div>
         </div>
       </section>
 
