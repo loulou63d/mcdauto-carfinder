@@ -45,7 +45,7 @@ const Index = () => {
   return (
     <div>
       {/* HERO — autosphere style */}
-      <section className="relative h-[420px] md:h-[460px] overflow-hidden">
+      <section className="relative h-[500px] md:h-[540px] overflow-hidden">
         <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover" loading="eager" />
         <div className="absolute inset-0 hero-gradient" />
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">

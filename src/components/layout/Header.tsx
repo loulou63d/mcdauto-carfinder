@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Car, ChevronDown, Search, User, Phone } from 'lucide-react';
+import { Menu, X, Car, ChevronDown, Search, User, ShoppingCart, BookmarkCheck } from 'lucide-react';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,39 +22,31 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b shadow-sm">
+    <header className="absolute top-0 left-0 right-0 z-50">
       {/* Top bar */}
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        {/* Logo */}
-        <Link to={`/${lang}`} className="flex items-center gap-2 shrink-0">
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
-            <Car className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="font-heading font-bold text-xl text-foreground tracking-tight">MCD AUTO</span>
-        </Link>
-
-        {/* Search bar - desktop */}
-        <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-          <div className="relative w-full">
-            <Input
-              placeholder={t('hero.searchPlaceholder')}
-              className="pr-10 h-10 rounded-full border-border bg-secondary"
-            />
-            <button className="absolute right-1 top-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors">
-              <Search className="w-4 h-4 text-primary-foreground" />
-            </button>
-          </div>
+        {/* Left: hamburger + logo */}
+        <div className="flex items-center gap-3">
+          <button className="p-1 text-white hover:text-white/80 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+          </button>
+          <Link to={`/${lang}`} className="flex items-center gap-2 shrink-0">
+            <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Car className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-heading font-bold text-xl text-white tracking-tight">MCD AUTO</span>
+          </Link>
         </div>
 
         {/* Right icons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {/* Language */}
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
             >
-              {langLabels[lang as Lang] || 'DE'}
+              {(lang as string).toUpperCase()}
               <ChevronDown className="w-3 h-3" />
             </button>
             {langOpen && (
@@ -73,40 +65,24 @@ const Header = () => {
             )}
           </div>
 
-          <Link to="/auth" className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <User className="w-5 h-5" />
+          <Link to={`/${lang}/search`} className="p-2 text-white hover:text-white/80 transition-colors">
+            <Search className="w-6 h-6" />
           </Link>
-
-          <a href="tel:+33490000000" className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <Phone className="w-5 h-5" />
-          </a>
-
-          {/* Mobile toggle */}
-          <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button className="p-2 text-white hover:text-white/80 transition-colors">
+            <ShoppingCart className="w-6 h-6" />
+          </button>
+          <Link to="/auth" className="p-2 text-white hover:text-white/80 transition-colors">
+            <User className="w-6 h-6" />
+          </Link>
+          <button className="p-2 text-white hover:text-white/80 transition-colors">
+            <BookmarkCheck className="w-6 h-6" />
           </button>
         </div>
       </div>
 
-      {/* Secondary nav - desktop */}
-      <nav className="hidden md:block border-t bg-background">
-        <div className="container mx-auto px-4 flex items-center gap-0">
-          {navLinks.map((l) => (
-            <Link
-              key={l.to + l.label}
-              to={l.to}
-              className="px-5 py-3 text-sm font-medium text-foreground hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-      </nav>
-
-      {/* Mobile nav */}
+      {/* Mobile nav overlay */}
       {mobileOpen && (
-        <div className="md:hidden border-t bg-background">
-          {/* Mobile search */}
+        <div className="bg-card/95 backdrop-blur-md border-t shadow-lg">
           <div className="px-4 py-3 border-b">
             <div className="relative">
               <Input placeholder={t('hero.searchPlaceholder')} className="pr-10 h-10 rounded-full bg-secondary" />
@@ -120,7 +96,7 @@ const Header = () => {
               key={l.to + l.label}
               to={l.to}
               onClick={() => setMobileOpen(false)}
-              className="block px-4 py-3 text-sm font-medium hover:bg-muted transition-colors border-b"
+              className="block px-4 py-3 text-sm font-medium hover:bg-muted transition-colors border-b text-foreground"
             >
               {l.label}
             </Link>
