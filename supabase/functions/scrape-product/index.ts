@@ -852,16 +852,23 @@ serve(async (req) => {
       if (detectedTrans) vehicleData.transmission = detectedTrans;
     }
 
-    // Auto-estimate price if missing
-    if (!price && brand) {
-      const year = vehicleData.year || new Date().getFullYear();
-      const mileage = vehicleData.mileage || 50000;
-      const energy = vehicleData.energy || "Essence";
-      const estimated = await estimatePrice(brand, title.replace(brand, "").trim().split(/[\s,]/)[0] || title, year, mileage, energy, category);
+    // Always estimate price for proper EUR 8000-25000 range
+    {
+      const estBrand = brand || "Unknown";
+      const estYear = vehicleData.year || new Date().getFullYear() - 5;
+      const estMileage = vehicleData.mileage || 80000;
+      const estEnergy = vehicleData.energy || "Essence";
+      const estimated = await estimatePrice(estBrand, title.replace(estBrand, "").trim().split(/[\s,]/)[0] || title, estYear, estMileage, estEnergy, category);
       if (estimated) {
         price = estimated;
-        console.log("Price estimated by AI:", estimated);
+        console.log("Price estimated (EUR):", estimated);
       }
+    }
+
+    // Ensure category is always set - fallback to "Berline" if nothing detected
+    if (!category) {
+      category = "Berline";
+      console.log("Category defaulted to Berline");
     }
 
     const product = {
