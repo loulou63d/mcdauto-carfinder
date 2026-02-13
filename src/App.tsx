@@ -34,6 +34,7 @@ import AdminVehicles from "./pages/admin/Vehicles";
 import AdminContacts from "./pages/admin/Contacts";
 import AdminImport from "./pages/admin/Import";
 import AdminOrders from "./pages/admin/Orders";
+import AdminSettings from "./pages/admin/Settings";
 import Checkout from "./pages/Checkout";
 import CustomerAuth from "./pages/CustomerAuth";
 import Account from "./pages/Account";
@@ -81,6 +82,7 @@ const App = () => (
             <Route path="contacts" element={<AdminContacts />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="import" element={<AdminImport />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

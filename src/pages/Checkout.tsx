@@ -27,6 +27,7 @@ const Checkout = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [bankDetails, setBankDetails] = useState({ iban: '', bic: '', name: '' });
 
   // Check auth - redirect if not logged in
   useEffect(() => {
@@ -40,6 +41,19 @@ const Checkout = () => {
         setPhone(session.user.user_metadata?.phone || '');
       }
       setAuthLoading(false);
+    });
+
+    // Fetch bank details
+    supabase.from('site_settings').select('key, value').in('key', ['bank_iban', 'bank_bic', 'bank_name']).then(({ data }) => {
+      if (data) {
+        const details = { iban: '', bic: '', name: '' };
+        data.forEach(s => {
+          if (s.key === 'bank_iban') details.iban = s.value;
+          if (s.key === 'bank_bic') details.bic = s.value;
+          if (s.key === 'bank_name') details.name = s.value;
+        });
+        setBankDetails(details);
+      }
     });
   }, [lang, navigate]);
 
@@ -220,8 +234,9 @@ const Checkout = () => {
                 <span className="text-primary">{deposit.toLocaleString('de-DE')} €</span>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
-                <p><strong>IBAN:</strong> DE89 3704 0044 0532 0130 00</p>
-                <p><strong>BIC:</strong> COBADEFFXXX</p>
+                <p><strong>IBAN:</strong> {bankDetails.iban}</p>
+                <p><strong>BIC:</strong> {bankDetails.bic}</p>
+                <p><strong>{t('checkout.beneficiary', { defaultValue: 'Bénéficiaire' })}:</strong> {bankDetails.name}</p>
                 <p><strong>{t('checkout.reference')}:</strong> MCD-{Date.now().toString(36).toUpperCase()}</p>
               </div>
             </div>
