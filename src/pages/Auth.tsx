@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle } from 'lucide-react';
+import logoMcd from '@/assets/logo-mcd.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,9 +54,8 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 font-heading font-bold text-2xl text-primary mb-2">
-            <Car className="w-8 h-8" />
-            MCD AUTO
+          <div className="flex items-center justify-center mb-2">
+            <img src={logoMcd} alt="MCD AUTO" className="h-16 w-auto" />
           </div>
           <p className="text-muted-foreground text-sm">Connexion administrateur</p>
         </div>

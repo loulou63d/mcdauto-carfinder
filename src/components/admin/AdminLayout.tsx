@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Car, MessageSquare, LogOut, Menu, X, PackagePlus } from 'lucide-react';
+import logoMcd from '@/assets/logo-mcd.png';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-          <span className="font-heading font-bold text-lg text-primary">MCD AUTO Admin</span>
+          <img src={logoMcd} alt="MCD AUTO Admin" className="h-10 w-auto" />
           <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
           </button>
