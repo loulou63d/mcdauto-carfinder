@@ -24,6 +24,7 @@ import Repair from "./pages/Repair";
 import FAQ from "./pages/FAQ";
 import Warranty from "./pages/Warranty";
 import Delivery from "./pages/Delivery";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/de" replace />} />
           <Route path="/:lang" element={<Layout />}>
