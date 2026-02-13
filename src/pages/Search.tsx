@@ -226,7 +226,9 @@ const SearchPage = () => {
               </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
-                <p className="text-lg">{t('common.error')}</p>
+                <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                <p className="text-lg font-medium">{t('search.noResults')}</p>
+                <p className="text-sm mt-2">{t('search.noResultsHint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
