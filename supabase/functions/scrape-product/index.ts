@@ -66,6 +66,59 @@ function parsePrice(text: string): number | null {
   return bestPrice;
 }
 
+async function estimatePrice(
+  brand: string | null,
+  model: string,
+  year: number,
+  mileage: number,
+  energy: string | null,
+  category: string | null
+): Promise<number | null> {
+  try {
+    const baseUrl = Deno.env.get("VITE_SUPABASE_URL");
+    if (!baseUrl) {
+      console.warn("VITE_SUPABASE_URL not configured");
+      return null;
+    }
+
+    const response = await fetch(
+      `${baseUrl}/functions/v1/estimate-vehicle-price`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        },
+        body: JSON.stringify({
+          brand: brand || "Unknown",
+          model,
+          year,
+          mileage,
+          energy: energy || "Diesel",
+          category,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn(
+        "Price estimation failed:",
+        response.status,
+        await response.text()
+      );
+      return null;
+    }
+
+    const data = await response.json();
+    return data.success && data.estimatedPrice
+      ? Math.round(data.estimatedPrice)
+      : null;
+  } catch (e) {
+    console.warn("Error calling price estimation:", e);
+    return null;
+  }
+}
+
 function extractImages(markdown: string, html: string, url: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();

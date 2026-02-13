@@ -89,8 +89,44 @@ const AdminImport = () => {
       if (error) throw error;
       if (!data?.success) throw new Error(data?.error || 'Scrape failed');
 
+      let scrapedData = data.data;
+
+      // Estimate price if not found
+      if (!scrapedData.price && scrapedData.brand && scrapedData.title) {
+        try {
+          const yearMatch = scrapedData.title.match(/\b(19|20)\d{2}\b/);
+          const year = scrapedData.vehicleData?.year || (yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear());
+          const mileage = scrapedData.vehicleData?.mileage || 100000;
+          const energy = scrapedData.vehicleData?.energy || 'Diesel';
+
+          const { data: priceData, error: priceError } = await supabase.functions.invoke('estimate-vehicle-price', {
+            body: {
+              brand: scrapedData.brand,
+              model: scrapedData.title.replace(scrapedData.brand, '').trim().split(/[\s,]/)[0],
+              year,
+              mileage,
+              energy,
+              category: scrapedData.category,
+            },
+          });
+
+          if (priceData?.success && priceData.estimatedPrice) {
+            scrapedData = {
+              ...scrapedData,
+              price: priceData.estimatedPrice,
+            };
+            toast({
+              title: 'Prix estimé',
+              description: `Prix estimé: ${priceData.estimatedPrice}€`,
+            });
+          }
+        } catch (priceErr) {
+          console.warn('Price estimation failed:', priceErr);
+        }
+      }
+
       setSingleProduct({
-        scraped: data.data,
+        scraped: scrapedData,
         selected: true,
         status: 'pending',
       });
