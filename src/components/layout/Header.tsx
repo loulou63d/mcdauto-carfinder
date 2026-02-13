@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft } from 'lucide-react';
+import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
 import logoMcd from '@/assets/logo-mcd.png';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const { itemCount } = useCart();
 
   // Check if we're on the homepage (/:lang or /:lang/)
   const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
@@ -80,6 +82,14 @@ const Header = () => {
 
           <Link to={`/${lang}/search`} className={`p-2 ${textColor} ${textHover} transition-colors`}>
             <Search className="w-6 h-6" />
+          </Link>
+          <Link to={`/${lang}/cart`} className={`relative p-2 ${textColor} ${textHover} transition-colors`}>
+            <ShoppingCart className="w-6 h-6" />
+            {itemCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
           </Link>
           <Link to="/auth" className={`p-2 ${textColor} ${textHover} transition-colors`}>
             <User className="w-6 h-6" />

@@ -25,6 +25,8 @@ import FAQ from "./pages/FAQ";
 import Warranty from "./pages/Warranty";
 import Delivery from "./pages/Delivery";
 import ScrollToTop from "./components/ScrollToTop";
+import Cart from "./pages/Cart";
+import { CartProvider } from "./contexts/CartContext";
 import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
@@ -37,6 +39,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <CartProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -62,6 +65,7 @@ const App = () => (
              <Route path="legal" element={<Legal />} />
              <Route path="privacy" element={<Privacy />} />
              <Route path="cgv" element={<CGV />} />
+             <Route path="cart" element={<Cart />} />
            </Route>
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
@@ -73,6 +77,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
