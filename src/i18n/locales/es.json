@@ -234,8 +234,24 @@
     "ctaDesc": "Nuestro equipo está a su disposición para ayudarle.",
     "ctaButton": "Contáctenos"
   },
-  "warranty": {
-    "title": "Garantías y protección",
+   "cgv": {
+     "title": "Condiciones Generales de Venta",
+     "intro": "Las presentes condiciones generales rigen nuestras relaciones comerciales",
+     "section1Title": "1. Objeto",
+     "section1": "Las presentes condiciones generales de venta rigen las relaciones contractuales entre MCD AUTO SARL y sus clientes para la venta de vehículos de ocasión.",
+     "section2Title": "2. Precios",
+     "section2": "Los precios mostrados están en euros IVA incluido. MCD AUTO se reserva el derecho de modificar sus precios en cualquier momento. El precio aplicable es el vigente en el momento de la compra.",
+     "section3Title": "3. Garantía",
+     "section3": "Todos nuestros vehículos tienen una garantía mínima de 12 meses, extensible hasta 24 meses. Esta garantía cubre averías mecánicas, eléctricas y electrónicas.",
+     "section4Title": "4. Derecho de desistimiento",
+     "section4": "De conformidad con nuestra política \"Satisfecho o reembolsado\", dispone de un plazo de 14 días calendario a partir de la entrega del vehículo para ejercer su derecho de desistimiento, sin tener que justificar el motivo.",
+     "section5Title": "5. Entrega",
+     "section5": "La entrega se realiza en nuestras instalaciones o en la dirección indicada por el cliente. Los plazos de entrega se dan a título informativo.",
+     "section6Title": "6. Litigios",
+     "section6": "En caso de litigio, se buscará una solución amistosa antes de emprender acciones legales. El juzgado competente es el del domicilio social de MCD AUTO."
+   },
+   "warranty": {
+     "title": "Garantías y protección",
     "subtitle": "Proteja su inversión con nuestras garantías completas",
     "benefitsTitle": "¿Por qué una garantía MCD AUTO?",
     "benefit1Title": "Protección completa",
