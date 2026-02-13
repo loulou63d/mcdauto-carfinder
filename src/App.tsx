@@ -25,6 +25,11 @@ import FAQ from "./pages/FAQ";
 import Warranty from "./pages/Warranty";
 import Delivery from "./pages/Delivery";
 import ScrollToTop from "./components/ScrollToTop";
+import AdminLayout from "./components/admin/AdminLayout";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminVehicles from "./pages/admin/Vehicles";
+import AdminContacts from "./pages/admin/Contacts";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +63,11 @@ const App = () => (
              <Route path="cgv" element={<CGV />} />
            </Route>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+            <Route index element={<Dashboard />} />
+            <Route path="vehicles" element={<AdminVehicles />} />
+            <Route path="contacts" element={<AdminContacts />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
