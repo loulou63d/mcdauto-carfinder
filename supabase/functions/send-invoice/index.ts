@@ -142,7 +142,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "MCD AUTO <onboarding@resend.dev>",
+          from: "MCD AUTO <facturation@mcd-auto.com>",
           to: [order.customer_email],
           subject: `Facture MCD AUTO — Commande #${order.id.substring(0, 8).toUpperCase()}`,
           html: invoiceHTML,
