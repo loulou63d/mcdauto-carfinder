@@ -111,7 +111,9 @@
     "seeMore": "See more",
     "km": "km",
     "guarantee12": "12 months warranty",
-    "satisfactionBadge": "Satisfied or refunded"
+    "satisfactionBadge": "Satisfied or refunded",
+    "noResults": "No vehicles found",
+    "noResultsHint": "Try adjusting the filters or performing a different search"
   },
   "vehicle": {
     "contact": "Contact",

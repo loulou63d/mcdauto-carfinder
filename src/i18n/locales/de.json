@@ -113,7 +113,9 @@
     "seeMore": "Mehr anzeigen",
     "km": "km",
     "guarantee12": "12 Monate Garantie",
-    "satisfactionBadge": "Zufrieden oder Geld zurück"
+    "satisfactionBadge": "Zufrieden oder Geld zurück",
+    "noResults": "Keine Fahrzeuge gefunden",
+    "noResultsHint": "Versuchen Sie, die Filter anzupassen oder eine andere Suche durchzuführen"
   },
   "vehicle": {
     "contact": "Kontaktieren",
