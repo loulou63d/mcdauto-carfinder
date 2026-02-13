@@ -57,6 +57,19 @@ const CustomerAuth = () => {
     if (error) {
       setError(error.message);
     } else {
+      // Send welcome email in client's language
+      try {
+        await supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'welcome',
+            lang,
+            to: email,
+            data: { name: fullName, siteUrl: window.location.origin },
+          },
+        });
+      } catch (err) {
+        console.error('Welcome email error:', err);
+      }
       setSignupSuccess(true);
     }
   };
