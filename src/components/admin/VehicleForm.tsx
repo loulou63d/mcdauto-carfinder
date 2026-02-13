@@ -48,7 +48,7 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
     euro_norm: vehicle?.euro_norm ?? '',
     description: vehicle?.description ?? '',
     equipment: vehicle?.equipment?.join(', ') ?? '',
-    location: vehicle?.location ?? 'Salon-de-Provence',
+    location: vehicle?.location ?? 'Dortmund',
     is_featured: vehicle?.is_featured ?? false,
     status: vehicle?.status ?? 'available',
   });

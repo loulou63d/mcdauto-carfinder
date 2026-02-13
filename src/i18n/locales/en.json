@@ -537,11 +537,11 @@
     "publisher": "Publisher",
     "hosting": "Hosting",
     "data": "Data protection",
-    "companyDetails": "MCD AUTO SARL\nShare capital: €50,000\nSIRET: 123 456 789 00010\nRCS Salon-de-Provence\nVAT: FR12345678900",
-    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, France\nPhone: +33 4 90 00 00 00\nEmail: contact@mcdauto.fr",
-    "publisherDetails": "Mr. Jean Dupont, Manager of MCD AUTO SARL",
+    "companyDetails": "MCD AUTO\nSüdwall 23\n44137 Dortmund, Germany",
+    "addressDetails": "Südwall 23\n44137 Dortmund, Germany\nPhone: +49 178 3724542\nEmail: contact@mcd-auto.com",
+    "publisherDetails": "MCD AUTO",
     "hostingDetails": "This website is hosted by Lovable (Lovable Technologies Ltd).",
-    "dataDetails1": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify and delete your personal data. To exercise your rights, please contact us at: dpo@mcdauto.fr",
+    "dataDetails1": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify and delete your personal data. To exercise your rights, please contact us at: contact@mcd-auto.com",
     "dataDetails2": "Data collected through contact forms is used exclusively to respond to your requests and is never shared with third parties without your explicit consent."
   },
   "privacy": {
@@ -556,7 +556,7 @@
     "section4Title": "4. Your rights",
     "section4": "In accordance with the GDPR, you have the following rights: right of access, right of rectification, right to erasure, right to restrict processing, right to data portability, right to object.",
     "section5Title": "5. DPO Contact",
-    "section5": "To exercise your rights, contact our Data Protection Officer: dpo@mcdauto.fr",
+    "section5": "To exercise your rights, contact us at: contact@mcd-auto.com",
     "section6Title": "6. Cookies",
     "section6": "This site uses technical cookies necessary for the proper functioning of the site. No advertising cookies are used without your consent."
   },

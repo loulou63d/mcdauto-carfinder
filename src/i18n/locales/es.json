@@ -331,11 +331,11 @@
     "publisher": "Editor",
     "hosting": "Alojamiento",
     "data": "Protección de datos",
-    "companyDetails": "MCD AUTO SARL\nCapital social: 50.000 €\nSIRET: 123 456 789 00010\nRCS Salon-de-Provence\nNIF intracomunitario: FR12345678900",
-    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, Francia\nTeléfono: +33 4 90 00 00 00\nEmail: contact@mcdauto.fr",
-    "publisherDetails": "Sr. Jean Dupont, Director de MCD AUTO SARL",
+    "companyDetails": "MCD AUTO\nSüdwall 23\n44137 Dortmund, Alemania",
+    "addressDetails": "Südwall 23\n44137 Dortmund, Alemania\nTeléfono: +49 178 3724542\nEmail: contact@mcd-auto.com",
+    "publisherDetails": "MCD AUTO",
     "hostingDetails": "Este sitio web está alojado por Lovable (Lovable Technologies Ltd).",
-    "dataDetails1": "De acuerdo con el Reglamento General de Protección de Datos (RGPD), usted tiene derecho de acceso, rectificación y supresión de sus datos personales. Para ejercer sus derechos, contáctenos en: dpo@mcdauto.fr",
+    "dataDetails1": "De acuerdo con el Reglamento General de Protección de Datos (RGPD), usted tiene derecho de acceso, rectificación y supresión de sus datos personales. Para ejercer sus derechos, contáctenos en: contact@mcd-auto.com",
     "dataDetails2": "Los datos recogidos a través de los formularios de contacto se utilizan exclusivamente para responder a sus solicitudes y nunca se transmiten a terceros sin su consentimiento explícito."
   },
   "privacy": {
@@ -350,7 +350,7 @@
     "section4Title": "4. Sus derechos",
     "section4": "De acuerdo con el RGPD, usted tiene los siguientes derechos: derecho de acceso, derecho de rectificación, derecho de supresión, derecho a la limitación del tratamiento, derecho a la portabilidad de datos, derecho de oposición.",
     "section5Title": "5. Contacto DPO",
-    "section5": "Para ejercer sus derechos, contacte con nuestro Delegado de Protección de Datos: dpo@mcdauto.fr",
+    "section5": "Para ejercer sus derechos, contáctenos en: contact@mcd-auto.com",
     "section6Title": "6. Cookies",
     "section6": "Este sitio utiliza cookies técnicas necesarias para el correcto funcionamiento del sitio. No se utilizan cookies publicitarias sin su consentimiento."
   },

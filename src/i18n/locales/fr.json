@@ -539,11 +539,11 @@
     "publisher": "Directeur de publication",
     "hosting": "Hébergement",
     "data": "Protection des données",
-    "companyDetails": "MCD AUTO SARL\nCapital social : 50 000 €\nSIRET : 123 456 789 00010\nRCS Salon-de-Provence\nTVA Intracommunautaire : FR12345678900",
-    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, France\nTéléphone : +33 4 90 00 00 00\nEmail : contact@mcdauto.fr",
-    "publisherDetails": "Monsieur Jean Dupont, Gérant de MCD AUTO SARL",
+    "companyDetails": "MCD AUTO\nSüdwall 23\n44137 Dortmund, Allemagne",
+    "addressDetails": "Südwall 23\n44137 Dortmund, Allemagne\nTéléphone : +49 178 3724542\nEmail : contact@mcd-auto.com",
+    "publisherDetails": "MCD AUTO",
     "hostingDetails": "Ce site est hébergé par Lovable (Lovable Technologies Ltd).",
-    "dataDetails1": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ces droits, veuillez nous contacter à l'adresse : dpo@mcdauto.fr",
+    "dataDetails1": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ces droits, veuillez nous contacter à l'adresse : contact@mcd-auto.com",
     "dataDetails2": "Les données collectées via les formulaires de contact sont utilisées exclusivement pour répondre à vos demandes et ne sont jamais transmises à des tiers sans votre consentement explicite."
   },
   "privacy": {
@@ -558,7 +558,7 @@
     "section4Title": "4. Vos droits",
     "section4": "Conformément au RGPD, vous disposez des droits suivants : droit d'accès, droit de rectification, droit à l'effacement, droit à la limitation du traitement, droit à la portabilité des données, droit d'opposition.",
     "section5Title": "5. Contact DPO",
-    "section5": "Pour exercer vos droits, contactez notre Délégué à la Protection des Données : dpo@mcdauto.fr",
+    "section5": "Pour exercer vos droits, contactez-nous : contact@mcd-auto.com",
     "section6Title": "6. Cookies",
     "section6": "Ce site utilise des cookies techniques nécessaires au bon fonctionnement du site. Aucun cookie publicitaire n'est utilisé sans votre consentement."
   },
