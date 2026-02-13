@@ -1,9 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/hooks/useAuth';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -13,6 +14,8 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
   const { addToCart, isInCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const firstImage = vehicle.images?.[0];
 
@@ -86,6 +89,11 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                if (!user) {
+                  toast.info(t('cart.loginRequired', { defaultValue: 'Connectez-vous pour ajouter au panier' }));
+                  navigate(`/${lang}/customer-auth`);
+                  return;
+                }
                 if (isInCart(vehicle.id)) {
                   toast.info(t('cart.alreadyInCart'));
                 } else {
