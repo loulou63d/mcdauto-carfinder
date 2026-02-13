@@ -8,6 +8,10 @@ import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
 import { mockVehicles, popularBrands, categoryTypes } from '@/data/mockVehicles';
 import heroImage from '@/assets/hero-showroom.jpg';
+import promoImg1 from '@/assets/promo-slide1.jpg';
+import promoImg2 from '@/assets/promo-slide2.jpg';
+import promoImg3 from '@/assets/promo-slide3.jpg';
+import promoImg4 from '@/assets/promo-slide4.jpg';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -32,7 +36,8 @@ const Index = () => {
 
   const promoSlides = [
     {
-      bg: 'bg-gradient-to-br from-[hsl(10,80%,65%)] to-[hsl(10,70%,55%)]',
+      image: promoImg1,
+      overlay: 'bg-gradient-to-r from-[hsl(10,70%,55%)/0.75] to-transparent',
       topLabel: t('promo.slide1TopLabel'),
       bigText: '-35%',
       midText: t('promo.slide1MidText'),
@@ -42,7 +47,8 @@ const Index = () => {
       badge: t('promo.goodDeals'),
     },
     {
-      bg: 'bg-gradient-to-br from-[hsl(170,50%,60%)] to-[hsl(170,45%,50%)]',
+      image: promoImg2,
+      overlay: 'bg-gradient-to-r from-[hsl(170,45%,45%)/0.8] to-transparent',
       topLabel: '208 Active essence 100 ch',
       bigText: '189 €',
       midText: t('promo.slide2MidText'),
@@ -53,7 +59,8 @@ const Index = () => {
       extraBadge: t('promo.noDeposit'),
     },
     {
-      bg: 'bg-gradient-to-br from-[hsl(220,10%,92%)] to-[hsl(220,10%,85%)]',
+      image: promoImg3,
+      overlay: 'bg-gradient-to-r from-[hsl(0,0%,95%)/0.85] to-[hsl(0,0%,95%)/0.3]',
       topLabel: '',
       bigText: '',
       midText: t('promo.slide3Title'),
@@ -62,7 +69,8 @@ const Index = () => {
       dark: true,
     },
     {
-      bg: 'bg-gradient-to-br from-[hsl(215,30%,35%)] to-[hsl(215,35%,25%)]',
+      image: promoImg4,
+      overlay: 'bg-gradient-to-r from-[hsl(215,35%,25%)/0.8] to-[hsl(215,35%,25%)/0.3]',
       topLabel: '',
       bigText: '',
       midText: t('promo.slide4Title'),
@@ -159,8 +167,10 @@ const Index = () => {
               const slide = promoSlides[promoSlide];
               const isDark = slide.dark;
               return (
-                <div className={`${slide.bg} rounded-2xl overflow-hidden h-52 md:h-64 flex items-stretch relative`}>
-                  <div className="flex-1 flex flex-col justify-center px-6 md:px-12 py-6 z-10">
+                <div className="rounded-2xl overflow-hidden h-52 md:h-64 flex items-stretch relative">
+                  <img src={slide.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className={`absolute inset-0 ${slide.overlay}`} />
+                  <div className="flex-1 flex flex-col justify-center px-6 md:px-12 py-6 z-10 relative">
                     {slide.topLabel && (
                       <span className={`text-xs md:text-sm font-semibold mb-1 ${isDark ? 'text-foreground' : 'text-white/90'}`}>
                         {slide.topLabel}
