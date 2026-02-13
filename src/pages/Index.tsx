@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft } from 'lucide-react';
+import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
+import actionSearchImg from '@/assets/action-search.jpg';
+import actionFinanceImg from '@/assets/action-finance.jpg';
+import actionEstimateImg from '@/assets/action-estimate.jpg';
+import actionMaintenanceImg from '@/assets/action-maintenance.jpg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
@@ -427,21 +431,24 @@ const Index = () => {
       {/* ACTION CARDS — "Que souhaitez-vous faire ?" */}
       <section className="section-padding">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold mb-8">{t('actions.title')}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">{t('actions.title')}</h2>
+          <div className="flex flex-col gap-3">
             {[
-              { icon: Search, title: t('actions.searchVehicle'), desc: t('actions.searchVehicleDesc'), to: `/${lang}/search` },
-              { icon: CreditCard, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services` },
-              { icon: BarChart3, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/contact` },
-              { icon: Wrench, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services` },
+              { img: actionSearchImg, title: t('actions.searchVehicle'), desc: t('actions.searchVehicleDesc'), to: `/${lang}/search` },
+              { img: actionFinanceImg, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services` },
+              { img: actionEstimateImg, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/contact` },
+              { img: actionMaintenanceImg, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services` },
             ].map((item, i) => (
               <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <Link to={item.to} className="block p-5 bg-card rounded-xl border card-hover group">
-                  <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-3 group-hover:bg-primary/5 transition-colors">
-                    <item.icon className="w-6 h-6 text-primary" />
+                <Link to={item.to} className="flex items-center bg-secondary/60 rounded-xl overflow-hidden card-hover group">
+                  <img src={item.img} alt={item.title} className="w-28 h-24 md:w-36 md:h-28 object-cover shrink-0" />
+                  <div className="flex-1 px-4 py-3">
+                    <h3 className="font-heading font-bold text-sm md:text-base">{item.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                   </div>
-                  <h3 className="font-heading font-bold text-sm">{item.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
+                  <div className="pr-4 shrink-0">
+                    <ChevronRight className="w-6 h-6 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 </Link>
               </motion.div>
             ))}
