@@ -30,6 +30,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminVehicles from "./pages/admin/Vehicles";
 import AdminContacts from "./pages/admin/Contacts";
+import AdminImport from "./pages/admin/Import";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="vehicles" element={<AdminVehicles />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="import" element={<AdminImport />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
