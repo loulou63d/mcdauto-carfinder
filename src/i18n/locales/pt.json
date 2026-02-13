@@ -325,7 +325,39 @@
   "footer": { "about": "Sobre nós", "services": "Serviços", "legal": "Aviso legal", "privacy": "Política de privacidade", "cgv": "Condições gerais", "contact": "Contacto", "newsletter": "Newsletter", "newsletterPlaceholder": "O seu email", "subscribe": "Subscrever", "rights": "Todos os direitos reservados", "followUs": "Siga-nos", "description": "O seu especialista em veículos usados garantidos e revisados.", "engTitle": "Os nossos compromissos", "engQuality": "Qualidade", "engAccompaniment": "Acompanhamento", "engProximity": "Proximidade", "engCustom": "Personalizado", "ecoMessage": "Partilhe carro quando possível. #ConduçãoMenosPolusão", "sectionBuy": "Comprar", "linkUsedCars": "Veículos usados", "linkAllBrands": "Todas as marcas", "linkPromotions": "Promoções", "sectionSell": "Avaliar e vender", "linkEstimate": "Avaliar o meu veículo", "linkSellCar": "Vender o meu carro", "sectionMaintain": "Manutenção e reparação", "linkMaintenance": "Manutenção", "linkRepair": "Reparação", "sectionServices": "Os nossos serviços", "linkFinancing": "Financiamento", "linkWarranty": "Garantia", "linkDelivery": "Entrega", "sectionHelp": "Precisa de ajuda?", "linkFaq": "FAQ", "sectionAbout": "Sobre nós", "sectionConditions": "Condições", "reviewsText": "Descubra a opinião dos nossos clientes", "reviewsCollected": "recolhidas por MCD AUTO", "socialText": "Siga-nos", "socialSub": "nas redes sociais" },
   "common": { "loading": "A carregar...", "error": "Ocorreu um erro", "back": "Voltar", "save": "Guardar", "cancel": "Cancelar", "delete": "Eliminar", "edit": "Editar", "close": "Fechar", "seeAll": "Ver tudo", "currency": "€" },
   "auth": { "login": "Entrar", "email": "Email", "password": "Palavra-passe", "loginButton": "Entrar", "forgotPassword": "Esqueceu a palavra-passe?", "noAccount": "Não tem conta?", "signup": "Registar-se", "signupButton": "Registar-se", "hasAccount": "Já tem conta?", "logout": "Sair" },
-  "legal": { "title": "Aviso legal", "company": "Informação da empresa", "publisher": "Editor", "hosting": "Alojamento", "data": "Proteção de dados" },
-  "privacy": { "title": "Política de privacidade", "intro": "A proteção dos seus dados pessoais é a nossa prioridade." },
+  "legal": {
+    "title": "Aviso legal",
+    "company": "Informação da empresa",
+    "publisher": "Editor",
+    "hosting": "Alojamento",
+    "data": "Proteção de dados",
+    "companyDetails": "MCD AUTO SARL\nCapital social: 50.000 €\nSIRET: 123 456 789 00010\nRCS Salon-de-Provence\nNIF intracomunitário: FR12345678900",
+    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, França\nTelefone: +33 4 90 00 00 00\nEmail: contact@mcdauto.fr",
+    "publisherDetails": "Sr. Jean Dupont, Diretor da MCD AUTO SARL",
+    "hostingDetails": "Este site é alojado pela Lovable (Lovable Technologies Ltd).",
+    "dataDetails1": "De acordo com o Regulamento Geral de Proteção de Dados (RGPD), tem direito de acesso, retificação e supressão dos seus dados pessoais. Para exercer os seus direitos, contacte-nos em: dpo@mcdauto.fr",
+    "dataDetails2": "Os dados recolhidos através dos formulários de contacto são utilizados exclusivamente para responder às suas solicitações e nunca são transmitidos a terceiros sem o seu consentimento explícito."
+  },
+  "privacy": {
+    "title": "Política de privacidade",
+    "intro": "A proteção dos seus dados pessoais é a nossa prioridade.",
+    "section1Title": "1. Dados recolhidos",
+    "section1": "Recolhemos os seguintes dados: nome, apelido, endereço de email, número de telefone e qualquer informação que nos envie através dos nossos formulários de contacto.",
+    "section2Title": "2. Finalidade do tratamento",
+    "section2": "Os dados recolhidos são utilizados para: responder às suas solicitações de contacto, informá-lo sobre os nossos veículos e serviços, gerir encomendas e entregas.",
+    "section3Title": "3. Período de conservação",
+    "section3": "Os seus dados pessoais são conservados por um período máximo de 3 anos a partir da sua última interação connosco.",
+    "section4Title": "4. Os seus direitos",
+    "section4": "De acordo com o RGPD, tem os seguintes direitos: direito de acesso, direito de retificação, direito ao apagamento, direito à limitação do tratamento, direito à portabilidade dos dados, direito de oposição.",
+    "section5Title": "5. Contacto DPO",
+    "section5": "Para exercer os seus direitos, contacte o nosso Encarregado de Proteção de Dados: dpo@mcdauto.fr",
+    "section6Title": "6. Cookies",
+    "section6": "Este site utiliza cookies técnicos necessários ao bom funcionamento do site. Nenhum cookie publicitário é utilizado sem o seu consentimento."
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "message": "A página que procura não existe ou foi movida.",
+    "backHome": "Voltar ao início"
+  },
   "cgv": { "title": "Condições gerais de venda", "intro": "Aplicam-se as seguintes condições gerais de venda." }
 }

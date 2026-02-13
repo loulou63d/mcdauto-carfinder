@@ -538,11 +538,34 @@
     "company": "Informations sur l'entreprise",
     "publisher": "Directeur de publication",
     "hosting": "Hébergement",
-    "data": "Protection des données"
+    "data": "Protection des données",
+    "companyDetails": "MCD AUTO SARL\nCapital social : 50 000 €\nSIRET : 123 456 789 00010\nRCS Salon-de-Provence\nTVA Intracommunautaire : FR12345678900",
+    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, France\nTéléphone : +33 4 90 00 00 00\nEmail : contact@mcdauto.fr",
+    "publisherDetails": "Monsieur Jean Dupont, Gérant de MCD AUTO SARL",
+    "hostingDetails": "Ce site est hébergé par Lovable (Lovable Technologies Ltd).",
+    "dataDetails1": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ces droits, veuillez nous contacter à l'adresse : dpo@mcdauto.fr",
+    "dataDetails2": "Les données collectées via les formulaires de contact sont utilisées exclusivement pour répondre à vos demandes et ne sont jamais transmises à des tiers sans votre consentement explicite."
   },
   "privacy": {
     "title": "Politique de confidentialité",
-    "intro": "La protection de vos données personnelles est notre priorité."
+    "intro": "La protection de vos données personnelles est notre priorité.",
+    "section1Title": "1. Données collectées",
+    "section1": "Nous collectons les données suivantes : nom, prénom, adresse email, numéro de téléphone, et toute information que vous nous transmettez via nos formulaires de contact.",
+    "section2Title": "2. Finalité du traitement",
+    "section2": "Les données collectées sont utilisées pour : répondre à vos demandes de contact, vous informer sur nos véhicules et services, gérer les commandes et livraisons.",
+    "section3Title": "3. Durée de conservation",
+    "section3": "Vos données personnelles sont conservées pendant une durée maximale de 3 ans à compter de votre dernière interaction avec nous.",
+    "section4Title": "4. Vos droits",
+    "section4": "Conformément au RGPD, vous disposez des droits suivants : droit d'accès, droit de rectification, droit à l'effacement, droit à la limitation du traitement, droit à la portabilité des données, droit d'opposition.",
+    "section5Title": "5. Contact DPO",
+    "section5": "Pour exercer vos droits, contactez notre Délégué à la Protection des Données : dpo@mcdauto.fr",
+    "section6Title": "6. Cookies",
+    "section6": "Ce site utilise des cookies techniques nécessaires au bon fonctionnement du site. Aucun cookie publicitaire n'est utilisé sans votre consentement."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
   },
   "cgv": {
     "title": "Conditions générales de vente",
