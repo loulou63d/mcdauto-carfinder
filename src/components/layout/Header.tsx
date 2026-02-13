@@ -59,7 +59,7 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className={`flex items-center gap-1 px-2 py-2 text-sm font-medium ${isHome ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'} transition-colors`}
+              className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               {(lang as string).toUpperCase()}
               <ChevronDown className="w-3 h-3" />
