@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-type NotificationType = "welcome" | "order_confirmation" | "contact_confirmation";
+type NotificationType = "welcome" | "order_confirmation" | "order_completed" | "contact_confirmation";
 type Lang = "de" | "fr" | "en" | "es" | "pt";
 
 interface NotificationPayload {
@@ -41,6 +41,16 @@ const translations: Record<Lang, Record<string, string>> = {
     order_tracking: "Sie können den Status Ihrer Bestellung jederzeit in Ihrem Kundenbereich verfolgen.",
     order_cta: "Meine Bestellungen ansehen",
 
+    completed_subject: "MCD AUTO — Ihre Bestellung wurde bestätigt!",
+    completed_title: "Bestellung bestätigt!",
+    completed_body: "Großartige Neuigkeiten! Ihre Bestellung wurde von unserem Team validiert und abgeschlossen.",
+    completed_body2: "Ihre Anzahlung wurde überprüft und Ihr Fahrzeug wird nun für die Übergabe vorbereitet.",
+    completed_next_title: "Nächste Schritte:",
+    completed_next1: "Unser Team bereitet Ihr Fahrzeug vor (Inspektion, Reinigung, Dokumente)",
+    completed_next2: "Sie werden kontaktiert, um die Lieferung oder Abholung zu vereinbaren",
+    completed_next3: "Ihre Rechnung ist in Ihrem Kundenbereich verfügbar",
+    completed_cta: "Mein Kundenkonto",
+
     contact_subject: "MCD AUTO — Ihre Nachricht wurde empfangen",
     contact_title: "Nachricht empfangen!",
     contact_body: "Vielen Dank für Ihre Kontaktaufnahme. Wir haben Ihre Nachricht erhalten und werden Ihnen innerhalb von 24 bis 48 Stunden antworten.",
@@ -72,6 +82,16 @@ const translations: Record<Lang, Record<string, string>> = {
     order_total: "Prix total",
     order_tracking: "Vous pouvez suivre le statut de votre commande à tout moment depuis votre espace client.",
     order_cta: "Voir mes commandes",
+
+    completed_subject: "MCD AUTO — Votre commande a été validée !",
+    completed_title: "Commande validée !",
+    completed_body: "Excellente nouvelle ! Votre commande a été validée et finalisée par notre équipe.",
+    completed_body2: "Votre acompte a été vérifié et votre véhicule est maintenant en préparation pour la remise.",
+    completed_next_title: "Prochaines étapes :",
+    completed_next1: "Notre équipe prépare votre véhicule (inspection, nettoyage, documents)",
+    completed_next2: "Vous serez contacté pour organiser la livraison ou le retrait",
+    completed_next3: "Votre facture est disponible dans votre espace client",
+    completed_cta: "Mon espace client",
 
     contact_subject: "MCD AUTO — Votre message a bien été reçu",
     contact_title: "Message reçu !",
@@ -105,6 +125,16 @@ const translations: Record<Lang, Record<string, string>> = {
     order_tracking: "You can track the status of your order at any time from your customer area.",
     order_cta: "View my orders",
 
+    completed_subject: "MCD AUTO — Your order has been confirmed!",
+    completed_title: "Order confirmed!",
+    completed_body: "Great news! Your order has been validated and completed by our team.",
+    completed_body2: "Your deposit has been verified and your vehicle is now being prepared for handover.",
+    completed_next_title: "Next steps:",
+    completed_next1: "Our team is preparing your vehicle (inspection, cleaning, documents)",
+    completed_next2: "You will be contacted to arrange delivery or pickup",
+    completed_next3: "Your invoice is available in your customer area",
+    completed_cta: "My account",
+
     contact_subject: "MCD AUTO — Your message has been received",
     contact_title: "Message received!",
     contact_body: "Thank you for contacting us. We have received your message and will respond within 24 to 48 hours.",
@@ -137,6 +167,16 @@ const translations: Record<Lang, Record<string, string>> = {
     order_tracking: "Puede seguir el estado de su pedido en cualquier momento desde su área de cliente.",
     order_cta: "Ver mis pedidos",
 
+    completed_subject: "MCD AUTO — ¡Su pedido ha sido confirmado!",
+    completed_title: "¡Pedido confirmado!",
+    completed_body: "¡Excelentes noticias! Su pedido ha sido validado y finalizado por nuestro equipo.",
+    completed_body2: "Su depósito ha sido verificado y su vehículo está siendo preparado para la entrega.",
+    completed_next_title: "Próximos pasos:",
+    completed_next1: "Nuestro equipo prepara su vehículo (inspección, limpieza, documentos)",
+    completed_next2: "Se le contactará para organizar la entrega o recogida",
+    completed_next3: "Su factura está disponible en su área de cliente",
+    completed_cta: "Mi cuenta",
+
     contact_subject: "MCD AUTO — Su mensaje ha sido recibido",
     contact_title: "¡Mensaje recibido!",
     contact_body: "Gracias por contactarnos. Hemos recibido su mensaje y le responderemos en un plazo de 24 a 48 horas.",
@@ -168,6 +208,16 @@ const translations: Record<Lang, Record<string, string>> = {
     order_total: "Preço total",
     order_tracking: "Pode acompanhar o estado do seu pedido a qualquer momento na sua área de cliente.",
     order_cta: "Ver os meus pedidos",
+
+    completed_subject: "MCD AUTO — O seu pedido foi confirmado!",
+    completed_title: "Pedido confirmado!",
+    completed_body: "Ótimas notícias! O seu pedido foi validado e concluído pela nossa equipa.",
+    completed_body2: "O seu depósito foi verificado e o seu veículo está agora a ser preparado para a entrega.",
+    completed_next_title: "Próximos passos:",
+    completed_next1: "A nossa equipa está a preparar o seu veículo (inspeção, limpeza, documentos)",
+    completed_next2: "Será contactado para organizar a entrega ou recolha",
+    completed_next3: "A sua fatura está disponível na sua área de cliente",
+    completed_cta: "A minha conta",
 
     contact_subject: "MCD AUTO — A sua mensagem foi recebida",
     contact_title: "Mensagem recebida!",
@@ -315,6 +365,65 @@ function orderEmail(lang: Lang, data: Record<string, unknown>): { subject: strin
   return { subject: t(lang, "order_subject"), html: baseTemplate(lang, t(lang, "order_title"), content) };
 }
 
+function orderCompletedEmail(lang: Lang, data: Record<string, unknown>): { subject: string; html: string } {
+  const name = (data.name as string) || "";
+  const vehicles = (data.vehicles as Array<{ brand: string; model: string; year: number; price: number }>) || [];
+  const totalPrice = data.totalPrice as number || 0;
+  const depositAmount = data.depositAmount as number || 0;
+  const siteUrl = (data.siteUrl as string) || "https://mcdauto-carfinder.lovable.app";
+
+  const vehicleRows = vehicles.map(v => `
+    <tr>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;font-size:14px;color:#333;">${v.brand} ${v.model} <span style="color:#888;">(${v.year})</span></td>
+      <td style="padding:10px 14px;border-bottom:1px solid #eef1f5;text-align:right;font-weight:600;color:#0A1F3F;font-size:14px;">${Number(v.price).toLocaleString("de-DE")} €</td>
+    </tr>`).join("");
+
+  const content = `
+    <p style="color:#444;line-height:1.7;font-size:15px;">${name ? `${name}, ` : ""}${t(lang, "completed_body")}</p>
+    <p style="color:#444;line-height:1.7;font-size:15px;">${t(lang, "completed_body2")}</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border-radius:8px;overflow:hidden;">
+      <thead><tr style="background:linear-gradient(135deg,#0A1F3F,#132d54);">
+        <th style="padding:12px 14px;text-align:left;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Véhicule</th>
+        <th style="padding:12px 14px;text-align:right;color:white;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Prix</th>
+      </tr></thead>
+      <tbody>${vehicleRows}</tbody>
+    </table>
+
+    <div style="background:#f7f9fb;border-radius:10px;padding:18px;margin:20px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#555;">${t(lang, "order_total")}</td>
+          <td style="padding:6px 0;font-size:14px;color:#0A1F3F;font-weight:700;text-align:right;">${Number(totalPrice).toLocaleString("de-DE")} €</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:15px;color:#E63946;font-weight:700;">${t(lang, "order_deposit")}</td>
+          <td style="padding:6px 0;font-size:15px;color:#E63946;font-weight:700;text-align:right;">${Number(depositAmount).toLocaleString("de-DE")} €</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="background:#f7f9fb;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #39B54A;">
+      <p style="font-weight:700;margin:0 0 10px;color:#0A1F3F;font-size:14px;">${t(lang, "completed_next_title")}</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#39B54A;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "completed_next1")}
+        </td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#39B54A;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "completed_next2")}
+        </td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;">
+          <span style="color:#39B54A;font-weight:bold;margin-right:8px;">✓</span>${t(lang, "completed_next3")}
+        </td></tr>
+      </table>
+    </div>
+
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${siteUrl}/${lang}/account" style="display:inline-block;background:linear-gradient(135deg,#E63946,#c62833);color:white;text-decoration:none;padding:14px 40px;border-radius:8px;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(230,57,70,0.3);">${t(lang, "completed_cta")}</a>
+    </div>`;
+  return { subject: t(lang, "completed_subject"), html: baseTemplate(lang, t(lang, "completed_title"), content) };
+}
+
 function contactEmail(lang: Lang, data: Record<string, unknown>): { subject: string; html: string } {
   const name = (data.name as string) || "";
   const message = (data.message as string) || "";
@@ -353,6 +462,9 @@ serve(async (req) => {
         break;
       case "order_confirmation":
         emailContent = orderEmail(lang, data);
+        break;
+      case "order_completed":
+        emailContent = orderCompletedEmail(lang, data);
         break;
       case "contact_confirmation":
         emailContent = contactEmail(lang, data);

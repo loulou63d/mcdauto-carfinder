@@ -77,6 +77,7 @@ export type Database = {
           customer_phone: string | null
           deposit_amount: number
           id: string
+          lang: string | null
           receipt_url: string | null
           status: string
           total_price: number
@@ -93,6 +94,7 @@ export type Database = {
           customer_phone?: string | null
           deposit_amount?: number
           id?: string
+          lang?: string | null
           receipt_url?: string | null
           status?: string
           total_price?: number
@@ -109,6 +111,7 @@ export type Database = {
           customer_phone?: string | null
           deposit_amount?: number
           id?: string
+          lang?: string | null
           receipt_url?: string | null
           status?: string
           total_price?: number
