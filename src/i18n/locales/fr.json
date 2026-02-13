@@ -572,5 +572,38 @@
   "cgv": {
     "title": "Conditions générales de vente",
     "intro": "Les conditions générales de vente suivantes s'appliquent."
+  },
+  "energyValues": {
+    "Essence": "Essence",
+    "Diesel": "Diesel",
+    "Électrique": "Électrique",
+    "Hybride": "Hybride",
+    "Hybride rechargeable": "Hybride rechargeable",
+    "GPL": "GPL",
+    "Bioéthanol": "Bioéthanol"
+  },
+  "transmissionValues": {
+    "Automatique": "Automatique",
+    "Manuelle": "Manuelle",
+    "Manuel": "Manuel"
+  },
+  "colorValues": {
+    "Noir": "Noir",
+    "Blanc": "Blanc",
+    "Gris": "Gris",
+    "Grey": "Gris",
+    "Black": "Noir",
+    "White": "Blanc",
+    "Bleu": "Bleu",
+    "Blue": "Bleu",
+    "Rouge": "Rouge",
+    "Red": "Rouge",
+    "Vert": "Vert",
+    "Argent": "Argent",
+    "Silver": "Argent",
+    "Beige": "Beige",
+    "Marron": "Marron",
+    "Orange": "Orange",
+    "Jaune": "Jaune"
   }
 }

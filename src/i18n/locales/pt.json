@@ -359,5 +359,38 @@
     "message": "A página que procura não existe ou foi movida.",
     "backHome": "Voltar ao início"
   },
-  "cgv": { "title": "Condições gerais de venda", "intro": "Aplicam-se as seguintes condições gerais de venda." }
+  "cgv": { "title": "Condições gerais de venda", "intro": "Aplicam-se as seguintes condições gerais de venda." },
+  "energyValues": {
+    "Essence": "Gasolina",
+    "Diesel": "Diesel",
+    "Électrique": "Elétrico",
+    "Hybride": "Híbrido",
+    "Hybride rechargeable": "Híbrido plug-in",
+    "GPL": "GPL",
+    "Bioéthanol": "Bioetanol"
+  },
+  "transmissionValues": {
+    "Automatique": "Automático",
+    "Manuelle": "Manual",
+    "Manuel": "Manual"
+  },
+  "colorValues": {
+    "Noir": "Preto",
+    "Blanc": "Branco",
+    "Gris": "Cinzento",
+    "Grey": "Cinzento",
+    "Black": "Preto",
+    "White": "Branco",
+    "Bleu": "Azul",
+    "Blue": "Azul",
+    "Rouge": "Vermelho",
+    "Red": "Vermelho",
+    "Vert": "Verde",
+    "Argent": "Prateado",
+    "Silver": "Prateado",
+    "Beige": "Bege",
+    "Marron": "Castanho",
+    "Orange": "Laranja",
+    "Jaune": "Amarelo"
+  }
 }

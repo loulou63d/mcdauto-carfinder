@@ -567,5 +567,38 @@
     "message": "The page you are looking for does not exist or has been moved.",
     "backHome": "Return to Home"
   },
-  "cgv": { "title": "Terms & Conditions", "intro": "The following terms and conditions apply." }
+  "cgv": { "title": "Terms & Conditions", "intro": "The following terms and conditions apply." },
+  "energyValues": {
+    "Essence": "Gasoline",
+    "Diesel": "Diesel",
+    "Électrique": "Electric",
+    "Hybride": "Hybrid",
+    "Hybride rechargeable": "Plug-in Hybrid",
+    "GPL": "LPG",
+    "Bioéthanol": "Bioethanol"
+  },
+  "transmissionValues": {
+    "Automatique": "Automatic",
+    "Manuelle": "Manual",
+    "Manuel": "Manual"
+  },
+  "colorValues": {
+    "Noir": "Black",
+    "Blanc": "White",
+    "Gris": "Grey",
+    "Grey": "Grey",
+    "Black": "Black",
+    "White": "White",
+    "Bleu": "Blue",
+    "Blue": "Blue",
+    "Rouge": "Red",
+    "Red": "Red",
+    "Vert": "Green",
+    "Argent": "Silver",
+    "Silver": "Silver",
+    "Beige": "Beige",
+    "Marron": "Brown",
+    "Orange": "Orange",
+    "Jaune": "Yellow"
+  }
 }
