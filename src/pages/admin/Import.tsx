@@ -29,6 +29,8 @@ type ScrapedProduct = {
   source_url: string;
   raw_markdown?: string;
   vehicleData?: VehicleData;
+  equipment?: string[];
+  category?: string | null;
 };
 
 type GeneratedContent = {
@@ -142,7 +144,7 @@ const AdminImport = () => {
       const yearMatch = item.scraped.title.match(/\b(19|20)\d{2}\b/);
       const year = vd.year || (yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear());
 
-      const selectedCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
+      const selectedCatName = categories?.find((c) => c.id === selectedCategory)?.slug || item.scraped.category || null;
 
       const vehicleData: any = {
         brand: item.scraped.brand || 'Non détecté',
@@ -156,6 +158,7 @@ const AdminImport = () => {
         power: vd.power || null,
         description: item.generated?.description || item.scraped.description,
         description_translations: item.generated?.description_translations || {},
+        equipment: item.scraped.equipment || [],
         equipment_translations: item.generated?.title_translations || {},
         status: 'available',
         source_url: item.scraped.source_url,
@@ -303,7 +306,7 @@ const AdminImport = () => {
          const year = batchVd.year || (yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear());
 
          // Import vehicle
-         const batchCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
+         const batchCatName = categories?.find((c) => c.id === selectedCategory)?.slug || selected[i].scraped.category || null;
 
          const vehicleData: any = {
            brand: selected[i].scraped.brand || 'Non détecté',
@@ -317,6 +320,7 @@ const AdminImport = () => {
            power: batchVd.power || null,
            description: updated[idx].generated?.description || selected[i].scraped.description,
            description_translations: updated[idx].generated?.description_translations || {},
+           equipment: selected[i].scraped.equipment || [],
            equipment_translations: updated[idx].generated?.title_translations || {},
            status: 'available',
            source_url: selected[i].scraped.source_url,
