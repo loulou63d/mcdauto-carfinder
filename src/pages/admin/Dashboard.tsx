@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Car, MessageSquare, Eye, TrendingUp } from 'lucide-react';
+import { Car, MessageSquare, Eye, TrendingUp, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -10,6 +12,8 @@ const Dashboard = () => {
     totalContacts: 0,
     newContacts: 0,
   });
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState<{ success: number; failures: number; errors?: string[] } | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -29,6 +33,43 @@ const Dashboard = () => {
     };
     fetchStats();
   }, []);
+
+  const handleDownloadImages = async () => {
+    setIsDownloading(true);
+    setDownloadStatus(null);
+    
+    try {
+      const response = await fetch('/functions/v1/download-vehicle-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setDownloadStatus({
+        success: result.success,
+        failures: result.failures,
+        errors: result.errors,
+      });
+
+      if (result.success > 0) {
+        toast.success(`${result.success} images téléchargées avec succès`);
+      }
+      if (result.failures > 0) {
+        toast.error(`${result.failures} images ont échoué`);
+      }
+    } catch (error) {
+      toast.error('Erreur lors du téléchargement des images');
+      console.error(error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const cards = [
     { title: 'Véhicules', value: stats.totalVehicles, icon: Car, description: `${stats.featuredVehicles} en vedette` },
@@ -55,6 +96,44 @@ const Dashboard = () => {
           </Card>
         ))}
       </div>
+
+      {/* Image Download Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Télécharger les images des véhicules
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Télécharger les images Autosphere dans notre propre stockage pour une meilleure performance et fiabilité.
+          </p>
+          
+          <Button 
+            onClick={handleDownloadImages}
+            disabled={isDownloading}
+            className="mb-4"
+          >
+            {isDownloading ? 'Téléchargement en cours...' : 'Démarrer le téléchargement'}
+          </Button>
+
+          {downloadStatus && (
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <p className="text-sm font-medium mb-2">
+                ✓ Réussi: {downloadStatus.success} | ✗ Échoué: {downloadStatus.failures}
+              </p>
+              {downloadStatus.errors && downloadStatus.errors.length > 0 && (
+                <div className="mt-2 text-xs text-muted-foreground space-y-1 max-h-40 overflow-y-auto">
+                  {downloadStatus.errors.map((error, i) => (
+                    <p key={i}>{error}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
