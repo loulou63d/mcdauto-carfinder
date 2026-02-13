@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
-import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, MapPin, Loader2 } from 'lucide-react';
+import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +46,6 @@ const VehicleDetail = () => {
     ...(vehicle.color ? [{ icon: Palette, label: t('vehicle.color'), value: translateValue('colorValues', vehicle.color) }] : []),
     ...(vehicle.co2 ? [{ icon: Leaf, label: t('vehicle.co2'), value: vehicle.co2 }] : []),
     ...(vehicle.euro_norm ? [{ icon: Shield, label: t('vehicle.euroNorm'), value: vehicle.euro_norm }] : []),
-    ...(vehicle.location ? [{ icon: MapPin, label: t('vehicle.location'), value: vehicle.location }] : []),
   ];
 
   const firstImage = vehicle.images?.[0];
