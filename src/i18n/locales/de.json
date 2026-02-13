@@ -14,7 +14,16 @@
     "title": "Geprüfte und garantierte Gebrauchtwagen — der MCD AUTO Service",
     "subtitle": "Große Auswahl an überprüften Gebrauchtwagen zu fairen Preisen",
     "searchPlaceholder": "Marke, Modell...",
-    "searchButton": "Suchen"
+    "searchButton": "Suchen",
+    "estimate": "Bewerten",
+    "unknownPlate": "Kennzeichen unbekannt? Formular ausfüllen",
+    "vinLabel": "Fahrgestellnummer (VIN)",
+    "vinPlaceholder": "z.B. VF1XXXXXX00000000",
+    "brandLabel": "Marke",
+    "brandPlaceholder": "z.B. Volkswagen",
+    "mileageLabel": "Kilometerstand",
+    "mileagePlaceholder": "z.B. 85.000 km",
+    "bookAppointment": "Termin vereinbaren"
   },
   "trust": {
     "reconditioned": "Aufbereitete und garantierte Fahrzeuge",

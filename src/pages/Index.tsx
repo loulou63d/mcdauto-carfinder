@@ -68,6 +68,9 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'maintain'>('buy');
   const [promoSlide, setPromoSlide] = useState(0);
+  const [plateNumber, setPlateNumber] = useState('');
+  const [showFullForm, setShowFullForm] = useState(false);
+  const [plateForm, setPlateForm] = useState({ vin: '', brand: '', mileage: '' });
 
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
@@ -80,6 +83,20 @@ const Index = () => {
   const handleSearch = () => {
     navigate(`/${lang}/search${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`);
   };
+
+  const handlePlateSubmit = () => {
+    navigate(`/${lang}/contact`);
+  };
+
+  const plateFormats: Record<string, { placeholder: string; flag: string; country: string }> = {
+    fr: { placeholder: 'AA-000-AA', flag: '🇫🇷', country: 'F' },
+    de: { placeholder: 'B-AB 1234', flag: '🇩🇪', country: 'D' },
+    es: { placeholder: '0000 AAA', flag: '🇪🇸', country: 'E' },
+    pt: { placeholder: 'AA-00-AA', flag: '🇵🇹', country: 'P' },
+    en: { placeholder: 'AB12 CDE', flag: '🇬🇧', country: 'GB' },
+  };
+
+  const currentPlate = plateFormats[lang] || plateFormats.fr;
 
   const categoryIcons: Record<string, string> = {
     berline: '🚗', break: '🚙', suv: '🏔️', utilitaire: '🚐', '4x4': '🏔️', cabriolet: '🏎️', monospace: '🚌', coupé: '🏎️',
@@ -199,34 +216,112 @@ const Index = () => {
             ))}
           </motion.div>
 
-          {/* Search bar */}
+          {/* Tab content */}
           <motion.div
+            key={activeTab}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4 }}
-            className="mt-4 flex w-full max-w-xl"
+            className="mt-4 w-full max-w-xl"
           >
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder={t('hero.searchPlaceholder')}
-              className="rounded-r-none h-12 bg-card text-foreground border-0 text-base flex-1"
-            />
-            <Button onClick={handleSearch} className="rounded-l-none h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-              <Search className="w-5 h-5 mr-2" />
-              {t('hero.searchButton')}
-            </Button>
-          </motion.div>
+            {activeTab === 'buy' ? (
+              <>
+                <div className="flex w-full">
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    placeholder={t('hero.searchPlaceholder')}
+                    className="rounded-r-none h-12 bg-card text-foreground border-0 text-base flex-1"
+                  />
+                  <Button onClick={handleSearch} className="rounded-l-none h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+                    <Search className="w-5 h-5 mr-2" />
+                    {t('hero.searchButton')}
+                  </Button>
+                </div>
+                <Link to={`/${lang}/search`} className="inline-block mt-3 text-sm text-primary-foreground/80 underline hover:text-primary-foreground">
+                  {t('featured.seeAll')}
+                </Link>
+              </>
+            ) : (
+              <div className="space-y-3">
+                {/* Plate input row */}
+                <div className="flex items-stretch w-full">
+                  <div className="flex items-center gap-1 bg-[hsl(220,60%,45%)] text-white px-3 rounded-l-lg text-sm font-bold">
+                    <span className="text-xs">{currentPlate.flag}</span>
+                    <span>{currentPlate.country}</span>
+                  </div>
+                  <Input
+                    value={plateNumber}
+                    onChange={(e) => setPlateNumber(e.target.value)}
+                    placeholder={currentPlate.placeholder}
+                    className="rounded-none h-12 bg-card text-foreground border-0 text-base flex-1 text-center font-mono tracking-widest uppercase"
+                  />
+                  <Button
+                    onClick={handlePlateSubmit}
+                    className="rounded-l-none h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-r-lg"
+                  >
+                    {activeTab === 'sell' ? t('hero.estimate') : 'OK'}
+                  </Button>
+                </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Link to={`/${lang}/search`} className="inline-block mt-3 text-sm text-primary-foreground/80 underline hover:text-primary-foreground">
-              {t('featured.seeAll')}
-            </Link>
+                {/* Links below plate */}
+                <div className="flex items-center justify-center gap-2 text-sm text-primary-foreground/80">
+                  <button
+                    onClick={() => setShowFullForm(!showFullForm)}
+                    className="underline hover:text-primary-foreground"
+                  >
+                    {t('hero.unknownPlate')}
+                  </button>
+                </div>
+
+                {/* Expanded form */}
+                {showFullForm && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="bg-card/95 backdrop-blur-sm rounded-xl p-4 space-y-3"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.vinLabel')}</label>
+                        <Input
+                          value={plateForm.vin}
+                          onChange={(e) => setPlateForm({ ...plateForm, vin: e.target.value })}
+                          placeholder={t('hero.vinPlaceholder')}
+                          className="h-10 text-sm bg-secondary border-0 uppercase font-mono"
+                          maxLength={17}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.brandLabel')}</label>
+                        <Input
+                          value={plateForm.brand}
+                          onChange={(e) => setPlateForm({ ...plateForm, brand: e.target.value })}
+                          placeholder={t('hero.brandPlaceholder')}
+                          className="h-10 text-sm bg-secondary border-0"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.mileageLabel')}</label>
+                        <Input
+                          type="number"
+                          value={plateForm.mileage}
+                          onChange={(e) => setPlateForm({ ...plateForm, mileage: e.target.value })}
+                          placeholder={t('hero.mileagePlaceholder')}
+                          className="h-10 text-sm bg-secondary border-0"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <Button onClick={handlePlateSubmit} className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+                          {activeTab === 'sell' ? t('hero.estimate') : t('hero.bookAppointment')}
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
