@@ -531,7 +531,39 @@
     "hasAccount": "Already have an account?",
     "logout": "Logout"
   },
-  "legal": { "title": "Legal Notice", "company": "Company information", "publisher": "Publisher", "hosting": "Hosting", "data": "Data protection" },
-  "privacy": { "title": "Privacy Policy", "intro": "Protecting your personal data is our priority." },
+  "legal": {
+    "title": "Legal Notice",
+    "company": "Company information",
+    "publisher": "Publisher",
+    "hosting": "Hosting",
+    "data": "Data protection",
+    "companyDetails": "MCD AUTO SARL\nShare capital: €50,000\nSIRET: 123 456 789 00010\nRCS Salon-de-Provence\nVAT: FR12345678900",
+    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, France\nPhone: +33 4 90 00 00 00\nEmail: contact@mcdauto.fr",
+    "publisherDetails": "Mr. Jean Dupont, Manager of MCD AUTO SARL",
+    "hostingDetails": "This website is hosted by Lovable (Lovable Technologies Ltd).",
+    "dataDetails1": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify and delete your personal data. To exercise your rights, please contact us at: dpo@mcdauto.fr",
+    "dataDetails2": "Data collected through contact forms is used exclusively to respond to your requests and is never shared with third parties without your explicit consent."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "Protecting your personal data is our priority.",
+    "section1Title": "1. Data collected",
+    "section1": "We collect the following data: name, surname, email address, phone number, and any information you send us through our contact forms.",
+    "section2Title": "2. Purpose of processing",
+    "section2": "The collected data is used to: respond to your contact requests, inform you about our vehicles and services, manage orders and deliveries.",
+    "section3Title": "3. Retention period",
+    "section3": "Your personal data is kept for a maximum of 3 years from your last interaction with us.",
+    "section4Title": "4. Your rights",
+    "section4": "In accordance with the GDPR, you have the following rights: right of access, right of rectification, right to erasure, right to restrict processing, right to data portability, right to object.",
+    "section5Title": "5. DPO Contact",
+    "section5": "To exercise your rights, contact our Data Protection Officer: dpo@mcdauto.fr",
+    "section6Title": "6. Cookies",
+    "section6": "This site uses technical cookies necessary for the proper functioning of the site. No advertising cookies are used without your consent."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has been moved.",
+    "backHome": "Return to Home"
+  },
   "cgv": { "title": "Terms & Conditions", "intro": "The following terms and conditions apply." }
 }

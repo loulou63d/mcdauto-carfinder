@@ -538,11 +538,34 @@
     "company": "Unternehmensangaben",
     "publisher": "Verantwortlicher",
     "hosting": "Hosting",
-    "data": "Datenschutz"
+    "data": "Datenschutz",
+    "companyDetails": "MCD AUTO SARL\nStammkapital: 50.000 €\nSIRET: 123 456 789 00010\nRCS Salon-de-Provence\nUSt-IdNr.: FR12345678900",
+    "addressDetails": "123 Avenue de l'Automobile\n13300 Salon-de-Provence, Frankreich\nTelefon: +33 4 90 00 00 00\nE-Mail: contact@mcdauto.fr",
+    "publisherDetails": "Herr Jean Dupont, Geschäftsführer der MCD AUTO SARL",
+    "hostingDetails": "Diese Website wird von Lovable (Lovable Technologies Ltd) gehostet.",
+    "dataDetails1": "Gemäß der Datenschutz-Grundverordnung (DSGVO) haben Sie das Recht auf Auskunft, Berichtigung und Löschung Ihrer personenbezogenen Daten. Um Ihre Rechte auszuüben, kontaktieren Sie uns unter: dpo@mcdauto.fr",
+    "dataDetails2": "Die über die Kontaktformulare erhobenen Daten werden ausschließlich zur Beantwortung Ihrer Anfragen verwendet und niemals ohne Ihre ausdrückliche Zustimmung an Dritte weitergegeben."
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "intro": "Der Schutz Ihrer persönlichen Daten ist uns wichtig."
+    "intro": "Der Schutz Ihrer persönlichen Daten ist uns wichtig.",
+    "section1Title": "1. Erhobene Daten",
+    "section1": "Wir erheben folgende Daten: Name, Vorname, E-Mail-Adresse, Telefonnummer und alle Informationen, die Sie uns über unsere Kontaktformulare übermitteln.",
+    "section2Title": "2. Zweck der Verarbeitung",
+    "section2": "Die erhobenen Daten werden verwendet für: die Beantwortung Ihrer Kontaktanfragen, die Information über unsere Fahrzeuge und Dienstleistungen, die Verwaltung von Bestellungen und Lieferungen.",
+    "section3Title": "3. Aufbewahrungsdauer",
+    "section3": "Ihre personenbezogenen Daten werden maximal 3 Jahre ab Ihrer letzten Interaktion mit uns aufbewahrt.",
+    "section4Title": "4. Ihre Rechte",
+    "section4": "Gemäß der DSGVO haben Sie folgende Rechte: Recht auf Auskunft, Recht auf Berichtigung, Recht auf Löschung, Recht auf Einschränkung der Verarbeitung, Recht auf Datenübertragbarkeit, Widerspruchsrecht.",
+    "section5Title": "5. Kontakt Datenschutzbeauftragter",
+    "section5": "Um Ihre Rechte auszuüben, kontaktieren Sie unseren Datenschutzbeauftragten: dpo@mcdauto.fr",
+    "section6Title": "6. Cookies",
+    "section6": "Diese Website verwendet technische Cookies, die für das ordnungsgemäße Funktionieren der Website erforderlich sind. Werbe-Cookies werden ohne Ihre Zustimmung nicht verwendet."
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "message": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite"
   },
   "cgv": {
     "title": "Allgemeine Geschäftsbedingungen",
