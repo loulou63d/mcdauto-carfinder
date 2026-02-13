@@ -31,9 +31,44 @@ const Index = () => {
   };
 
   const promoSlides = [
-    { bg: 'bg-gradient-to-r from-accent to-accent/80', text: '-35%', sub: 'sur le prix du neuf', cta: "J'en profite" },
-    { bg: 'bg-gradient-to-r from-primary to-primary/80', text: '0 km', sub: 'Véhicules quasi neufs', cta: 'Découvrir' },
-    { bg: 'bg-gradient-to-r from-success to-success/80', text: '14j', sub: 'Satisfait ou remboursé', cta: 'En savoir plus' },
+    {
+      bg: 'bg-gradient-to-br from-[hsl(10,80%,65%)] to-[hsl(10,70%,55%)]',
+      topLabel: t('promo.slide1TopLabel'),
+      bigText: '-35%',
+      midText: t('promo.slide1MidText'),
+      subText: t('promo.slide1SubText'),
+      cta: t('promo.slide1Cta'),
+      footnote: t('promo.legalNote'),
+      badge: t('promo.goodDeals'),
+    },
+    {
+      bg: 'bg-gradient-to-br from-[hsl(170,50%,60%)] to-[hsl(170,45%,50%)]',
+      topLabel: '208 Active essence 100 ch',
+      bigText: '189 €',
+      midText: t('promo.slide2MidText'),
+      subText: t('promo.slide2SubText'),
+      cta: t('promo.slide2Cta'),
+      footnote: t('promo.legalNoteFull'),
+      badge: t('promo.goodDeals'),
+      extraBadge: t('promo.noDeposit'),
+    },
+    {
+      bg: 'bg-gradient-to-br from-[hsl(220,10%,92%)] to-[hsl(220,10%,85%)]',
+      topLabel: '',
+      bigText: '',
+      midText: t('promo.slide3Title'),
+      subText: t('promo.slide3Sub'),
+      cta: t('promo.slide3Cta'),
+      dark: true,
+    },
+    {
+      bg: 'bg-gradient-to-br from-[hsl(215,30%,35%)] to-[hsl(215,35%,25%)]',
+      topLabel: '',
+      bigText: '',
+      midText: t('promo.slide4Title'),
+      subText: '',
+      cta: t('promo.slide4Cta'),
+    },
   ];
 
   const reviews = [
@@ -116,35 +151,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* PROMO CAROUSEL — autosphere style */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="relative">
-            <div className={`${promoSlides[promoSlide].bg} rounded-xl overflow-hidden h-44 md:h-52 flex items-center justify-between px-8 md:px-16 text-primary-foreground`}>
-              <div>
-                <div className="text-5xl md:text-7xl font-heading font-extrabold leading-none">{promoSlides[promoSlide].text}</div>
-                <div className="text-lg md:text-xl font-medium mt-1 opacity-90">{promoSlides[promoSlide].sub}</div>
-              </div>
-              <Button variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 font-semibold">
-                {promoSlides[promoSlide].cta}
-              </Button>
-            </div>
-            {/* Nav arrows */}
-            <button onClick={() => setPromoSlide((promoSlide - 1 + promoSlides.length) % promoSlides.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted">
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button onClick={() => setPromoSlide((promoSlide + 1) % promoSlides.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted">
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            {/* Dots */}
-            <div className="flex justify-center gap-2 mt-4">
-              {promoSlides.map((_, i) => (
-                <button key={i} onClick={() => setPromoSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-colors ${i === promoSlide ? 'bg-primary' : 'bg-border'}`} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* TRUST STRIP — autosphere style (horizontal) */}
       <section className="border-y">
