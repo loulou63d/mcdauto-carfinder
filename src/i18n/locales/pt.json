@@ -234,8 +234,24 @@
     "ctaDesc": "A nossa equipa está ao seu dispor para ajudar.",
     "ctaButton": "Contacte-nos"
   },
-  "warranty": {
-    "title": "Garantias e proteção",
+   "cgv": {
+     "title": "Termos e Condições de Venda",
+     "intro": "Os presentes termos e condições regem as nossas relações comerciais",
+     "section1Title": "1. Objeto",
+     "section1": "Os presentes Termos e Condições de Venda regem as relações contratuais entre MCD AUTO SARL e seus clientes para a venda de veículos usados.",
+     "section2Title": "2. Preços",
+     "section2": "Os preços indicados estão em euros com IVA incluído. A MCD AUTO reserva-se o direito de modificar os seus preços em qualquer altura. O preço aplicável é o vigente no momento da compra.",
+     "section3Title": "3. Garantia",
+     "section3": "Todos os nossos veículos têm uma garantia mínima de 12 meses, extensível até 24 meses. Esta garantia cobre avarias mecânicas, elétricas e eletrónicas.",
+     "section4Title": "4. Direito de retratação",
+     "section4": "De acordo com a nossa política \"Satisfeito ou reembolsado\", tem um prazo de 14 dias a contar da data de entrega do veículo para exercer o seu direito de retratação, sem ter de justificar o motivo.",
+     "section5Title": "5. Entrega",
+     "section5": "A entrega é feita nas nossas instalações ou no endereço indicado pelo cliente. Os prazos de entrega são fornecidos apenas a título informativo.",
+     "section6Title": "6. Litígios",
+     "section6": "Em caso de litígio, será procurada uma solução amigável antes de qualquer ação legal. O tribunal competente é o da sede da MCD AUTO."
+   },
+   "warranty": {
+     "title": "Garantias e proteção",
     "subtitle": "Proteja o seu investimento com as nossas garantias completas",
     "benefitsTitle": "Porquê uma garantia MCD AUTO?",
     "benefit1Title": "Proteção completa",

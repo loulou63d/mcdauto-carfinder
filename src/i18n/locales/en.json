@@ -377,8 +377,24 @@
     "ctaDesc": "Our team is at your disposal to help.",
     "ctaButton": "Contact us"
   },
-  "warranty": {
-    "title": "Warranties & Protection",
+   "cgv": {
+     "title": "Terms and Conditions of Sale",
+     "intro": "These terms and conditions govern our business relationships",
+     "section1Title": "1. Purpose",
+     "section1": "These Terms and Conditions of Sale govern the contractual relationships between MCD AUTO SARL and its customers for the sale of used vehicles.",
+     "section2Title": "2. Prices",
+     "section2": "The prices listed are in euros including VAT. MCD AUTO reserves the right to change its prices at any time. The applicable price is the one in effect at the time of order.",
+     "section3Title": "3. Warranty",
+     "section3": "All our vehicles come with a minimum 12-month warranty, extendable up to 24 months. This warranty covers mechanical, electrical and electronic failures.",
+     "section4Title": "4. Right of Withdrawal",
+     "section4": "In accordance with our \"Satisfied or Refunded\" policy, you have the right to withdraw from the purchase within 14 calendar days from the date of vehicle delivery, without having to give any reason.",
+     "section5Title": "5. Delivery",
+     "section5": "Delivery is made at our premises or at the address indicated by the customer. Delivery times are given for information purposes only.",
+     "section6Title": "6. Disputes",
+     "section6": "In the event of a dispute, an amicable solution will be sought before any legal action. The competent court is that of MCD AUTO's registered office."
+   },
+   "warranty": {
+     "title": "Warranties & Protection",
     "subtitle": "Protect your investment with our comprehensive warranties",
     "benefitsTitle": "Why an MCD AUTO warranty?",
     "benefit1Title": "Complete protection",
