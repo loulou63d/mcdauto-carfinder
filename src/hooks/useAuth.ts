@@ -15,8 +15,14 @@ export const useAuth = () => {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          const { data } = await supabase.rpc('is_admin');
-          setIsAdmin(!!data);
+          try {
+            const { data, error } = await supabase.rpc('is_admin');
+            if (error) console.error('is_admin RPC error:', error);
+            setIsAdmin(!!data);
+          } catch (err) {
+            console.error('is_admin check failed:', err);
+            setIsAdmin(false);
+          }
         } else {
           setIsAdmin(false);
         }
@@ -28,8 +34,14 @@ export const useAuth = () => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        const { data } = await supabase.rpc('is_admin');
-        setIsAdmin(!!data);
+        try {
+          const { data, error } = await supabase.rpc('is_admin');
+          if (error) console.error('is_admin RPC error (init):', error);
+          setIsAdmin(!!data);
+        } catch (err) {
+          console.error('is_admin check failed (init):', err);
+          setIsAdmin(false);
+        }
       }
       setLoading(false);
     });
