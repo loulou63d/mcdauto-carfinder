@@ -36,7 +36,7 @@ const SearchPage = () => {
     let results = [...vehicles];
     if (selectedBrands.length > 0) results = results.filter(v => selectedBrands.includes(v.brand));
     if (selectedEnergies.length > 0) results = results.filter(v => selectedEnergies.includes(v.energy));
-    if (selectedCategories.length > 0) results = results.filter(v => v.category && selectedCategories.includes(v.category));
+    if (selectedCategories.length > 0) results = results.filter(v => v.category && selectedCategories.some(c => c.toLowerCase() === v.category!.toLowerCase()));
     if (selectedTransmissions.length > 0) results = results.filter(v => selectedTransmissions.includes(v.transmission));
     if (priceMax < 100000) results = results.filter(v => Number(v.price) <= priceMax);
     const q = searchParams.get('q')?.toLowerCase();
@@ -149,10 +149,10 @@ const SearchPage = () => {
             <FilterSection id="categories" title={t('search.category')}>
               <div className="space-y-2.5">
                 {categoryTypes.map(cat => {
-                  const count = vehicles.filter(v => v.category === cat).length;
+                  const count = vehicles.filter(v => v.category && v.category.toLowerCase() === cat.toLowerCase()).length;
                   return (
                     <label key={cat} className="flex items-center gap-2.5 text-sm cursor-pointer capitalize">
-                      <Checkbox checked={selectedCategories.includes(cat)} onCheckedChange={() => toggleFilter(selectedCategories, setSelectedCategories, cat)} />
+                      <Checkbox checked={selectedCategories.some(c => c.toLowerCase() === cat.toLowerCase())} onCheckedChange={() => toggleFilter(selectedCategories, setSelectedCategories, cat)} />
                       <span className="flex-1">{cat}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
