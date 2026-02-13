@@ -65,9 +65,9 @@ const Contact = () => {
               <div className="p-6 bg-muted rounded-lg">
                 <h3 className="font-heading font-bold mb-4">{t('contact.address')}</h3>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <div className="flex items-start gap-3"><MapPin className="w-4 h-4 mt-0.5 shrink-0" /><span>123 Avenue de l'Automobile<br/>13300 Salon-de-Provence<br/>France</span></div>
-                  <div className="flex items-center gap-3"><Phone className="w-4 h-4 shrink-0" /><span>+33 4 90 00 00 00</span></div>
-                  <div className="flex items-center gap-3"><Mail className="w-4 h-4 shrink-0" /><span>contact@mcdauto.fr</span></div>
+                  <div className="flex items-start gap-3"><MapPin className="w-4 h-4 mt-0.5 shrink-0" /><span>Südwall 23<br/>44137 Dortmund<br/>Allemagne</span></div>
+                  <div className="flex items-center gap-3"><Phone className="w-4 h-4 shrink-0" /><span>+49 178 3724542</span></div>
+                  <div className="flex items-center gap-3"><Mail className="w-4 h-4 shrink-0" /><span>contact@mcd-auto.com</span></div>
                 </div>
               </div>
               <div className="p-6 bg-muted rounded-lg">
