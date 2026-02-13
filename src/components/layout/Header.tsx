@@ -22,8 +22,8 @@ const Header = () => {
 
   const navLinks = [
     { label: t('nav.buy'), to: `/${lang}/search` },
-    { label: t('nav.sell'), to: `/${lang}/contact` },
-    { label: t('nav.maintain'), to: `/${lang}/services` },
+    { label: t('nav.sell'), to: `/${lang}#sell` },
+    { label: t('nav.maintain'), to: `/${lang}#maintain` },
     { label: t('nav.services'), to: `/${lang}/services` },
     { label: t('nav.about'), to: `/${lang}/about` },
     { label: t('nav.contact'), to: `/${lang}/contact` },

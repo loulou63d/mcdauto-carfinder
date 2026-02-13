@@ -103,6 +103,14 @@ const Index = () => {
   const [showFullForm, setShowFullForm] = useState(false);
   const [plateForm, setPlateForm] = useState({ vin: '', brand: '', mileage: '' });
 
+  // Read hash on mount and set active tab
+  useEffect(() => {
+    const hash = window.location.hash.slice(1) as 'buy' | 'sell' | 'maintain';
+    if (hash === 'sell' || hash === 'maintain') {
+      setActiveTab(hash);
+    }
+  }, []);
+
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
