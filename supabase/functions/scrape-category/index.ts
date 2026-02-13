@@ -37,8 +37,9 @@ serve(async (req) => {
     const isAutosphere = formattedUrl.includes("autosphere.fr");
     const isCpmAuto = formattedUrl.includes("cpmauto.fr");
     const isAutoFrancis = formattedUrl.includes("autofrancis.com");
+    const isMultimarcas = formattedUrl.includes("multimarcaspremiumpe.com.br");
 
-    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : isAutoFrancis ? "autofrancis" : "generic");
+    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : isAutoFrancis ? "autofrancis" : isMultimarcas ? "multimarcas" : "generic");
 
     // For CPM Auto, we may need to scan multiple pages (pagination: w1, w2, w3...)
     const urlsToScrape: string[] = [formattedUrl];
@@ -54,6 +55,15 @@ serve(async (req) => {
         for (let i = startPage + 1; i <= startPage + maxPages; i++) {
           urlsToScrape.push(`${base}${i}`);
         }
+      }
+    }
+
+    if (isMultimarcas) {
+      // Pagination: ?zero_km=0&page=2, page=3, etc.
+      const maxPages = Math.min(Math.ceil(limit / 9) + 1, 10);
+      for (let i = 2; i <= maxPages; i++) {
+        const separator = formattedUrl.includes("?") ? "&" : "?";
+        urlsToScrape.push(`${formattedUrl}${separator}zero_km=0&page=${i}`);
       }
     }
 
@@ -108,6 +118,14 @@ serve(async (req) => {
           pageProductUrls = links.filter((link: string) =>
             link.includes("/VehicleDetail?id=") && !productUrls.includes(link)
           );
+        } else if (isMultimarcas) {
+          // Multimarcas product URLs: /estoque/model-slug-year1-year2-id
+          pageProductUrls = links.filter((link: string) => {
+            if (productUrls.includes(link)) return false;
+            // Must be under /estoque/ and have a slug with year pattern
+            const match = link.match(/\/estoque\/[\w-]+-\d{4}-\d{4}-\d+$/);
+            return !!match;
+          });
         } else {
           pageProductUrls = links.filter((link: string) => {
             const lower = link.toLowerCase();
@@ -133,7 +151,7 @@ serve(async (req) => {
     }
 
     // Strategy 2: also try Firecrawl Map API for additional URLs (non-CPM and non-autofrancis sites)
-    if (!isCpmAuto && !isAutoFrancis && productUrls.length < limit) {
+    if (!isCpmAuto && !isAutoFrancis && !isMultimarcas && productUrls.length < limit) {
       try {
         const mapResponse = await fetch("https://api.firecrawl.dev/v1/map", {
           method: "POST",

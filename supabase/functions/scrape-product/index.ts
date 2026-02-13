@@ -13,6 +13,7 @@ const BRANDS = [
   "Mercedes","Mini","Mitsubishi","Nissan","Opel","Peugeot","Porsche","Renault","Seat",
   "Skoda","Škoda","Suzuki","Tesla","Toyota","Volkswagen","Volvo","Abarth","Alpine",
   "Bentley","Bugatti","Cadillac","Chevrolet","Chrysler","Cupra","Dodge","Ferrari",
+  "Genesis","GWM","Lamborghini","Lancia","Lincoln","Lotus","McLaren","MG","RAM","Rolls-Royce",
   "Genesis","Lamborghini","Lancia","Lincoln","Lotus","McLaren","MG","Rolls-Royce",
   "Saab","Smart","SsangYong","Subaru",
   // Agricole / Industriel
@@ -41,7 +42,8 @@ function detectBrand(title: string): string | null {
 }
 
 function parsePrice(text: string): number | null {
-  const patterns = [
+  // EUR patterns
+  const eurPatterns = [
     /(\d[\d\s.]*)\s*€/g,
     /prix[^€]*?(\d[\d\s.]*)\s*€/gi,
     /(\d[\d\s.]*),(\d{2})\s*€/g,
@@ -49,7 +51,7 @@ function parsePrice(text: string): number | null {
 
   let bestPrice: number | null = null;
 
-  for (const pattern of patterns) {
+  for (const pattern of eurPatterns) {
     let match;
     while ((match = pattern.exec(text)) !== null) {
       const raw = match[1].replace(/[\s.]/g, "");
@@ -59,6 +61,20 @@ function parsePrice(text: string): number | null {
         if (!bestPrice || val > bestPrice) {
           bestPrice = val;
         }
+      }
+    }
+  }
+
+  // BRL patterns: R$ 201.900,00 — take the FIRST match (most prominent price on page)
+  if (!bestPrice) {
+    const brlPattern = /R\$\s*([\d.]+),?\d*/g;
+    let match;
+    while ((match = brlPattern.exec(text)) !== null) {
+      const raw = match[1].replace(/\./g, "");
+      const val = parseFloat(raw);
+      if (val >= 500 && val <= 5000000) {
+        bestPrice = val;
+        break; // Take first valid BRL price
       }
     }
   }
@@ -124,9 +140,35 @@ function extractImages(markdown: string, html: string, url: string): string[] {
   const seen = new Set<string>();
   const isCpmAuto = url.includes("cpmauto.fr");
   const isAutoFrancis = url.includes("autofrancis.com");
+  const isMultimarcas = url.includes("multimarcaspremiumpe.com.br");
   const allText = markdown + " " + html;
 
-  if (isCpmAuto) {
+  if (isMultimarcas) {
+    // Multimarcas: images from lua4auto/public/uploads/seminovos/
+    const mmPattern = /https?:\/\/www\.multimarcaspremiumpe\.com\.br\/lua4auto\/public\/uploads\/seminovos\/veiculo_[^\s)"'\]&]+/g;
+    let match;
+    while ((match = mmPattern.exec(allText)) !== null) {
+      let imgUrl = match[0].replace(/&amp;/g, "&");
+      // Skip thumbnails (generate_thumb.php URLs) - prefer direct uploads
+      if (imgUrl.includes("generate_thumb.php")) continue;
+      if (!seen.has(imgUrl)) {
+        seen.add(imgUrl);
+        images.push(imgUrl);
+      }
+    }
+    // If no direct images, also try thumbnail URLs but extract the original
+    if (images.length === 0) {
+      const thumbPattern = /generate_thumb\.php\?img=([^\s&"']+)/g;
+      while ((match = thumbPattern.exec(allText)) !== null) {
+        const imgPath = match[1];
+        const imgUrl = `https://www.multimarcaspremiumpe.com.br${imgPath}`;
+        if (!seen.has(imgUrl) && imgPath.includes("seminovos/veiculo")) {
+          seen.add(imgUrl);
+          images.push(imgUrl);
+        }
+      }
+    }
+  } else if (isCpmAuto) {
     // CPM Auto: extract big images from cpmauto.fr/public/img/big/
     const cpmPattern = /https?:\/\/www\.cpmauto\.fr\/public\/img\/big\/[^\s)"'\]&]+/g;
     let match;
@@ -336,10 +378,129 @@ function extractAutoFrancisData(markdown: string): {
   return { brand, model, title, year, mileage, color, description, equipment };
 }
 
+function extractMultimarcasData(markdown: string): {
+  brand: string;
+  model: string;
+  title: string;
+  year?: number;
+  mileage?: number;
+  color?: string;
+  transmission?: string;
+  energy?: string;
+  doors?: number;
+  description: string;
+  equipment: string[];
+} {
+  const lines = markdown.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+  
+  // Title from H1: # **BMW 320i**  2.0 16V TURBO GASOLINA GP AUTOMÁTICO
+  let brand = "";
+  let model = "";
+  let title = "";
+  const h1Match = markdown.match(/^#\s+\*\*(.+?)\*\*\s*(.*?)$/m);
+  if (h1Match) {
+    const brandModel = h1Match[1].trim(); // "BMW 320i"
+    const variant = h1Match[2].trim(); // "2.0 16V TURBO GASOLINA GP AUTOMÁTICO"
+    title = `${brandModel} ${variant}`.trim();
+    // Split brand and model
+    const parts = brandModel.split(/\s+/);
+    brand = parts[0] || "";
+    model = parts.slice(1).join(" ") || "";
+  }
+  
+  // If no bold H1, try breadcrumb: Início > Estoque > BMW > 320i
+  if (!title) {
+    const bcMatch = markdown.match(/\[Estoque\].*?\[(\w+)\].*?\d+\.\s*(\w+)/);
+    if (bcMatch) {
+      brand = bcMatch[1];
+      model = bcMatch[2];
+      title = `${brand} ${model}`;
+    }
+  }
+  
+  // Specs: **Key** Value pattern
+  let year: number | undefined;
+  let mileage: number | undefined;
+  let transmission: string | undefined;
+  let energy: string | undefined;
+  let doors: number | undefined;
+  let color: string | undefined;
+  
+  // **Ano** 2020/2021
+  const yearMatch = markdown.match(/\*\*Ano\*\*\s*(\d{4})\/(\d{4})/);
+  if (yearMatch) year = parseInt(yearMatch[2]); // Use newer year
+  
+  // **Quilometragem** 66.150
+  const kmMatch = markdown.match(/\*\*Quilometragem\*\*\s*([\d.]+)/);
+  if (kmMatch) mileage = parseInt(kmMatch[1].replace(/\./g, ""));
+  
+  // **Câmbio** Automático
+  const transMatch = markdown.match(/\*\*Câmbio\*\*\s*(\S+)/);
+  if (transMatch) {
+    const val = transMatch[1].toLowerCase();
+    if (val.includes("automático") || val.includes("automatico") || val.includes("cvt")) transmission = "Automatique";
+    else if (val.includes("manual")) transmission = "Manuelle";
+    else transmission = transMatch[1];
+  }
+  
+  // **Combustível** Gasolina
+  const fuelMatch = markdown.match(/\*\*Combustível\*\*\s*(.+?)(?:\n|$)/);
+  if (fuelMatch) {
+    const val = fuelMatch[1].toLowerCase().trim();
+    if (val.includes("diesel")) energy = "Diesel";
+    else if (val.includes("elétrico") || val.includes("eletrico")) energy = "Électrique";
+    else if (val.includes("gasolina e elétrico") || val.includes("híbrido") || val.includes("hibrido") || val.includes("phev")) energy = "Hybride rechargeable";
+    else if (val.includes("flex")) energy = "Essence"; // Flex is gasoline+ethanol, map to Essence
+    else if (val.includes("gasolina")) energy = "Essence";
+    else if (val.includes("gnv") || val.includes("gás")) energy = "GPL";
+    else energy = "Essence";
+  }
+  
+  // **Portas** 4
+  const doorsMatch = markdown.match(/\*\*Portas\*\*\s*(\d+)/);
+  if (doorsMatch) doors = parseInt(doorsMatch[1]);
+  
+  // **Cor** (if present)
+  const colorMatch = markdown.match(/\*\*Cor\*\*\s*(.+?)(?:\n|$)/);
+  if (colorMatch) color = colorMatch[1].trim();
+  
+  // Description: "Caracteristicas:" section or "Opcionais:" or "Detalhes:"
+  let description = "";
+  const equipment: string[] = [];
+  
+  // Caracteristicas (features)
+  const charIdx = lines.findIndex(l => l.toLowerCase().startsWith("caracteristicas"));
+  if (charIdx >= 0) {
+    for (let i = charIdx + 1; i < lines.length; i++) {
+      const l = lines[i];
+      if (l.toLowerCase().startsWith("opcionais") || l.toLowerCase().startsWith("detalhes") || l.startsWith("[") || l.startsWith("!") || l.startsWith("#")) break;
+      if (l.length > 1 && l.length < 100) equipment.push(l);
+    }
+  }
+  
+  // Opcionais (options)
+  const optIdx = lines.findIndex(l => l.toLowerCase().startsWith("opcionais"));
+  if (optIdx >= 0) {
+    for (let i = optIdx + 1; i < lines.length; i++) {
+      const l = lines[i];
+      if (l.toLowerCase().startsWith("detalhes") || l.startsWith("[") || l.startsWith("!") || l.startsWith("#")) break;
+      if (l.length > 1 && l.length < 100 && !equipment.includes(l)) equipment.push(l);
+    }
+  }
+  
+  return { brand, model, title: title || "Sans titre", year, mileage, color, transmission, energy, doors, description, equipment };
+}
+
 function extractTitle(markdown: string, url: string): string {
   const isCpmAuto = url.includes("cpmauto.fr");
   const isAutoFrancis = url.includes("autofrancis.com");
+  const isMultimarcas = url.includes("multimarcaspremiumpe.com.br");
   
+  if (isMultimarcas) {
+    const mm = extractMultimarcasData(markdown);
+    return mm.title;
+  }
+
   if (isCpmAuto) {
     const title = extractTitleCpmAuto(markdown);
     if (title) return title;
@@ -480,8 +641,8 @@ function detectTransmission(title: string, brand: string | null, model: string):
   // Keywords that strongly indicate automatic transmission
   const autoKeywords = [
     "4matic", "4motion", "xdrive", "quattro", "awd", "4wd",
-    "automatique", "automatic", "auto ", "bva", "dsg", "dct", "cvt",
-    "tiptronic", "s tronic", "steptronic", "speedshift", "multitronic",
+    "automatique", "automatic", "automático", "automatico", "auto ", "bva", "dsg", "dct", "cvt",
+    "tiptronic", "s tronic", "s-tronic", "steptronic", "speedshift", "multitronic",
     "powershift", "edc", "eat", "at ", "a/t",
     // Luxury/sport models almost always automatic
     "amg", "g63", "g500", "escalade", "platinum", "svr", "hse",
@@ -624,6 +785,7 @@ serve(async (req) => {
     const html = data.data?.html || data.html || "";
     const fullText = markdown + " " + html;
     const isAutoFrancis = formattedUrl.includes("autofrancis.com");
+    const isMultimarcas = formattedUrl.includes("multimarcaspremiumpe.com.br");
 
     let title: string;
     let price: number | null;
@@ -635,7 +797,25 @@ serve(async (req) => {
     let equipment: string[] = [];
     let category: string | null = null;
 
-    if (isAutoFrancis) {
+    if (isMultimarcas) {
+      const mm = extractMultimarcasData(markdown);
+      title = mm.title;
+      brand = mm.brand || detectBrand(mm.title);
+      description = mm.description;
+      equipment = mm.equipment;
+      images = extractImages(markdown, html, formattedUrl);
+      price = parsePrice(fullText);
+      specs = {};
+      vehicleData = {
+        year: mm.year,
+        mileage: mm.mileage,
+        color: mm.color,
+        transmission: mm.transmission,
+        energy: mm.energy,
+      };
+      if (mm.doors) vehicleData.doors = mm.doors;
+      category = detectCategory(title, description);
+    } else if (isAutoFrancis) {
       // Use dedicated AutoFrancis parser
       const af = extractAutoFrancisData(markdown);
       title = af.title;
@@ -643,7 +823,7 @@ serve(async (req) => {
       description = af.description;
       equipment = af.equipment;
       images = extractImages(markdown, html, formattedUrl);
-      price = parsePrice(fullText); // likely null for this site
+      price = parsePrice(fullText);
       specs = extractSpecs(markdown, formattedUrl);
       vehicleData = {
         year: af.year,
@@ -651,7 +831,6 @@ serve(async (req) => {
         color: af.color,
         ...extractVehicleDataFromSpecs(specs),
       };
-      // Override with direct data if available
       if (af.year) vehicleData.year = af.year;
       if (af.mileage) vehicleData.mileage = af.mileage;
       if (af.color) vehicleData.color = af.color;
