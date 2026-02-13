@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Car, MessageSquare, LogOut, Menu, X, PackagePlus, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Car, MessageSquare, LogOut, Menu, X, PackagePlus, ShoppingBag, Settings } from 'lucide-react';
 import logoMcd from '@/assets/logo-mcd.png';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/admin/contacts', icon: MessageSquare, label: 'Contacts' },
   { to: '/admin/orders', icon: ShoppingBag, label: 'Commandes' },
   { to: '/admin/import', icon: PackagePlus, label: 'Import' },
+  { to: '/admin/settings', icon: Settings, label: 'Paramètres' },
 ];
 
 const AdminLayout = () => {
