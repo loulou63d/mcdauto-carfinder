@@ -131,6 +131,8 @@ const AdminImport = () => {
       const yearMatch = item.scraped.title.match(/\b(19|20)\d{2}\b/);
       const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
 
+      const selectedCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
+
       const vehicleData: any = {
         brand: item.scraped.brand || 'Non détecté',
         model: item.scraped.title,
@@ -144,6 +146,7 @@ const AdminImport = () => {
         equipment_translations: item.generated?.title_translations || {},
         status: 'available',
         source_url: item.scraped.source_url,
+        category: selectedCatName,
       };
 
       // Insert vehicle
@@ -286,6 +289,8 @@ const AdminImport = () => {
          const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
 
          // Import vehicle
+         const batchCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
+
          const vehicleData: any = {
            brand: selected[i].scraped.brand || 'Non détecté',
            model: selected[i].scraped.title,
@@ -299,6 +304,7 @@ const AdminImport = () => {
            equipment_translations: updated[idx].generated?.title_translations || {},
            status: 'available',
            source_url: selected[i].scraped.source_url,
+           category: batchCatName,
          };
 
          const { data: vehicleResult, error: vehicleError } = await (supabase as any)
