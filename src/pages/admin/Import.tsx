@@ -116,34 +116,58 @@ const AdminImport = () => {
     try {
       // Check dedup
       const { data: existing } = await supabase
-        .from('products')
+        .from('vehicles')
         .select('id')
         .eq('source_url', item.scraped.source_url)
         .maybeSingle();
 
       if (existing) {
         setter({ ...item, status: 'duplicate' });
-        toast({ title: 'Doublon détecté', description: 'Ce produit existe déjà.', variant: 'destructive' });
+        toast({ title: 'Doublon détecté', description: 'Ce véhicule existe déjà.', variant: 'destructive' });
         return;
       }
 
-      const productData = {
-        title: item.generated?.title || item.scraped.title,
-        description: item.generated?.description || item.scraped.description,
+      // Extract year from title if possible (e.g., "2020 BMW X5")
+      const yearMatch = item.scraped.title.match(/\b(19|20)\d{2}\b/);
+      const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
+
+      const vehicleData = {
+        brand: item.scraped.brand || 'Non détecté',
+        model: item.scraped.title,
+        year,
         price: item.scraped.price || 0,
-        brand: item.scraped.brand,
-        images: item.scraped.images,
-        source_url: item.scraped.source_url,
-        category_id: selectedCategory || null,
-        title_translations: item.generated?.title_translations || {},
+        mileage: 0,
+        transmission: 'Manuelle',
+        energy: 'Essence',
+        description: item.generated?.description || item.scraped.description,
         description_translations: item.generated?.description_translations || {},
-        status: 'active',
-        stock: 5,
-        condition: 'new',
+        equipment_translations: item.generated?.title_translations || {},
+        status: 'available',
       };
 
-      const { error } = await supabase.from('products').insert(productData);
-      if (error) throw error;
+      // Insert vehicle
+      const { data: vehicleResult, error: vehicleError } = await supabase
+        .from('vehicles')
+        .insert(vehicleData)
+        .select()
+        .single();
+
+      if (vehicleError) throw vehicleError;
+
+      // Insert images
+      if (item.scraped.images?.length > 0) {
+        const imageData = item.scraped.images.map((url, idx) => ({
+          vehicle_id: vehicleResult.id,
+          image_url: url,
+          position: idx,
+        }));
+
+        const { error: imageError } = await supabase
+          .from('vehicle_images')
+          .insert(imageData);
+
+        if (imageError) throw imageError;
+      }
 
       setter({ ...item, status: 'imported' });
       toast({ title: 'Importé !', description: item.generated?.title || item.scraped.title });
@@ -243,40 +267,63 @@ const AdminImport = () => {
         }
         setBatchProducts([...updated]);
 
-        // Dedup check
-        const { data: existing } = await supabase
-          .from('products')
-          .select('id')
-          .eq('source_url', selected[i].scraped.source_url)
-          .maybeSingle();
+       // Dedup check
+         const { data: existing } = await supabase
+           .from('vehicles')
+           .select('id')
+           .eq('source_url', selected[i].scraped.source_url)
+           .maybeSingle();
 
-        if (existing) {
-          updated[idx] = { ...updated[idx], status: 'duplicate' };
-          setBatchProducts([...updated]);
-          continue;
-        }
+         if (existing) {
+           updated[idx] = { ...updated[idx], status: 'duplicate' };
+           setBatchProducts([...updated]);
+           continue;
+         }
 
-        // Import
-        const productData = {
-          title: updated[idx].generated?.title || selected[i].scraped.title,
-          description: updated[idx].generated?.description || selected[i].scraped.description,
-          price: selected[i].scraped.price || 0,
-          brand: selected[i].scraped.brand,
-          images: selected[i].scraped.images,
-          source_url: selected[i].scraped.source_url,
-          category_id: selectedCategory || null,
-          title_translations: updated[idx].generated?.title_translations || {},
-          description_translations: updated[idx].generated?.description_translations || {},
-          status: 'active',
-          stock: 5,
-          condition: 'new',
-        };
+         // Extract year from title if possible
+         const yearMatch = selected[i].scraped.title.match(/\b(19|20)\d{2}\b/);
+         const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
 
-        const { error } = await supabase.from('products').insert(productData);
-        if (error) throw error;
+         // Import vehicle
+         const vehicleData = {
+           brand: selected[i].scraped.brand || 'Non détecté',
+           model: selected[i].scraped.title,
+           year,
+           price: selected[i].scraped.price || 0,
+           mileage: 0,
+           transmission: 'Manuelle',
+           energy: 'Essence',
+           description: updated[idx].generated?.description || selected[i].scraped.description,
+           description_translations: updated[idx].generated?.description_translations || {},
+           equipment_translations: updated[idx].generated?.title_translations || {},
+           status: 'available',
+         };
 
-        updated[idx] = { ...updated[idx], status: 'imported' };
-        setBatchProducts([...updated]);
+         const { data: vehicleResult, error: vehicleError } = await supabase
+           .from('vehicles')
+           .insert(vehicleData)
+           .select()
+           .single();
+
+         if (vehicleError) throw vehicleError;
+
+         // Insert images
+         if (selected[i].scraped.images?.length > 0) {
+           const imageData = selected[i].scraped.images.map((url: string, imgIdx: number) => ({
+             vehicle_id: vehicleResult.id,
+             image_url: url,
+             position: imgIdx,
+           }));
+
+           const { error: imageError } = await supabase
+             .from('vehicle_images')
+             .insert(imageData);
+
+           if (imageError) throw imageError;
+         }
+
+         updated[idx] = { ...updated[idx], status: 'imported' };
+         setBatchProducts([...updated]);
       } catch (e: any) {
         updated[idx] = { ...updated[idx], status: 'error', error: e.message };
         setBatchProducts([...updated]);
