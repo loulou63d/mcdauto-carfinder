@@ -16,7 +16,9 @@ export interface Vehicle {
   euro_norm?: string | null;
   location: string | null;
   description?: string | null;
+  description_translations?: Record<string, string> | null;
   equipment: string[] | null;
+  equipment_translations?: Record<string, string> | null;
   is_featured?: boolean | null;
   status: string | null;
   images?: string[];

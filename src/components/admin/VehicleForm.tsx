@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Upload, X } from 'lucide-react';
+import { ArrowLeft, Upload, X, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +7,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import type { Tables } from '@/integrations/supabase/types';
+
+const LANGUAGES = [
+  { code: 'de', label: '🇩🇪 Deutsch' },
+  { code: 'fr', label: '🇫🇷 Français' },
+  { code: 'en', label: '🇬🇧 English' },
+  { code: 'es', label: '🇪🇸 Español' },
+  { code: 'pt', label: '🇵🇹 Português' },
+];
 
 type Vehicle = Tables<'vehicles'> & { vehicle_images?: { image_url: string }[] };
 
@@ -30,6 +39,16 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
   const [existingImages, setExistingImages] = useState<string[]>(
     vehicle?.vehicle_images?.map(i => i.image_url) ?? []
   );
+
+  const initTranslations = (field: 'description_translations' | 'equipment_translations') => {
+    const existing = vehicle?.[field] as Record<string, string> | null;
+    const result: Record<string, string> = {};
+    LANGUAGES.forEach(l => { result[l.code] = existing?.[l.code] ?? ''; });
+    return result;
+  };
+
+  const [descriptionTranslations, setDescriptionTranslations] = useState<Record<string, string>>(initTranslations('description_translations'));
+  const [equipmentTranslations, setEquipmentTranslations] = useState<Record<string, string>>(initTranslations('equipment_translations'));
 
   const [form, setForm] = useState({
     brand: vehicle?.brand ?? '',
@@ -76,7 +95,9 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
         co2: form.co2 || null,
         euro_norm: form.euro_norm || null,
         description: form.description || null,
+        description_translations: descriptionTranslations,
         equipment: form.equipment ? form.equipment.split(',').map(s => s.trim()) : [],
+        equipment_translations: equipmentTranslations,
         location: form.location || null,
         is_featured: form.is_featured,
         status: form.status,
@@ -193,14 +214,53 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
           </div>
         </div>
 
-        {/* Description & Equipment */}
-        <div>
-          <Label>Description</Label>
-          <Textarea rows={4} value={form.description} onChange={e => update('description', e.target.value)} />
-        </div>
-        <div>
-          <Label>Équipements (séparés par des virgules)</Label>
-          <Textarea rows={2} value={form.equipment} onChange={e => update('equipment', e.target.value)} placeholder="Climatisation, GPS, Radar de recul..." />
+        {/* Description & Equipment with Translations */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="w-4 h-4 text-primary" />
+            <h3 className="font-heading font-semibold text-base">Description & Équipements (multilingue)</h3>
+          </div>
+
+          {/* Default description (used as fallback) */}
+          <div>
+            <Label>Description (par défaut)</Label>
+            <Textarea rows={3} value={form.description} onChange={e => update('description', e.target.value)} placeholder="Description principale du véhicule..." />
+          </div>
+          <div>
+            <Label>Équipements par défaut (séparés par des virgules)</Label>
+            <Textarea rows={2} value={form.equipment} onChange={e => update('equipment', e.target.value)} placeholder="Climatisation, GPS, Radar de recul..." />
+          </div>
+
+          {/* Translation tabs */}
+          <Tabs defaultValue="de" className="w-full">
+            <TabsList className="w-full flex-wrap h-auto gap-1">
+              {LANGUAGES.map(l => (
+                <TabsTrigger key={l.code} value={l.code} className="text-xs">{l.label}</TabsTrigger>
+              ))}
+            </TabsList>
+            {LANGUAGES.map(l => (
+              <TabsContent key={l.code} value={l.code} className="space-y-3 mt-3">
+                <div>
+                  <Label>Description ({l.label})</Label>
+                  <Textarea
+                    rows={3}
+                    value={descriptionTranslations[l.code] || ''}
+                    onChange={e => setDescriptionTranslations(prev => ({ ...prev, [l.code]: e.target.value }))}
+                    placeholder={`Description en ${l.label}...`}
+                  />
+                </div>
+                <div>
+                  <Label>Équipements ({l.label}) — séparés par des virgules</Label>
+                  <Textarea
+                    rows={2}
+                    value={equipmentTranslations[l.code] || ''}
+                    onChange={e => setEquipmentTranslations(prev => ({ ...prev, [l.code]: e.target.value }))}
+                    placeholder={`Climatisation, GPS, Radar de recul...`}
+                  />
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
         </div>
 
         {/* Images */}

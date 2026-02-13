@@ -100,27 +100,35 @@ const VehicleDetail = () => {
             </div>
 
             {/* Description */}
-            {vehicle.description && (
+            {(vehicle.description || vehicle.description_translations?.[lang]) && (
               <div className="mt-6 bg-card rounded-lg border p-6">
                 <h2 className="font-heading font-bold text-lg mb-3">{t('vehicle.description')}</h2>
-                <p className="text-muted-foreground leading-relaxed">{vehicle.description}</p>
+                <p className="text-muted-foreground leading-relaxed">
+                  {vehicle.description_translations?.[lang] || vehicle.description}
+                </p>
               </div>
             )}
 
             {/* Equipment */}
-            {vehicle.equipment && vehicle.equipment.length > 0 && (
-              <div className="mt-6 bg-card rounded-lg border p-6">
-                <h2 className="font-heading font-bold text-lg mb-3">{t('vehicle.equipment')}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {vehicle.equipment.map((eq, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                      {eq}
-                    </div>
-                  ))}
+            {(() => {
+              const translatedEquipment = vehicle.equipment_translations?.[lang];
+              const equipmentList = translatedEquipment
+                ? translatedEquipment.split(',').map(s => s.trim()).filter(Boolean)
+                : vehicle.equipment;
+              return equipmentList && equipmentList.length > 0 ? (
+                <div className="mt-6 bg-card rounded-lg border p-6">
+                  <h2 className="font-heading font-bold text-lg mb-3">{t('vehicle.equipment')}</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {equipmentList.map((eq, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                        {eq}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : null;
+            })()}
           </div>
 
           {/* RIGHT - Info sticky */}
