@@ -81,6 +81,7 @@ export type Database = {
           status: string
           total_price: number
           updated_at: string
+          user_id: string | null
           vehicle_details: Json
           vehicle_ids: string[]
         }
@@ -96,6 +97,7 @@ export type Database = {
           status?: string
           total_price?: number
           updated_at?: string
+          user_id?: string | null
           vehicle_details?: Json
           vehicle_ids: string[]
         }
@@ -111,6 +113,7 @@ export type Database = {
           status?: string
           total_price?: number
           updated_at?: string
+          user_id?: string | null
           vehicle_details?: Json
           vehicle_ids?: string[]
         }

@@ -1,6 +1,8 @@
-import { Link, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '@/contexts/CartContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Trash2, ShoppingCart, CreditCard, Shield, FileText, Check, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -8,8 +10,15 @@ import { Separator } from '@/components/ui/separator';
 const Cart = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
+  const navigate = useNavigate();
   const { items, removeFromCart, clearCart } = useCart();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+  }, []);
   const total = items.reduce((sum, i) => sum + Number(i.vehicle.price), 0);
 
   return (
@@ -94,11 +103,19 @@ const Cart = () => {
                   <span>{t('cart.total')}</span>
                   <span>{total.toLocaleString('de-DE')} €</span>
                 </div>
-                <Link to={`/${lang}/checkout`}>
-                  <Button className="w-full mt-4" size="lg">
-                    <CreditCard className="w-4 h-4 mr-2" /> {t('cart.checkout')}
-                  </Button>
-                </Link>
+                {isLoggedIn ? (
+                  <Link to={`/${lang}/checkout`}>
+                    <Button className="w-full mt-4" size="lg">
+                      <CreditCard className="w-4 h-4 mr-2" /> {t('cart.checkout')}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to={`/${lang}/login?redirect=/${lang}/checkout`}>
+                    <Button className="w-full mt-4" size="lg">
+                      <CreditCard className="w-4 h-4 mr-2" /> {t('cart.checkout')}
+                    </Button>
+                  </Link>
+                )}
               </div>
 
               {/* Conditions sections */}

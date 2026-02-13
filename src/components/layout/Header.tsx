@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft, ShoppingCart, LogOut } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { supabase } from '@/integrations/supabase/client';
 import logoMcd from '@/assets/logo-mcd.png';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import type { User as SupaUser } from '@supabase/supabase-js';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -16,6 +18,17 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { itemCount } = useCart();
+  const [currentUser, setCurrentUser] = useState<SupaUser | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setCurrentUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Check if we're on the homepage (/:lang or /:lang/)
   const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
@@ -91,9 +104,15 @@ const Header = () => {
               </span>
             )}
           </Link>
-          <Link to="/auth" className={`p-2 ${textColor} ${textHover} transition-colors`}>
-            <User className="w-6 h-6" />
-          </Link>
+          {currentUser ? (
+            <Link to={`/${lang}/account`} className={`p-2 ${textColor} ${textHover} transition-colors`}>
+              <User className="w-6 h-6" />
+            </Link>
+          ) : (
+            <Link to={`/${lang}/login`} className={`p-2 ${textColor} ${textHover} transition-colors`}>
+              <User className="w-6 h-6" />
+            </Link>
+          )}
           <Link to={`/${lang}/search`} className={`hidden md:flex items-center gap-1.5 px-3 py-2 text-sm ${textColor} ${textHover} transition-colors`}>
             <BookmarkCheck className="w-5 h-5" />
             <span className="text-sm">{t('nav.favorites')}</span>
@@ -123,12 +142,23 @@ const Header = () => {
             </Link>
           ))}
           <div className="px-4 py-3 flex gap-2">
-            <Link to="/auth" onClick={() => setMobileOpen(false)} className="flex-1">
-              <Button variant="outline" size="sm" className="w-full">
-                <User className="w-4 h-4 mr-2" />
-                {t('nav.login')}
-              </Button>
-            </Link>
+            {currentUser ? (
+              <>
+                <Link to={`/${lang}/account`} onClick={() => setMobileOpen(false)} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <User className="w-4 h-4 mr-2" />
+                    {t('account.myAccount', { defaultValue: 'Mon compte' })}
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link to={`/${lang}/login`} onClick={() => setMobileOpen(false)} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full">
+                  <User className="w-4 h-4 mr-2" />
+                  {t('nav.login')}
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       )}

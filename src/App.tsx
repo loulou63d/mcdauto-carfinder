@@ -35,6 +35,8 @@ import AdminContacts from "./pages/admin/Contacts";
 import AdminImport from "./pages/admin/Import";
 import AdminOrders from "./pages/admin/Orders";
 import Checkout from "./pages/Checkout";
+import CustomerAuth from "./pages/CustomerAuth";
+import Account from "./pages/Account";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,8 @@ const App = () => (
              <Route path="cgv" element={<CGV />} />
              <Route path="cart" element={<Cart />} />
              <Route path="checkout" element={<Checkout />} />
+             <Route path="login" element={<CustomerAuth />} />
+             <Route path="account" element={<Account />} />
            </Route>
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>

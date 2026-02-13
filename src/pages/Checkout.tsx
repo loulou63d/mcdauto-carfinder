@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '@/contexts/CartContext';
@@ -9,14 +9,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import type { User } from '@supabase/supabase-js';
 
 const Checkout = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
-  const { items, clearCart } = useCart();
+  const { items } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -24,6 +27,21 @@ const Checkout = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  // Check auth - redirect if not logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate(`/${lang}/login?redirect=/${lang}/checkout`);
+      } else {
+        setUser(session.user);
+        setName(session.user.user_metadata?.full_name || '');
+        setEmail(session.user.email || '');
+        setPhone(session.user.user_metadata?.phone || '');
+      }
+      setAuthLoading(false);
+    });
+  }, [lang, navigate]);
 
   const total = items.reduce((sum, i) => sum + Number(i.vehicle.price), 0);
   const deposit = Math.ceil(total * 0.2);
@@ -72,6 +90,7 @@ const Checkout = () => {
       }));
 
       const { error: orderError } = await supabase.from('orders').insert({
+        user_id: user!.id,
         customer_name: name.trim(),
         customer_email: email.trim(),
         customer_phone: phone.trim() || null,
@@ -85,13 +104,21 @@ const Checkout = () => {
       if (orderError) throw orderError;
 
       setSuccess(true);
-      clearCart();
+      // Don't clear cart - it stays until admin confirms the order
     } catch (err: any) {
       toast({ title: t('common.error'), description: err.message, variant: 'destructive' });
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">{t('common.loading')}</p>
+      </div>
+    );
+  }
 
   if (items.length === 0 && !success) {
     return (
@@ -117,8 +144,8 @@ const Checkout = () => {
             </div>
             <h2 className="text-2xl font-heading font-bold text-foreground mb-2">{t('checkout.successTitle')}</h2>
             <p className="text-muted-foreground mb-6">{t('checkout.successMessage')}</p>
-            <Link to={`/${lang}`}>
-              <Button>{t('notFound.backHome')}</Button>
+            <Link to={`/${lang}/account`}>
+              <Button>{t('account.viewOrders', { defaultValue: 'Voir mes commandes' })}</Button>
             </Link>
           </div>
         </div>
