@@ -639,5 +639,23 @@
     "adminInspection": "Technical inspection",
     "adminServiceBook": "Manufacturer service book",
     "adminInvoices": "Maintenance invoices"
+  },
+  "checkout": {
+    "title": "Complete your order",
+    "customerInfo": "Your information",
+    "depositTitle": "Required deposit (20%)",
+    "depositInfo": "A 20% deposit is required to confirm your order",
+    "depositInstruction": "Make the bank transfer for the amount below, then upload your payment receipt.",
+    "depositAmount": "Deposit to pay",
+    "reference": "Reference",
+    "receiptTitle": "Payment receipt",
+    "receiptDesc": "Upload a photo or PDF of your bank transfer receipt",
+    "receiptRequired": "Please upload the payment receipt",
+    "fillRequired": "Please fill in the required fields",
+    "uploadCta": "Click or drag your receipt here",
+    "uploadHint": "Image (JPG, PNG) or PDF accepted",
+    "submitOrder": "Confirm order",
+    "successTitle": "Order submitted!",
+    "successMessage": "Your order has been registered. Our team will verify your payment and contact you within 24 hours."
   }
 }

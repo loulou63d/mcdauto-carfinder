@@ -94,7 +94,7 @@ const Cart = () => {
                   <span>{t('cart.total')}</span>
                   <span>{total.toLocaleString('de-DE')} €</span>
                 </div>
-                <Link to={`/${lang}/contact`}>
+                <Link to={`/${lang}/checkout`}>
                   <Button className="w-full mt-4" size="lg">
                     <CreditCard className="w-4 h-4 mr-2" /> {t('cart.checkout')}
                   </Button>

@@ -68,6 +68,54 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          deposit_amount: number
+          id: string
+          receipt_url: string | null
+          status: string
+          total_price: number
+          updated_at: string
+          vehicle_details: Json
+          vehicle_ids: string[]
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          deposit_amount?: number
+          id?: string
+          receipt_url?: string | null
+          status?: string
+          total_price?: number
+          updated_at?: string
+          vehicle_details?: Json
+          vehicle_ids: string[]
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          deposit_amount?: number
+          id?: string
+          receipt_url?: string | null
+          status?: string
+          total_price?: number
+          updated_at?: string
+          vehicle_details?: Json
+          vehicle_ids?: string[]
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           brand: string | null

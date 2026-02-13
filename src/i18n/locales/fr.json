@@ -644,5 +644,23 @@
     "adminInspection": "Inspection technique",
     "adminServiceBook": "Carnet d'entretien du fabricant",
     "adminInvoices": "Factures de maintenance"
+  },
+  "checkout": {
+    "title": "Finaliser la commande",
+    "customerInfo": "Vos informations",
+    "depositTitle": "Acompte obligatoire (20%)",
+    "depositInfo": "Un acompte de 20% est requis pour valider votre commande",
+    "depositInstruction": "Effectuez le virement bancaire du montant ci-dessous, puis uploadez le justificatif de paiement.",
+    "depositAmount": "Acompte à payer",
+    "reference": "Référence",
+    "receiptTitle": "Justificatif de paiement",
+    "receiptDesc": "Uploadez une photo ou un PDF de votre reçu de virement bancaire",
+    "receiptRequired": "Veuillez uploader le justificatif de paiement",
+    "fillRequired": "Veuillez remplir les champs obligatoires",
+    "uploadCta": "Cliquez ou glissez votre justificatif ici",
+    "uploadHint": "Image (JPG, PNG) ou PDF accepté",
+    "submitOrder": "Confirmer la commande",
+    "successTitle": "Commande envoyée !",
+    "successMessage": "Votre commande a été enregistrée. Notre équipe vérifiera votre paiement et vous contactera sous 24h."
   }
 }

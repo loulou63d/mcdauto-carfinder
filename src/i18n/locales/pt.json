@@ -431,5 +431,23 @@
     "adminInspection": "Inspeção técnica",
     "adminServiceBook": "Livro de manutenção do fabricante",
     "adminInvoices": "Faturas de manutenção"
+  },
+  "checkout": {
+    "title": "Finalizar encomenda",
+    "customerInfo": "Os seus dados",
+    "depositTitle": "Sinal obrigatório (20%)",
+    "depositInfo": "É necessário um sinal de 20% para confirmar a sua encomenda",
+    "depositInstruction": "Efetue a transferência bancária do valor indicado abaixo e carregue o comprovativo de pagamento.",
+    "depositAmount": "Sinal a pagar",
+    "reference": "Referência",
+    "receiptTitle": "Comprovativo de pagamento",
+    "receiptDesc": "Carregue uma foto ou PDF do seu recibo de transferência bancária",
+    "receiptRequired": "Por favor carregue o comprovativo de pagamento",
+    "fillRequired": "Por favor preencha os campos obrigatórios",
+    "uploadCta": "Clique ou arraste o seu comprovativo aqui",
+    "uploadHint": "Imagem (JPG, PNG) ou PDF aceite",
+    "submitOrder": "Confirmar encomenda",
+    "successTitle": "Encomenda enviada!",
+    "successMessage": "A sua encomenda foi registada. A nossa equipa verificará o seu pagamento e contactá-lo-á dentro de 24 horas."
   }
 }

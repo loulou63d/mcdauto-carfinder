@@ -33,6 +33,8 @@ import Dashboard from "./pages/admin/Dashboard";
 import AdminVehicles from "./pages/admin/Vehicles";
 import AdminContacts from "./pages/admin/Contacts";
 import AdminImport from "./pages/admin/Import";
+import AdminOrders from "./pages/admin/Orders";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -66,12 +68,14 @@ const App = () => (
              <Route path="privacy" element={<Privacy />} />
              <Route path="cgv" element={<CGV />} />
              <Route path="cart" element={<Cart />} />
+             <Route path="checkout" element={<Checkout />} />
            </Route>
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="vehicles" element={<AdminVehicles />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="orders" element={<AdminOrders />} />
             <Route path="import" element={<AdminImport />} />
           </Route>
           <Route path="*" element={<NotFound />} />
