@@ -1,45 +1,23 @@
 import { useTranslation } from 'react-i18next';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CreditCard, RefreshCw, Wrench, Shield, Headphones, Check, ChevronRight, Banknote, Truck, FileText, Clock } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { CreditCard, BarChart3, Wrench, Shield, Headphones, ChevronRight, RefreshCw } from 'lucide-react';
 
 const Services = () => {
   const { t } = useTranslation();
+  const { lang } = useParams();
 
-  const steps = [
-    t('services.step1'),
-    t('services.step2'),
-    t('services.step3'),
-    t('services.step4'),
-  ];
-
-  const conditions = [
-    t('services.cond0interest'),
-    t('services.condDuration'),
-    t('services.condFixed'),
-    t('services.condFlexible'),
-    t('services.condNoFees'),
-  ];
-
-  const adminItems = [
-    t('services.adminRegistration'),
-    t('services.adminCOC'),
-    t('services.adminNonPledge'),
-    t('services.adminInspection'),
-    t('services.adminServiceBook'),
-    t('services.adminInvoices'),
-  ];
-
-  const otherServices = [
-    { icon: RefreshCw, title: t('services.tradein'), desc: t('services.tradeinDesc') },
-    { icon: Wrench, title: t('services.maintenance'), desc: t('services.maintenanceDesc') },
-    { icon: Shield, title: t('services.warranty'), desc: t('services.warrantyDesc') },
-    { icon: Headphones, title: t('services.afterSales'), desc: t('services.afterSalesDesc') },
+  const services = [
+    { icon: CreditCard, title: t('services.financing'), desc: t('services.financingSubtitle'), to: `/${lang}/services/financing` },
+    { icon: BarChart3, title: t('estimation.title'), desc: t('estimation.heroSubtitle'), to: `/${lang}/services/estimation` },
+    { icon: Wrench, title: t('maintenancePage.title'), desc: t('maintenancePage.heroSubtitle'), to: `/${lang}/services/maintenance` },
+    { icon: RefreshCw, title: t('services.tradein'), desc: t('services.tradeinDesc'), to: `/${lang}/contact` },
+    { icon: Shield, title: t('services.warranty'), desc: t('services.warrantyDesc'), to: `/${lang}/contact` },
+    { icon: Headphones, title: t('services.afterSales'), desc: t('services.afterSalesDesc'), to: `/${lang}/contact` },
   ];
 
   return (
     <div>
-      {/* Hero */}
       <section className="bg-primary text-primary-foreground py-20">
         <div className="container mx-auto px-4 text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl md:text-4xl font-heading font-bold">
@@ -52,149 +30,29 @@ const Services = () => {
       </section>
 
       <section className="section-padding">
-        <div className="container mx-auto px-4 max-w-5xl space-y-12">
-
-          {/* Financing Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                <CreditCard className="w-6 h-6 text-accent" />
-              </div>
-              <h2 className="text-2xl font-heading font-bold">{t('services.financing')}</h2>
-            </div>
-            <p className="text-lg text-accent font-medium">{t('services.financingSubtitle')}</p>
-            <p className="text-muted-foreground mt-3 leading-relaxed max-w-3xl">{t('services.financingIntro')}</p>
-          </motion.div>
-
-          {/* How it works - Steps */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
-              ✅ {t('services.howItWorks')}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {steps.map((step, i) => (
-                <Card key={i} className="relative overflow-hidden">
-                  <CardContent className="p-5">
-                    <div className="text-3xl font-bold text-accent/20 mb-2">{i + 1}</div>
-                    <p className="text-sm font-medium">{step}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Financing Conditions */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
-              💰 {t('services.conditions')}
-            </h3>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="space-y-3">
-                  {conditions.map((c, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                      <span>{c}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Payment Options */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
-              <Banknote className="w-5 h-5 text-accent" />
-              {t('services.paymentTitle')}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-accent/30">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <ChevronRight className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <p className="leading-relaxed">{t('services.paymentCash')}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-accent/30">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <ChevronRight className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <p className="leading-relaxed">{t('services.paymentInstallments')}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-
-          {/* Import & Warranty */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
-              <Truck className="w-5 h-5 text-accent" />
-              {t('services.importTitle')}
-            </h3>
-            <Card>
-              <CardContent className="p-6">
-                <ul className="space-y-3">
-                  {[
-                    t('services.importOrigin'),
-                    t('services.importWarranty'),
-                    t('services.importDelivery'),
-                    t('services.importManufacturer'),
-                    t('services.importRetraction'),
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Admin procedures */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-xl font-heading font-bold mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-accent" />
-              {t('services.adminTitle')}
-            </h3>
-            <Card className="bg-accent/5 border-accent/20">
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {adminItems.map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                      <span className="text-sm">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Divider */}
-          <hr className="border-border" />
-
-          {/* Other Services */}
-          <div className="space-y-6">
-            {otherServices.map((s, i) => (
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="space-y-4">
+            {services.map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="flex gap-6 p-6 bg-card rounded-lg border"
+                transition={{ duration: 0.4 }}
               >
-                <div className="shrink-0 w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
-                  <s.icon className="w-7 h-7 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-heading font-bold text-lg">{s.title}</h3>
-                  <p className="text-muted-foreground mt-2 leading-relaxed">{s.desc}</p>
-                </div>
+                <Link
+                  to={s.to}
+                  className="flex items-center gap-5 p-5 bg-card rounded-lg border card-hover group"
+                >
+                  <div className="shrink-0 w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                    <s.icon className="w-6 h-6 text-accent" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-heading font-bold text-base">{s.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{s.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent shrink-0 transition-colors" />
+                </Link>
               </motion.div>
             ))}
           </div>

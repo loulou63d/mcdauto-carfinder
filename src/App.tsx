@@ -9,6 +9,9 @@ import SearchPage from "./pages/Search";
 import VehicleDetail from "./pages/VehicleDetail";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import ServiceFinancing from "./pages/ServiceFinancing";
+import ServiceEstimation from "./pages/ServiceEstimation";
+import ServiceMaintenance from "./pages/ServiceMaintenance";
 import Contact from "./pages/Contact";
 import Legal from "./pages/Legal";
 import Privacy from "./pages/Privacy";
@@ -32,6 +35,9 @@ const App = () => (
             <Route path="vehicle/:id" element={<VehicleDetail />} />
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
+            <Route path="services/financing" element={<ServiceFinancing />} />
+            <Route path="services/estimation" element={<ServiceEstimation />} />
+            <Route path="services/maintenance" element={<ServiceMaintenance />} />
             <Route path="contact" element={<Contact />} />
             <Route path="legal" element={<Legal />} />
             <Route path="privacy" element={<Privacy />} />

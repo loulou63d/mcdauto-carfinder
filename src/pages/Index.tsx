@@ -435,9 +435,9 @@ const Index = () => {
           <div className="flex flex-col gap-3">
             {[
               { img: actionSearchImg, title: t('actions.searchVehicle'), desc: t('actions.searchVehicleDesc'), to: `/${lang}/search` },
-              { img: actionFinanceImg, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services` },
-              { img: actionEstimateImg, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/contact` },
-              { img: actionMaintenanceImg, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services` },
+              { img: actionFinanceImg, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services/financing` },
+              { img: actionEstimateImg, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/services/estimation` },
+              { img: actionMaintenanceImg, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services/maintenance` },
             ].map((item, i) => (
               <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <Link to={item.to} className="flex items-center bg-secondary/60 rounded-xl overflow-hidden card-hover group">
