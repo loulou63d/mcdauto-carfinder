@@ -218,9 +218,11 @@ export type Database = {
           color: string | null
           created_at: string
           description: string | null
+          description_translations: Json | null
           doors: number | null
           energy: string
           equipment: string[] | null
+          equipment_translations: Json | null
           euro_norm: string | null
           id: string
           is_featured: boolean | null
@@ -242,9 +244,11 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          description_translations?: Json | null
           doors?: number | null
           energy?: string
           equipment?: string[] | null
+          equipment_translations?: Json | null
           euro_norm?: string | null
           id?: string
           is_featured?: boolean | null
@@ -266,9 +270,11 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          description_translations?: Json | null
           doors?: number | null
           energy?: string
           equipment?: string[] | null
+          equipment_translations?: Json | null
           euro_norm?: string | null
           id?: string
           is_featured?: boolean | null

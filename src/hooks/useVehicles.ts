@@ -46,6 +46,8 @@ async function fetchVehiclesWithImages(options?: {
 
   return vehicles.map((v) => ({
     ...v,
+    description_translations: v.description_translations as Record<string, string> | null,
+    equipment_translations: v.equipment_translations as Record<string, string> | null,
     images: imageMap.get(v.id) || [],
   }));
 }
@@ -68,6 +70,8 @@ async function fetchVehicleById(id: string): Promise<Vehicle | null> {
 
   return {
     ...vehicle,
+    description_translations: vehicle.description_translations as Record<string, string> | null,
+    equipment_translations: vehicle.equipment_translations as Record<string, string> | null,
     images: images?.map((img) => img.image_url) || [],
   };
 }
