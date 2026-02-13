@@ -70,6 +70,7 @@ function extractImages(markdown: string, html: string, url: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
   const isCpmAuto = url.includes("cpmauto.fr");
+  const isAutoFrancis = url.includes("autofrancis.com");
   const allText = markdown + " " + html;
 
   if (isCpmAuto) {
@@ -92,6 +93,17 @@ function extractImages(markdown: string, html: string, url: string): string[] {
           seen.add(imgUrl);
           images.push(imgUrl);
         }
+      }
+    }
+  } else if (isAutoFrancis) {
+    // AutoFrancis: extract images from base44.app CDN
+    const base44Pattern = /https?:\/\/base44\.app\/api\/apps\/[^\s)"'\]&]+\.jpg/gi;
+    let match;
+    while ((match = base44Pattern.exec(allText)) !== null) {
+      let imgUrl = match[0].replace(/&amp;/g, "&");
+      if (!seen.has(imgUrl)) {
+        seen.add(imgUrl);
+        images.push(imgUrl);
       }
     }
   } else {
@@ -183,10 +195,17 @@ function extractSpecsCpmAuto(markdown: string): Record<string, string> {
 
 function extractTitle(markdown: string, url: string): string {
   const isCpmAuto = url.includes("cpmauto.fr");
+  const isAutoFrancis = url.includes("autofrancis.com");
   
   if (isCpmAuto) {
     const title = extractTitleCpmAuto(markdown);
     if (title) return title;
+  }
+
+  if (isAutoFrancis) {
+    // AutoFrancis: Bold title with brand + model pattern
+    const boldMatch = markdown.match(/\*\*([^*]+)\*\*/);
+    if (boldMatch) return boldMatch[1].trim();
   }
 
   // Autosphere: extract from breadcrumb
@@ -219,6 +238,21 @@ function extractTitle(markdown: string, url: string): string {
 function extractSpecs(markdown: string, url: string): Record<string, string> {
   if (url.includes("cpmauto.fr")) {
     return extractSpecsCpmAuto(markdown);
+  }
+
+  if (url.includes("autofrancis.com")) {
+    // AutoFrancis: parse specs from markdown format (year, mileage, etc.)
+    const specs: Record<string, string> = {};
+    const specPattern = /\*\*(.+?)\*\*[\s\n]*(.+?)(?=\n|$)/g;
+    let match;
+    while ((match = specPattern.exec(markdown)) !== null) {
+      const key = match[1].trim();
+      const val = match[2].trim();
+      if (key && val && key !== "---" && val !== "---") {
+        specs[key] = val;
+      }
+    }
+    return specs;
   }
 
   const specs: Record<string, string> = {};

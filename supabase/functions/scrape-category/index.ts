@@ -36,8 +36,9 @@ serve(async (req) => {
 
     const isAutosphere = formattedUrl.includes("autosphere.fr");
     const isCpmAuto = formattedUrl.includes("cpmauto.fr");
+    const isAutoFrancis = formattedUrl.includes("autofrancis.com");
 
-    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : "generic");
+    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : isAutoFrancis ? "autofrancis" : "generic");
 
     // For CPM Auto, we may need to scan multiple pages (pagination: w1, w2, w3...)
     const urlsToScrape: string[] = [formattedUrl];
@@ -103,6 +104,10 @@ serve(async (req) => {
           pageProductUrls = links.filter((link: string) =>
             link.includes("/details-") && !productUrls.includes(link)
           );
+        } else if (isAutoFrancis) {
+          pageProductUrls = links.filter((link: string) =>
+            link.includes("/VehicleDetail?id=") && !productUrls.includes(link)
+          );
         } else {
           pageProductUrls = links.filter((link: string) => {
             const lower = link.toLowerCase();
@@ -127,8 +132,8 @@ serve(async (req) => {
       }
     }
 
-    // Strategy 2: also try Firecrawl Map API for additional URLs (non-CPM sites)
-    if (!isCpmAuto && productUrls.length < limit) {
+    // Strategy 2: also try Firecrawl Map API for additional URLs (non-CPM and non-autofrancis sites)
+    if (!isCpmAuto && !isAutoFrancis && productUrls.length < limit) {
       try {
         const mapResponse = await fetch("https://api.firecrawl.dev/v1/map", {
           method: "POST",
