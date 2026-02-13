@@ -7,22 +7,33 @@ const corsHeaders = {
 };
 
 const BRANDS = [
+  // Auto
+  "Alfa Romeo","Audi","BMW","Citroën","Citroen","Dacia","DS","Fiat","Ford","Honda",
+  "Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Maserati","Mazda",
+  "Mercedes","Mini","Mitsubishi","Nissan","Opel","Peugeot","Porsche","Renault","Seat",
+  "Skoda","Škoda","Suzuki","Tesla","Toyota","Volkswagen","Volvo","Abarth","Alpine",
+  "Bentley","Bugatti","Cadillac","Chevrolet","Chrysler","Cupra","Dodge","Ferrari",
+  "Genesis","Lamborghini","Lancia","Lincoln","Lotus","McLaren","MG","Rolls-Royce",
+  "Saab","Smart","SsangYong","Subaru",
+  // Agricole / Industriel
   "John Deere","Case IH","New Holland","Massey Ferguson","Fendt","Claas","Kubota",
-  "Deutz-Fahr","Valtra","Same","Lamborghini","McCormick","Landini","Zetor","JCB",
-  "Manitou","Merlo","Komatsu","Caterpillar","Volvo","Liebherr","Bobcat","Takeuchi",
+  "Deutz-Fahr","Valtra","Same","McCormick","Landini","Zetor","JCB",
+  "Manitou","Merlo","Komatsu","Caterpillar","Liebherr","Bobcat","Takeuchi",
   "Hitachi","Doosan","Yanmar","Iseki","Kioti","LS Tractor","Solis","Antonio Carraro",
   "Steyr","Hürlimann","Challenger","Versatile","AGCO","Amazone","Kuhn","Kverneland",
   "Lemken","Horsch","Väderstad","Grimme","Pöttinger","Rauch","Krone","Joskin",
   "Fliegl","Berthoud","Hardi","Bogballe","Sulky","Monosem","Breviglieri",
   "Bomford","McHale","Lely","Kongskilde","Maschio","Gaspardo","Alpego",
   "Agrisem","Agram","Bucher","Weidemann","Schäffer","Dieci","Faresin",
-  "Giant","Avant","MultiOne","Gehl","Kramer","Atlas","Terex","Hyundai",
+  "Giant","Avant","MultiOne","Gehl","Kramer","Atlas","Terex",
   "Samsung","Sany","XCMG","Zoomlion","LiuGong","SDLG","Shantui"
 ];
 
 function detectBrand(title: string): string | null {
   const titleLower = title.toLowerCase();
-  for (const brand of BRANDS) {
+  // Sort by length desc to match "Land Rover" before "Rover"
+  const sorted = [...BRANDS].sort((a, b) => b.length - a.length);
+  for (const brand of sorted) {
     if (titleLower.includes(brand.toLowerCase())) {
       return brand;
     }
@@ -31,34 +42,61 @@ function detectBrand(title: string): string | null {
 }
 
 function parsePrice(text: string): number | null {
-  // European format: 1.234,56 € or 1 234,56 €
-  const match = text.match(/(\d[\d\s.]*)[,.](\d{2})\s*€/);
-  if (match) {
-    const intPart = match[1].replace(/[\s.]/g, "");
-    return parseFloat(`${intPart}.${match[2]}`);
+  // European format: 18 699 € or 18.699 € or 18 699€
+  const patterns = [
+    /(\d[\d\s.]*)\s*€/g,
+    /prix[^€]*?(\d[\d\s.]*)\s*€/gi,
+    /(\d[\d\s.]*),(\d{2})\s*€/g,
+  ];
+
+  let bestPrice: number | null = null;
+
+  for (const pattern of patterns) {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      const raw = match[1].replace(/[\s.]/g, "");
+      const decimal = match[2] ? `.${match[2]}` : "";
+      const val = parseFloat(raw + decimal);
+      // Prefer prices in typical vehicle range (500 - 500000)
+      if (val >= 500 && val <= 500000) {
+        if (!bestPrice || val > bestPrice) {
+          bestPrice = val;
+        }
+      }
+    }
   }
-  // Simple format: 12345 € or 12345€
-  const simpleMatch = text.match(/(\d[\d\s.]*)\s*€/);
-  if (simpleMatch) {
-    return parseFloat(simpleMatch[1].replace(/[\s.]/g, ""));
-  }
-  return null;
+
+  return bestPrice;
 }
 
 function extractImages(markdown: string, html: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  // From HTML: WooCommerce gallery images
+  // Autosphere: extract media.autosphere.fr URLs
+  const mediaPattern = /https?:\/\/media\.autosphere\.fr\/[^\s)"'\]&]+/g;
+  const allText = markdown + " " + html;
+  let match;
+  while ((match = mediaPattern.exec(allText)) !== null) {
+    let url = match[0].replace(/&amp;/g, "&");
+    // Clean up URL-encoded versions
+    if (url.includes("%2F")) {
+      try { url = decodeURIComponent(url); } catch {}
+    }
+    if (!seen.has(url) && !url.includes("-thumb")) {
+      seen.add(url);
+      images.push(url);
+    }
+  }
+
+  // Generic: WooCommerce and standard gallery images
   const htmlPatterns = [
     /data-large_image="([^"]+)"/g,
-    /data-src="([^"]+)"/g,
-    /src="([^"]+(?:wp-content\/uploads)[^"]+)"/g,
-    /<img[^>]+src="([^"]+\.(jpg|jpeg|png|webp)[^"]*)"/gi,
+    /data-src="([^"]+(?:wp-content\/uploads)[^"]+)"/g,
+    /<img[^>]+src="([^"]+(?:wp-content\/uploads)[^"]+\.(jpg|jpeg|png|webp)[^"]*)"/gi,
   ];
 
   for (const pattern of htmlPatterns) {
-    let match;
     while ((match = pattern.exec(html)) !== null) {
       const url = match[1];
       if (!seen.has(url) && !url.includes("placeholder") && !url.includes("icon") && !url.includes("-150x") && !url.includes("-100x")) {
@@ -68,48 +106,94 @@ function extractImages(markdown: string, html: string): string[] {
     }
   }
 
-  // From markdown
+  // From markdown images
   const mdPattern = /!\[.*?\]\((https?:\/\/[^\s)]+\.(jpg|jpeg|png|webp)[^\s)]*)\)/gi;
-  let mdMatch;
-  while ((mdMatch = mdPattern.exec(markdown)) !== null) {
-    if (!seen.has(mdMatch[1])) {
-      seen.add(mdMatch[1]);
-      images.push(mdMatch[1]);
+  while ((match = mdPattern.exec(markdown)) !== null) {
+    const url = match[1];
+    if (!seen.has(url) && !url.includes("logo") && !url.includes("icon") && !url.includes("404")) {
+      seen.add(url);
+      images.push(url);
     }
   }
 
   return images.slice(0, 20);
 }
 
-function extractTitle(markdown: string): string {
+function extractTitle(markdown: string, url: string): string {
+  // Autosphere: extract from breadcrumb (e.g., "3. [Ford]... 4. [Puma]... 5. 1.0 Flexifuel...")
+  const breadcrumbMatch = markdown.match(/\d+\.\s*\[([^\]]+)\].*?\d+\.\s*\[([^\]]+)\].*?\d+\.\s*(.+?)(?:\n|$)/);
+  if (breadcrumbMatch) {
+    const brand = breadcrumbMatch[1].trim();
+    const model = breadcrumbMatch[2].trim();
+    const variant = breadcrumbMatch[3].trim();
+    return `${brand} ${model} ${variant}`;
+  }
+
+  // Extract from URL slug (autosphere format)
+  const urlSlugMatch = url.match(/auto-occasion-(.+?)(?:-\d{5})/);
+  if (urlSlugMatch) {
+    return urlSlugMatch[1].replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
   // Try H1
   const h1Match = markdown.match(/^#\s+(.+)$/m);
   if (h1Match) return h1Match[1].trim();
-  // First non-empty line
-  const lines = markdown.split("\n").filter((l) => l.trim());
+
+  // Try H2 with brand name
+  const h2Match = markdown.match(/^##\s+(.+)$/m);
+  if (h2Match) return h2Match[1].trim();
+
+  // First meaningful line
+  const lines = markdown.split("\n").filter((l) => l.trim() && !l.startsWith("[") && !l.startsWith("!"));
   return lines[0]?.replace(/^#+\s*/, "").trim() || "Sans titre";
 }
 
+function extractSpecs(markdown: string): Record<string, string> {
+  const specs: Record<string, string> = {};
+  // Pattern: "- Key :Value" or "- Key:Value"
+  const specPattern = /[-•]\s*([^:]+?)\s*:\s*(.+)/g;
+  let match;
+  while ((match = specPattern.exec(markdown)) !== null) {
+    const key = match[1].trim();
+    const val = match[2].trim();
+    if (key.length > 2 && key.length < 40 && val.length > 0 && val.length < 100) {
+      specs[key] = val;
+    }
+  }
+  return specs;
+}
+
 function extractDescription(markdown: string): string {
-  // Try to find description section
-  const descPatterns = [
-    /(?:Produktbeschreibung|Description|Beschreibung)\s*\n([\s\S]*?)(?=\n#{1,3}\s|\n\*\*|$)/i,
-    /(?:tab-description|product-description)\s*\n([\s\S]*?)(?=\n#{1,3}\s|$)/i,
+  // Try "Présentation" or "À propos" section
+  const presentPatterns = [
+    /(?:Présentation|À propos|About|Beschreibung|Description)\s*\n+(?:###?\s*.+\n+)?([\s\S]*?)(?=\n##\s|\n\*\*\*|$)/i,
+    /(?:Produktbeschreibung|tab-description|product-description)\s*\n([\s\S]*?)(?=\n#{1,3}\s|$)/i,
   ];
 
-  for (const pattern of descPatterns) {
+  for (const pattern of presentPatterns) {
     const match = markdown.match(pattern);
     if (match && match[1].trim().length > 50) {
       return match[1].trim().slice(0, 2000);
     }
   }
 
-  // Fallback: take content after title, skip images
+  // Try characteristics section
+  const charMatch = markdown.match(/Caractéristiques[\s\S]*?(?=\n##\s|$)/i);
+  if (charMatch && charMatch[0].length > 50) {
+    return charMatch[0].trim().slice(0, 2000);
+  }
+
+  // Fallback: text after title, excluding navigation
   const lines = markdown.split("\n");
-  const textLines = lines
-    .filter((l) => l.trim() && !l.startsWith("#") && !l.startsWith("!") && !l.startsWith("|"))
-    .slice(0, 20);
-  return textLines.join("\n").trim().slice(0, 2000) || "";
+  const startIdx = lines.findIndex((l) => l.startsWith("##") && !l.includes("Acheter") && !l.includes("Nos services"));
+  if (startIdx > -1) {
+    const textLines = lines.slice(startIdx)
+      .filter((l) => l.trim() && !l.startsWith("![") && !l.startsWith("[!["))
+      .slice(0, 30);
+    return textLines.join("\n").trim().slice(0, 2000);
+  }
+
+  return "";
 }
 
 serve(async (req) => {
@@ -152,6 +236,7 @@ serve(async (req) => {
         url: formattedUrl,
         formats: ["markdown", "html"],
         onlyMainContent: false,
+        waitFor: 3000,
       }),
     });
 
@@ -169,11 +254,12 @@ serve(async (req) => {
     const html = data.data?.html || data.html || "";
     const fullText = markdown + " " + html;
 
-    const title = extractTitle(markdown);
+    const title = extractTitle(markdown, formattedUrl);
     const price = parsePrice(fullText);
     const images = extractImages(markdown, html);
     const brand = detectBrand(title);
     const description = extractDescription(markdown);
+    const specs = extractSpecs(markdown);
 
     const product = {
       title,
@@ -181,11 +267,12 @@ serve(async (req) => {
       images,
       brand,
       description,
+      specs,
       source_url: formattedUrl,
       raw_markdown: markdown.slice(0, 5000),
     };
 
-    console.log("Scraped product:", title, "price:", price, "images:", images.length);
+    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand);
 
     return new Response(
       JSON.stringify({ success: true, data: product }),
