@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { SlidersHorizontal, X, ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown, ChevronRight, Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import VehicleCard from '@/components/VehicleCard';
-import { mockVehicles, popularBrands, energyTypes, categoryTypes } from '@/data/mockVehicles';
+import { popularBrands, energyTypes, categoryTypes } from '@/data/mockVehicles';
+import { useVehicles } from '@/hooks/useVehicles';
 
 const SearchPage = () => {
   const { t } = useTranslation();
@@ -29,21 +30,23 @@ const SearchPage = () => {
     categories: true, brands: true, energy: true, transmission: true, price: true,
   });
 
+  const { data: vehicles = [], isLoading } = useVehicles();
+
   const filtered = useMemo(() => {
-    let results = mockVehicles.filter(v => v.status === 'published');
+    let results = [...vehicles];
     if (selectedBrands.length > 0) results = results.filter(v => selectedBrands.includes(v.brand));
     if (selectedEnergies.length > 0) results = results.filter(v => selectedEnergies.includes(v.energy));
-    if (selectedCategories.length > 0) results = results.filter(v => selectedCategories.includes(v.category));
+    if (selectedCategories.length > 0) results = results.filter(v => v.category && selectedCategories.includes(v.category));
     if (selectedTransmissions.length > 0) results = results.filter(v => selectedTransmissions.includes(v.transmission));
-    if (priceMax < 100000) results = results.filter(v => v.price <= priceMax);
+    if (priceMax < 100000) results = results.filter(v => Number(v.price) <= priceMax);
     const q = searchParams.get('q')?.toLowerCase();
-    if (q) results = results.filter(v => `${v.brand} ${v.model} ${v.version}`.toLowerCase().includes(q));
-    if (sortBy === 'priceAsc') results.sort((a, b) => a.price - b.price);
-    else if (sortBy === 'priceDesc') results.sort((a, b) => b.price - a.price);
+    if (q) results = results.filter(v => `${v.brand} ${v.model}`.toLowerCase().includes(q));
+    if (sortBy === 'priceAsc') results.sort((a, b) => Number(a.price) - Number(b.price));
+    else if (sortBy === 'priceDesc') results.sort((a, b) => Number(b.price) - Number(a.price));
     else if (sortBy === 'year') results.sort((a, b) => b.year - a.year);
     else if (sortBy === 'mileage') results.sort((a, b) => a.mileage - b.mileage);
     return results;
-  }, [selectedBrands, selectedEnergies, selectedCategories, selectedTransmissions, priceMax, sortBy, searchParams]);
+  }, [vehicles, selectedBrands, selectedEnergies, selectedCategories, selectedTransmissions, priceMax, sortBy, searchParams]);
 
   const toggleFilter = (arr: string[], setArr: (v: string[]) => void, value: string) => {
     setArr(arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
@@ -118,7 +121,7 @@ const SearchPage = () => {
         </div>
 
         <div className="flex gap-6">
-          {/* SIDEBAR — autosphere style */}
+          {/* SIDEBAR */}
           <aside className={`${showFilters ? 'fixed inset-0 z-50 bg-background p-5 overflow-y-auto' : 'hidden'} md:block md:static md:w-[280px] md:shrink-0`}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
@@ -136,7 +139,6 @@ const SearchPage = () => {
               </div>
             </div>
 
-            {/* Search within filters */}
             <div className="relative mb-5">
               <Input placeholder="Mots-clés" className="pr-10 h-9 text-sm bg-secondary" />
               <button className="absolute right-1 top-1 w-7 h-7 rounded-md bg-primary flex items-center justify-center">
@@ -144,17 +146,13 @@ const SearchPage = () => {
               </button>
             </div>
 
-            {/* Categories */}
             <FilterSection id="categories" title={t('search.category')}>
               <div className="space-y-2.5">
                 {categoryTypes.map(cat => {
-                  const count = mockVehicles.filter(v => v.category === cat && v.status === 'published').length;
+                  const count = vehicles.filter(v => v.category === cat).length;
                   return (
                     <label key={cat} className="flex items-center gap-2.5 text-sm cursor-pointer capitalize">
-                      <Checkbox
-                        checked={selectedCategories.includes(cat)}
-                        onCheckedChange={() => toggleFilter(selectedCategories, setSelectedCategories, cat)}
-                      />
+                      <Checkbox checked={selectedCategories.includes(cat)} onCheckedChange={() => toggleFilter(selectedCategories, setSelectedCategories, cat)} />
                       <span className="flex-1">{cat}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
@@ -163,23 +161,14 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
-            {/* Brands */}
             <FilterSection id="brands" title={t('search.brand')}>
-              <Input
-                placeholder="Ex : Renault"
-                value={brandSearch}
-                onChange={(e) => setBrandSearch(e.target.value)}
-                className="mb-3 h-8 text-sm bg-secondary"
-              />
+              <Input placeholder="Ex : Renault" value={brandSearch} onChange={(e) => setBrandSearch(e.target.value)} className="mb-3 h-8 text-sm bg-secondary" />
               <div className="space-y-2.5 max-h-48 overflow-y-auto">
                 {filteredBrands.map(brand => {
-                  const count = mockVehicles.filter(v => v.brand === brand && v.status === 'published').length;
+                  const count = vehicles.filter(v => v.brand === brand).length;
                   return (
                     <label key={brand} className="flex items-center gap-2.5 text-sm cursor-pointer">
-                      <Checkbox
-                        checked={selectedBrands.includes(brand)}
-                        onCheckedChange={() => toggleFilter(selectedBrands, setSelectedBrands, brand)}
-                      />
+                      <Checkbox checked={selectedBrands.includes(brand)} onCheckedChange={() => toggleFilter(selectedBrands, setSelectedBrands, brand)} />
                       <span className="flex-1">{brand}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
@@ -188,18 +177,14 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
-            {/* Energy */}
             <FilterSection id="energy" title={t('search.energy')}>
               <div className="space-y-2.5">
                 {energyTypes.map(energy => {
-                  const count = mockVehicles.filter(v => v.energy === energy && v.status === 'published').length;
+                  const count = vehicles.filter(v => v.energy === energy).length;
                   return (
                     <label key={energy} className="flex items-center gap-2.5 text-sm cursor-pointer capitalize">
-                      <Checkbox
-                        checked={selectedEnergies.includes(energy)}
-                        onCheckedChange={() => toggleFilter(selectedEnergies, setSelectedEnergies, energy)}
-                      />
-                      <span className="flex-1">{energy.replace('_', ' ')}</span>
+                      <Checkbox checked={selectedEnergies.includes(energy)} onCheckedChange={() => toggleFilter(selectedEnergies, setSelectedEnergies, energy)} />
+                      <span className="flex-1">{energy}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
                   );
@@ -207,18 +192,14 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
-            {/* Transmission */}
             <FilterSection id="transmission" title={t('search.transmission')}>
               <div className="space-y-2.5">
-                {['automatic', 'manual'].map(tr => {
-                  const count = mockVehicles.filter(v => v.transmission === tr && v.status === 'published').length;
+                {['Automatique', 'Manuelle'].map(tr => {
+                  const count = vehicles.filter(v => v.transmission === tr).length;
                   return (
                     <label key={tr} className="flex items-center gap-2.5 text-sm cursor-pointer">
-                      <Checkbox
-                        checked={selectedTransmissions.includes(tr)}
-                        onCheckedChange={() => toggleFilter(selectedTransmissions, setSelectedTransmissions, tr)}
-                      />
-                      <span className="flex-1">{t(`search.${tr}`)}</span>
+                      <Checkbox checked={selectedTransmissions.includes(tr)} onCheckedChange={() => toggleFilter(selectedTransmissions, setSelectedTransmissions, tr)} />
+                      <span className="flex-1">{tr}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
                   );
@@ -226,21 +207,12 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
-            {/* Price */}
             <FilterSection id="price" title={t('search.price')}>
               <div className="space-y-3">
-                <input
-                  type="range"
-                  min={5000}
-                  max={100000}
-                  step={1000}
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-primary"
-                />
+                <input type="range" min={5000} max={100000} step={1000} value={priceMax} onChange={(e) => setPriceMax(Number(e.target.value))} className="w-full accent-primary" />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>0 €</span>
-                  <span className="font-medium text-foreground">{priceMax >= 100000 ? '100 000+ €' : `${priceMax.toLocaleString('fr-FR')} €`}</span>
+                  <span className="font-medium text-foreground">{priceMax >= 100000 ? '100 000+ €' : `${priceMax.toLocaleString('de-DE')} €`}</span>
                 </div>
               </div>
             </FilterSection>
@@ -248,7 +220,11 @@ const SearchPage = () => {
 
           {/* RESULTS GRID */}
           <div className="flex-1 min-w-0">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center py-20">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
                 <p className="text-lg">{t('common.error')}</p>
               </div>

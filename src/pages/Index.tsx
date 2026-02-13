@@ -10,7 +10,8 @@ import actionMaintenanceImg from '@/assets/action-maintenance.jpg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
-import { mockVehicles, popularBrands, categoryTypes } from '@/data/mockVehicles';
+import { popularBrands, categoryTypes } from '@/data/mockVehicles';
+import { useVehicles } from '@/hooks/useVehicles';
 import heroImage from '@/assets/hero-showroom.jpg';
 import promoImg1 from '@/assets/promo-slide1.jpg';
 import promoImg2 from '@/assets/promo-slide2.jpg';
@@ -61,6 +62,32 @@ import brandMaserati from '@/assets/brand-maserati.png';
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.4 } }),
+};
+
+const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
+  const { data: vehicles = [] } = useVehicles({ limit: 8 });
+
+  if (vehicles.length === 0) return null;
+
+  return (
+    <section className="section-padding">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('featured.title')}</h2>
+          <Link to={`/${lang}/search`} className="flex items-center gap-1 link-primary font-medium text-sm hover:underline">
+            {t('featured.seeAll')} <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {vehicles.map((vehicle, i) => (
+            <motion.div key={vehicle.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <VehicleCard vehicle={vehicle} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 
 const BRAND_SCROLL_SPEED = 30; // px per second
@@ -481,23 +508,7 @@ const Index = () => {
       </section>
 
       {/* FEATURED VEHICLES */}
-      <section className="section-padding">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('featured.title')}</h2>
-            <Link to={`/${lang}/search`} className="flex items-center gap-1 link-primary font-medium text-sm hover:underline">
-              {t('featured.seeAll')} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {mockVehicles.filter(v => v.status === 'published').slice(0, 8).map((vehicle, i) => (
-              <motion.div key={vehicle.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <VehicleCard vehicle={vehicle} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <FeaturedVehiclesSection lang={lang} t={t} />
 
       {/* POPULAR BRANDS — infinite auto-scroll carousel */}
       <section className="section-padding bg-secondary overflow-hidden">

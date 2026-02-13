@@ -2,217 +2,25 @@ export interface Vehicle {
   id: string;
   brand: string;
   model: string;
-  version: string;
   year: number;
   price: number;
-  monthlyPrice?: number;
+  monthly_price?: number | null;
   mileage: number;
   energy: string;
   transmission: string;
-  category: string;
-  power?: number;
-  doors?: number;
-  color?: string;
-  co2?: number;
-  euroNorm?: string;
-  location: string;
-  description?: string;
-  equipment: string[];
-  promoBadge?: string;
-  status: 'draft' | 'published' | 'sold';
-  images: string[];
+  category: string | null;
+  power?: string | null;
+  doors?: number | null;
+  color?: string | null;
+  co2?: string | null;
+  euro_norm?: string | null;
+  location: string | null;
+  description?: string | null;
+  equipment: string[] | null;
+  is_featured?: boolean | null;
+  status: string | null;
+  images?: string[];
 }
-
-export const mockVehicles: Vehicle[] = [
-  {
-    id: '1',
-    brand: 'Peugeot',
-    model: '208',
-    version: '1.2 PureTech 100ch Allure',
-    year: 2023,
-    price: 18990,
-    monthlyPrice: 149,
-    mileage: 12500,
-    energy: 'essence',
-    transmission: 'manual',
-    category: 'berline',
-    power: 100,
-    doors: 5,
-    color: 'Blanc Nacré',
-    co2: 93,
-    euroNorm: 'Euro 6',
-    location: 'Salon-de-Provence',
-    description: 'Peugeot 208 en excellent état, première main, carnet d\'entretien complet. Véhicule non-fumeur, intérieur impeccable.',
-    equipment: ['Climatisation', 'Bluetooth', 'Régulateur de vitesse', 'Caméra de recul', 'Écran tactile', 'Apple CarPlay'],
-    promoBadge: '-15%',
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '2',
-    brand: 'Renault',
-    model: 'Clio',
-    version: '1.0 TCe 90ch Intens',
-    year: 2022,
-    price: 15490,
-    monthlyPrice: 119,
-    mileage: 28000,
-    energy: 'essence',
-    transmission: 'manual',
-    category: 'berline',
-    power: 90,
-    doors: 5,
-    color: 'Gris Titanium',
-    co2: 99,
-    euroNorm: 'Euro 6',
-    location: 'Marseille',
-    description: 'Renault Clio Intens, très bien entretenue, faible kilométrage.',
-    equipment: ['Climatisation auto', 'GPS', 'Caméra de recul', 'Sièges chauffants', 'Vitres teintées'],
-    promoBadge: '-10%',
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '3',
-    brand: 'BMW',
-    model: 'Série 3',
-    version: '320d 190ch M Sport',
-    year: 2021,
-    price: 34990,
-    monthlyPrice: 289,
-    mileage: 45000,
-    energy: 'diesel',
-    transmission: 'automatic',
-    category: 'berline',
-    power: 190,
-    doors: 4,
-    color: 'Noir Saphir',
-    co2: 118,
-    euroNorm: 'Euro 6',
-    location: 'Lyon',
-    description: 'BMW Série 3 M Sport, pack M intérieur et extérieur, toit ouvrant, cuir Dakota.',
-    equipment: ['Cuir', 'Toit ouvrant', 'GPS Pro', 'Sièges chauffants', 'Système audio Harman Kardon', 'Régulateur adaptatif', 'Affichage tête haute'],
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '4',
-    brand: 'Volkswagen',
-    model: 'Golf',
-    version: '1.4 eHybrid 204ch Style DSG',
-    year: 2023,
-    price: 29990,
-    monthlyPrice: 239,
-    mileage: 18000,
-    energy: 'hybride_rechargeable',
-    transmission: 'automatic',
-    category: 'berline',
-    power: 204,
-    doors: 5,
-    color: 'Bleu Atlantique',
-    co2: 21,
-    euroNorm: 'Euro 6',
-    location: 'Paris',
-    description: 'VW Golf hybride rechargeable, économique et performante.',
-    equipment: ['Climatisation tri-zone', 'Digital Cockpit', 'Caméra 360°', 'Chargeur embarqué', 'LED Matrix', 'Park Assist'],
-    promoBadge: '-20%',
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '5',
-    brand: 'Mercedes',
-    model: 'GLC',
-    version: '220d 194ch AMG Line 4Matic',
-    year: 2022,
-    price: 49990,
-    monthlyPrice: 429,
-    mileage: 32000,
-    energy: 'diesel',
-    transmission: 'automatic',
-    category: 'suv',
-    power: 194,
-    doors: 5,
-    color: 'Gris Sélénite',
-    co2: 155,
-    euroNorm: 'Euro 6',
-    location: 'Bordeaux',
-    description: 'Mercedes GLC AMG Line, finition haut de gamme, nombreuses options.',
-    equipment: ['Cuir Artico', 'Toit panoramique', 'MBUX', 'Burmester', 'Sièges électriques', 'Aide au stationnement', 'Caméra de recul'],
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '6',
-    brand: 'Tesla',
-    model: 'Model 3',
-    version: 'Standard Plus',
-    year: 2023,
-    price: 35990,
-    monthlyPrice: 299,
-    mileage: 15000,
-    energy: 'électrique',
-    transmission: 'automatic',
-    category: 'berline',
-    power: 283,
-    doors: 4,
-    color: 'Blanc Perle',
-    co2: 0,
-    euroNorm: 'Euro 6',
-    location: 'Toulouse',
-    description: 'Tesla Model 3, autopilot de base, supercharge gratuite incluse.',
-    equipment: ['Autopilot', 'Écran 15 pouces', 'Toit panoramique vitré', 'Caméras 360°', 'Sièges chauffants', 'Audio Premium'],
-    promoBadge: '-11%',
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '7',
-    brand: 'Dacia',
-    model: 'Duster',
-    version: '1.3 TCe 130ch Prestige',
-    year: 2024,
-    price: 21490,
-    monthlyPrice: 169,
-    mileage: 5000,
-    energy: 'essence',
-    transmission: 'manual',
-    category: 'suv',
-    power: 130,
-    doors: 5,
-    color: 'Vert Cèdre',
-    co2: 135,
-    euroNorm: 'Euro 6',
-    location: 'Nantes',
-    description: 'Dacia Duster Prestige quasi neuf, excellent rapport qualité/prix.',
-    equipment: ['Climatisation auto', 'Multimédia 8 pouces', 'Caméra de recul', 'Radar de recul', 'Barres de toit'],
-    status: 'published',
-    images: [],
-  },
-  {
-    id: '8',
-    brand: 'Audi',
-    model: 'A4',
-    version: '35 TDI 163ch S line S tronic',
-    year: 2021,
-    price: 32490,
-    monthlyPrice: 269,
-    mileage: 52000,
-    energy: 'diesel',
-    transmission: 'automatic',
-    category: 'berline',
-    power: 163,
-    doors: 4,
-    color: 'Gris Daytona',
-    co2: 120,
-    euroNorm: 'Euro 6',
-    location: 'Strasbourg',
-    description: 'Audi A4 S line, look sportif, intérieur cuir/alcantara.',
-    equipment: ['Cuir/Alcantara', 'Virtual Cockpit', 'MMI Navigation Plus', 'Sièges Sport', 'LED', 'Régulateur adaptatif', 'Aide au stationnement'],
-    status: 'published',
-    images: [],
-  },
-];
 
 export const popularBrands = [
   'Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Ford',
@@ -224,7 +32,7 @@ export const popularBrands = [
 ];
 
 export const energyTypes = [
-  'diesel', 'essence', 'électrique', 'hybride', 'hybride_rechargeable', 'gpl', 'bioéthanol',
+  'Diesel', 'Essence', 'Électrique', 'Hybride', 'Hybride rechargeable', 'GPL', 'Bioéthanol',
 ];
 
 export const categoryTypes = [
