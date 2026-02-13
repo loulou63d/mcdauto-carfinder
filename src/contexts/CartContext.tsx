@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { Vehicle } from '@/data/mockVehicles';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CartItem {
   vehicle: Vehicle;
@@ -32,6 +33,39 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
   }, [items]);
+
+  // Auto-remove vehicles from cart when their order is completed by admin
+  const syncWithCompletedOrders = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data: completedOrders } = await supabase
+      .from('orders')
+      .select('vehicle_ids')
+      .eq('user_id', session.user.id)
+      .eq('status', 'completed');
+
+    if (completedOrders && completedOrders.length > 0) {
+      const completedVehicleIds = new Set(
+        completedOrders.flatMap((o) => o.vehicle_ids || [])
+      );
+      setItems((prev) => {
+        const filtered = prev.filter((i) => !completedVehicleIds.has(i.vehicle.id));
+        return filtered.length !== prev.length ? filtered : prev;
+      });
+    }
+  }, []);
+
+  // Check on mount and when auth changes
+  useEffect(() => {
+    syncWithCompletedOrders();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      syncWithCompletedOrders();
+    });
+
+    return () => subscription.unsubscribe();
+  }, [syncWithCompletedOrders]);
 
   const addToCart = (vehicle: Vehicle) => {
     setItems((prev) => {
