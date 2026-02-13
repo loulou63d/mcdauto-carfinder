@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2 } from 'lucide-react';
@@ -12,6 +13,7 @@ const VehicleDetail = () => {
   const { lang = 'de', id } = useParams();
   const { data: vehicle, isLoading } = useVehicle(id);
   const { data: allVehicles = [] } = useVehicles({ limit: 5 });
+  const [selectedImage, setSelectedImage] = useState(0);
 
   if (isLoading) {
     return (
@@ -48,7 +50,7 @@ const VehicleDetail = () => {
     ...(vehicle.euro_norm ? [{ icon: Shield, label: t('vehicle.euroNorm'), value: vehicle.euro_norm }] : []),
   ];
 
-  const firstImage = vehicle.images?.[0];
+  const currentImage = vehicle?.images?.[selectedImage] || vehicle?.images?.[0];
 
   return (
     <div className="bg-muted min-h-screen">
@@ -65,9 +67,9 @@ const VehicleDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
           {/* LEFT - Gallery */}
           <div>
-            <div className="bg-card rounded-lg border overflow-hidden aspect-[16/10] flex items-center justify-center relative">
-              {firstImage ? (
-                <img src={firstImage} alt={`${vehicle.brand} ${vehicle.model}`} className="w-full h-full object-cover" />
+            <div className="bg-card rounded-lg border overflow-hidden aspect-[16/10] flex items-center justify-center relative cursor-pointer">
+              {currentImage ? (
+                <img src={currentImage} alt={`${vehicle.brand} ${vehicle.model}`} className="w-full h-full object-cover" />
               ) : (
                 <>
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
@@ -80,7 +82,15 @@ const VehicleDetail = () => {
             {vehicle.images && vehicle.images.length > 1 && (
               <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
                 {vehicle.images.map((img, i) => (
-                  <img key={i} src={img} alt="" className="w-20 h-16 rounded object-cover border flex-shrink-0" />
+                  <img
+                    key={i}
+                    src={img}
+                    alt=""
+                    className={`w-20 h-16 rounded object-cover border-2 flex-shrink-0 cursor-pointer transition-all ${
+                      i === selectedImage ? 'border-primary ring-2 ring-primary/30' : 'border-transparent opacity-70 hover:opacity-100'
+                    }`}
+                    onClick={() => setSelectedImage(i)}
+                  />
                 ))}
               </div>
             )}
