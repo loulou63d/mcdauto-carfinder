@@ -58,29 +58,29 @@ const Footer = () => {
     {
       title: t('footer.sectionSell', 'Estimer et vendre'),
       links: [
-        { label: t('footer.linkEstimate', 'Estimer mon véhicule'), to: `/${lang}/contact` },
-        { label: t('footer.linkSellCar', 'Vendre ma voiture'), to: `/${lang}/contact` },
+        { label: t('footer.linkEstimate', 'Estimer mon véhicule'), to: `/${lang}/evaluation` },
+        { label: t('footer.linkSellCar', 'Vendre ma voiture'), to: `/${lang}/sell` },
       ],
     },
     {
       title: t('footer.sectionMaintain', 'Entretenir et réparer'),
       links: [
-        { label: t('footer.linkMaintenance', 'Entretien'), to: `/${lang}/services` },
-        { label: t('footer.linkRepair', 'Réparation'), to: `/${lang}/services` },
+        { label: t('footer.linkMaintenance', 'Entretien'), to: `/${lang}/services/maintenance` },
+        { label: t('footer.linkRepair', 'Réparation'), to: `/${lang}/repair` },
       ],
     },
     {
       title: t('footer.sectionServices', 'Nos services'),
       links: [
-        { label: t('footer.linkFinancing', 'Financement'), to: `/${lang}/services` },
-        { label: t('footer.linkWarranty', 'Garantie'), to: `/${lang}/services` },
-        { label: t('footer.linkDelivery', 'Livraison'), to: `/${lang}/services` },
+        { label: t('footer.linkFinancing', 'Financement'), to: `/${lang}/services/financing` },
+        { label: t('footer.linkWarranty', 'Garantie'), to: `/${lang}/warranty` },
+        { label: t('footer.linkDelivery', 'Livraison'), to: `/${lang}/delivery` },
       ],
     },
     {
       title: t('footer.sectionHelp', 'Besoin d\'aide'),
       links: [
-        { label: t('footer.linkFaq', 'FAQ'), to: `/${lang}/contact` },
+        { label: t('footer.linkFaq', 'FAQ'), to: `/${lang}/faq` },
         { label: t('footer.contact', 'Contact'), to: `/${lang}/contact` },
       ],
     },
