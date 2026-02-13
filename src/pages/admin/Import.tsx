@@ -11,6 +11,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, Download, Sparkles, Check, AlertTriangle, Link2, FolderSearch } from 'lucide-react';
 
+type VehicleData = {
+  year?: number;
+  mileage?: number;
+  transmission?: string;
+  energy?: string;
+  color?: string;
+  power?: string;
+};
+
 type ScrapedProduct = {
   title: string;
   price: number | null;
@@ -19,6 +28,7 @@ type ScrapedProduct = {
   description: string;
   source_url: string;
   raw_markdown?: string;
+  vehicleData?: VehicleData;
 };
 
 type GeneratedContent = {
@@ -127,9 +137,10 @@ const AdminImport = () => {
         return;
       }
 
-      // Extract year from title if possible (e.g., "2020 BMW X5")
+      // Extract vehicle data from specs or title
+      const vd = item.scraped.vehicleData || {};
       const yearMatch = item.scraped.title.match(/\b(19|20)\d{2}\b/);
-      const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
+      const year = vd.year || (yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear());
 
       const selectedCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
 
@@ -138,9 +149,11 @@ const AdminImport = () => {
         model: item.scraped.title,
         year,
         price: item.scraped.price || 0,
-        mileage: 0,
-        transmission: 'Manuelle',
-        energy: 'Essence',
+        mileage: vd.mileage || 0,
+        transmission: vd.transmission || 'Manuelle',
+        energy: vd.energy || 'Essence',
+        color: vd.color || null,
+        power: vd.power || null,
         description: item.generated?.description || item.scraped.description,
         description_translations: item.generated?.description_translations || {},
         equipment_translations: item.generated?.title_translations || {},
@@ -284,9 +297,10 @@ const AdminImport = () => {
            continue;
          }
 
-         // Extract year from title if possible
+         // Extract vehicle data from specs or title
+         const batchVd = selected[i].scraped.vehicleData || {};
          const yearMatch = selected[i].scraped.title.match(/\b(19|20)\d{2}\b/);
-         const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
+         const year = batchVd.year || (yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear());
 
          // Import vehicle
          const batchCatName = categories?.find((c) => c.id === selectedCategory)?.slug || null;
@@ -296,9 +310,11 @@ const AdminImport = () => {
            model: selected[i].scraped.title,
            year,
            price: selected[i].scraped.price || 0,
-           mileage: 0,
-           transmission: 'Manuelle',
-           energy: 'Essence',
+           mileage: batchVd.mileage || 0,
+           transmission: batchVd.transmission || 'Manuelle',
+           energy: batchVd.energy || 'Essence',
+           color: batchVd.color || null,
+           power: batchVd.power || null,
            description: updated[idx].generated?.description || selected[i].scraped.description,
            description_translations: updated[idx].generated?.description_translations || {},
            equipment_translations: updated[idx].generated?.title_translations || {},

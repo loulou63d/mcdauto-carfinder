@@ -31,7 +31,6 @@ const BRANDS = [
 
 function detectBrand(title: string): string | null {
   const titleLower = title.toLowerCase();
-  // Sort by length desc to match "Land Rover" before "Rover"
   const sorted = [...BRANDS].sort((a, b) => b.length - a.length);
   for (const brand of sorted) {
     if (titleLower.includes(brand.toLowerCase())) {
@@ -42,7 +41,6 @@ function detectBrand(title: string): string | null {
 }
 
 function parsePrice(text: string): number | null {
-  // European format: 18 699 € or 18.699 € or 18 699€
   const patterns = [
     /(\d[\d\s.]*)\s*€/g,
     /prix[^€]*?(\d[\d\s.]*)\s*€/gi,
@@ -57,7 +55,6 @@ function parsePrice(text: string): number | null {
       const raw = match[1].replace(/[\s.]/g, "");
       const decimal = match[2] ? `.${match[2]}` : "";
       const val = parseFloat(raw + decimal);
-      // Prefer prices in typical vehicle range (500 - 500000)
       if (val >= 500 && val <= 500000) {
         if (!bestPrice || val > bestPrice) {
           bestPrice = val;
@@ -69,58 +66,130 @@ function parsePrice(text: string): number | null {
   return bestPrice;
 }
 
-function extractImages(markdown: string, html: string): string[] {
+function extractImages(markdown: string, html: string, url: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
-
-  // Autosphere: extract media.autosphere.fr URLs
-  const mediaPattern = /https?:\/\/media\.autosphere\.fr\/[^\s)"'\]&]+/g;
+  const isCpmAuto = url.includes("cpmauto.fr");
   const allText = markdown + " " + html;
-  let match;
-  while ((match = mediaPattern.exec(allText)) !== null) {
-    let url = match[0].replace(/&amp;/g, "&");
-    // Clean up URL-encoded versions
-    if (url.includes("%2F")) {
-      try { url = decodeURIComponent(url); } catch {}
-    }
-    if (!seen.has(url) && !url.includes("-thumb")) {
-      seen.add(url);
-      images.push(url);
-    }
-  }
 
-  // Generic: WooCommerce and standard gallery images
-  const htmlPatterns = [
-    /data-large_image="([^"]+)"/g,
-    /data-src="([^"]+(?:wp-content\/uploads)[^"]+)"/g,
-    /<img[^>]+src="([^"]+(?:wp-content\/uploads)[^"]+\.(jpg|jpeg|png|webp)[^"]*)"/gi,
-  ];
+  if (isCpmAuto) {
+    // CPM Auto: extract big images from cpmauto.fr/public/img/big/
+    const cpmPattern = /https?:\/\/www\.cpmauto\.fr\/public\/img\/big\/[^\s)"'\]&]+/g;
+    let match;
+    while ((match = cpmPattern.exec(allText)) !== null) {
+      let imgUrl = match[0].replace(/&amp;/g, "&");
+      if (!seen.has(imgUrl)) {
+        seen.add(imgUrl);
+        images.push(imgUrl);
+      }
+    }
+    // If no big images, try medium
+    if (images.length === 0) {
+      const cpmMediumPattern = /https?:\/\/www\.cpmauto\.fr\/public\/img\/medium\/[^\s)"'\]&]+/g;
+      while ((match = cpmMediumPattern.exec(allText)) !== null) {
+        let imgUrl = match[0].replace(/&amp;/g, "&");
+        if (!seen.has(imgUrl)) {
+          seen.add(imgUrl);
+          images.push(imgUrl);
+        }
+      }
+    }
+  } else {
+    // Autosphere: extract media.autosphere.fr URLs
+    const mediaPattern = /https?:\/\/media\.autosphere\.fr\/[^\s)"'\]&]+/g;
+    let match;
+    while ((match = mediaPattern.exec(allText)) !== null) {
+      let imgUrl = match[0].replace(/&amp;/g, "&");
+      if (imgUrl.includes("%2F")) {
+        try { imgUrl = decodeURIComponent(imgUrl); } catch {}
+      }
+      if (!seen.has(imgUrl) && !imgUrl.includes("-thumb")) {
+        seen.add(imgUrl);
+        images.push(imgUrl);
+      }
+    }
 
-  for (const pattern of htmlPatterns) {
-    while ((match = pattern.exec(html)) !== null) {
-      const url = match[1];
-      if (!seen.has(url) && !url.includes("placeholder") && !url.includes("icon") && !url.includes("-150x") && !url.includes("-100x")) {
-        seen.add(url);
-        images.push(url);
+    // Generic: WooCommerce and standard gallery images
+    const htmlPatterns = [
+      /data-large_image="([^"]+)"/g,
+      /data-src="([^"]+(?:wp-content\/uploads)[^"]+)"/g,
+      /<img[^>]+src="([^"]+(?:wp-content\/uploads)[^"]+\.(jpg|jpeg|png|webp)[^"]*)"/gi,
+    ];
+
+    for (const pattern of htmlPatterns) {
+      while ((match = pattern.exec(html)) !== null) {
+        const imgUrl = match[1];
+        if (!seen.has(imgUrl) && !imgUrl.includes("placeholder") && !imgUrl.includes("icon") && !imgUrl.includes("-150x") && !imgUrl.includes("-100x")) {
+          seen.add(imgUrl);
+          images.push(imgUrl);
+        }
       }
     }
   }
 
-  // From markdown images
-  const mdPattern = /!\[.*?\]\((https?:\/\/[^\s)]+\.(jpg|jpeg|png|webp)[^\s)]*)\)/gi;
-  while ((match = mdPattern.exec(markdown)) !== null) {
-    const url = match[1];
-    if (!seen.has(url) && !url.includes("logo") && !url.includes("icon") && !url.includes("404")) {
-      seen.add(url);
-      images.push(url);
+  // From markdown images (generic fallback)
+  if (images.length === 0) {
+    const mdPattern = /!\[.*?\]\((https?:\/\/[^\s)]+\.(jpg|jpeg|png|webp)[^\s)]*)\)/gi;
+    let match;
+    while ((match = mdPattern.exec(markdown)) !== null) {
+      const imgUrl = match[1];
+      if (!seen.has(imgUrl) && !imgUrl.includes("logo") && !imgUrl.includes("icon") && !imgUrl.includes("404") && !imgUrl.includes("fav.png")) {
+        seen.add(imgUrl);
+        images.push(imgUrl);
+      }
     }
   }
 
   return images.slice(0, 20);
 }
 
+function extractTitleCpmAuto(markdown: string): string {
+  // CPM Auto: title is in H1 or H2 starting with "Voiture d'occasion"
+  const h1Match = markdown.match(/^#\s+(.+)$/m);
+  if (h1Match) {
+    const title = h1Match[1].trim();
+    // Clean up: remove "Voiture d'occasion " prefix if present
+    return title.replace(/^Voiture d'occasion\s+/i, "").trim();
+  }
+  return "";
+}
+
+function extractSpecsCpmAuto(markdown: string): Record<string, string> {
+  const specs: Record<string, string> = {};
+  
+  // CPM Auto uses a markdown table format: | Key | Value |
+  const tableRowPattern = /\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/g;
+  let match;
+  while ((match = tableRowPattern.exec(markdown)) !== null) {
+    const key = match[1].trim();
+    const val = match[2].trim();
+    if (key && val && key !== "---" && val !== "---" && key.length > 1 && key.length < 40) {
+      specs[key] = val;
+    }
+  }
+
+  // Also try "Key : Value" format
+  const specPattern = /[-•]\s*([^:]+?)\s*:\s*(.+)/g;
+  while ((match = specPattern.exec(markdown)) !== null) {
+    const key = match[1].trim();
+    const val = match[2].trim();
+    if (key.length > 2 && key.length < 40 && val.length > 0 && val.length < 100) {
+      specs[key] = val;
+    }
+  }
+
+  return specs;
+}
+
 function extractTitle(markdown: string, url: string): string {
-  // Autosphere: extract from breadcrumb (e.g., "3. [Ford]... 4. [Puma]... 5. 1.0 Flexifuel...")
+  const isCpmAuto = url.includes("cpmauto.fr");
+  
+  if (isCpmAuto) {
+    const title = extractTitleCpmAuto(markdown);
+    if (title) return title;
+  }
+
+  // Autosphere: extract from breadcrumb
   const breadcrumbMatch = markdown.match(/\d+\.\s*\[([^\]]+)\].*?\d+\.\s*\[([^\]]+)\].*?\d+\.\s*(.+?)(?:\n|$)/);
   if (breadcrumbMatch) {
     const brand = breadcrumbMatch[1].trim();
@@ -139,18 +208,20 @@ function extractTitle(markdown: string, url: string): string {
   const h1Match = markdown.match(/^#\s+(.+)$/m);
   if (h1Match) return h1Match[1].trim();
 
-  // Try H2 with brand name
+  // Try H2
   const h2Match = markdown.match(/^##\s+(.+)$/m);
   if (h2Match) return h2Match[1].trim();
 
-  // First meaningful line
   const lines = markdown.split("\n").filter((l) => l.trim() && !l.startsWith("[") && !l.startsWith("!"));
   return lines[0]?.replace(/^#+\s*/, "").trim() || "Sans titre";
 }
 
-function extractSpecs(markdown: string): Record<string, string> {
+function extractSpecs(markdown: string, url: string): Record<string, string> {
+  if (url.includes("cpmauto.fr")) {
+    return extractSpecsCpmAuto(markdown);
+  }
+
   const specs: Record<string, string> = {};
-  // Pattern: "- Key :Value" or "- Key:Value"
   const specPattern = /[-•]\s*([^:]+?)\s*:\s*(.+)/g;
   let match;
   while ((match = specPattern.exec(markdown)) !== null) {
@@ -164,7 +235,6 @@ function extractSpecs(markdown: string): Record<string, string> {
 }
 
 function extractDescription(markdown: string): string {
-  // Try "Présentation" or "À propos" section
   const presentPatterns = [
     /(?:Présentation|À propos|About|Beschreibung|Description)\s*\n+(?:###?\s*.+\n+)?([\s\S]*?)(?=\n##\s|\n\*\*\*|$)/i,
     /(?:Produktbeschreibung|tab-description|product-description)\s*\n([\s\S]*?)(?=\n#{1,3}\s|$)/i,
@@ -177,13 +247,17 @@ function extractDescription(markdown: string): string {
     }
   }
 
-  // Try characteristics section
+  // CPM Auto: description is after H1 title
+  const cpmMatch = markdown.match(/^#\s+.+\n\n([\s\S]*?)(?=\n##\s|Options & équipement|$)/m);
+  if (cpmMatch && cpmMatch[1].trim().length > 50) {
+    return cpmMatch[1].trim().slice(0, 2000);
+  }
+
   const charMatch = markdown.match(/Caractéristiques[\s\S]*?(?=\n##\s|$)/i);
   if (charMatch && charMatch[0].length > 50) {
     return charMatch[0].trim().slice(0, 2000);
   }
 
-  // Fallback: text after title, excluding navigation
   const lines = markdown.split("\n");
   const startIdx = lines.findIndex((l) => l.startsWith("##") && !l.includes("Acheter") && !l.includes("Nos services"));
   if (startIdx > -1) {
@@ -194,6 +268,67 @@ function extractDescription(markdown: string): string {
   }
 
   return "";
+}
+
+function extractVehicleDataFromSpecs(specs: Record<string, string>): {
+  year?: number;
+  mileage?: number;
+  transmission?: string;
+  energy?: string;
+  color?: string;
+  power?: string;
+} {
+  const result: any = {};
+
+  // Year
+  const yearVal = specs["Année"] || specs["Annee"] || specs["Year"];
+  if (yearVal) {
+    const y = parseInt(yearVal);
+    if (y >= 1990 && y <= 2030) result.year = y;
+  }
+
+  // Mileage
+  const mileageVal = specs["Kilométrage"] || specs["Kilometrage"] || specs["Mileage"];
+  if (mileageVal) {
+    const m = parseInt(mileageVal.replace(/[\s.km]/gi, ""));
+    if (m > 0) result.mileage = m;
+  }
+
+  // Transmission
+  const transVal = specs["Boite de vitesse"] || specs["Boîte de vitesse"] || specs["Transmission"];
+  if (transVal) {
+    const lower = transVal.toLowerCase();
+    if (lower.includes("auto")) result.transmission = "Automatique";
+    else if (lower.includes("manu")) result.transmission = "Manuelle";
+    else result.transmission = transVal;
+  }
+
+  // Energy / Fuel
+  const energyVal = specs["Énergie"] || specs["Energie"] || specs["Carburant"] || specs["Moteur"];
+  if (energyVal) {
+    const lower = energyVal.toLowerCase();
+    if (lower.includes("diesel") || lower.includes("hdi") || lower.includes("dci") || lower.includes("tdi") || lower.includes("blue hdi") || lower.includes("bluehdi")) {
+      result.energy = "Diesel";
+    } else if (lower.includes("electri") || lower.includes("ev")) {
+      result.energy = "Électrique";
+    } else if (lower.includes("hybride")) {
+      result.energy = lower.includes("rechargeable") ? "Hybride rechargeable" : "Hybride";
+    } else if (lower.includes("essence") || lower.includes("tsi") || lower.includes("tce") || lower.includes("puretech") || lower.includes("flexifuel")) {
+      result.energy = "Essence";
+    } else if (lower.includes("gpl")) {
+      result.energy = "GPL";
+    }
+  }
+
+  // Color
+  const colorVal = specs["Couleur"] || specs["Color"];
+  if (colorVal) result.color = colorVal;
+
+  // Power
+  const powerVal = specs["Puissance"] || specs["Puissance fiscale"];
+  if (powerVal) result.power = powerVal;
+
+  return result;
 }
 
 serve(async (req) => {
@@ -256,10 +391,11 @@ serve(async (req) => {
 
     const title = extractTitle(markdown, formattedUrl);
     const price = parsePrice(fullText);
-    const images = extractImages(markdown, html);
+    const images = extractImages(markdown, html, formattedUrl);
     const brand = detectBrand(title);
     const description = extractDescription(markdown);
-    const specs = extractSpecs(markdown);
+    const specs = extractSpecs(markdown, formattedUrl);
+    const vehicleData = extractVehicleDataFromSpecs(specs);
 
     const product = {
       title,
@@ -268,11 +404,12 @@ serve(async (req) => {
       brand,
       description,
       specs,
+      vehicleData,
       source_url: formattedUrl,
       raw_markdown: markdown.slice(0, 5000),
     };
 
-    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand);
+    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand, "| specs:", JSON.stringify(vehicleData));
 
     return new Response(
       JSON.stringify({ success: true, data: product }),

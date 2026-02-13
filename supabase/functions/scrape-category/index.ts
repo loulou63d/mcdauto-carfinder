@@ -35,68 +35,100 @@ serve(async (req) => {
     }
 
     const isAutosphere = formattedUrl.includes("autosphere.fr");
+    const isCpmAuto = formattedUrl.includes("cpmauto.fr");
 
-    console.log("Scanning category:", formattedUrl, "limit:", limit);
+    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : "generic");
 
-    // Strategy 1: scrape the listing page to extract product links from markdown
-    const scrapeResponse = await fetch("https://api.firecrawl.dev/v1/scrape", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        url: formattedUrl,
-        formats: ["markdown", "links"],
-        onlyMainContent: false,
-        waitFor: 3000,
-      }),
-    });
+    // For CPM Auto, we may need to scan multiple pages (pagination: w1, w2, w3...)
+    const urlsToScrape: string[] = [formattedUrl];
 
-    const scrapeData = await scrapeResponse.json();
-    let productUrls: string[] = [];
-
-    if (scrapeResponse.ok) {
-      const links = scrapeData.data?.links || scrapeData.links || [];
-      const markdown = scrapeData.data?.markdown || scrapeData.markdown || "";
-
-      // Extract links from markdown too
-      const mdLinkPattern = /\[.*?\]\((https?:\/\/[^\s)]+)\)/g;
-      let match;
-      while ((match = mdLinkPattern.exec(markdown)) !== null) {
-        if (!links.includes(match[1])) {
-          links.push(match[1]);
+    if (isCpmAuto) {
+      // Detect pagination pattern like /nos-berlines-w1 -> w2, w3, etc.
+      const paginationMatch = formattedUrl.match(/(.+-w)(\d+)$/);
+      if (paginationMatch) {
+        const base = paginationMatch[1];
+        const startPage = parseInt(paginationMatch[2]);
+        // Scan up to 10 extra pages to find enough vehicles
+        const maxPages = Math.min(Math.ceil(limit / 10) + 1, 20);
+        for (let i = startPage + 1; i <= startPage + maxPages; i++) {
+          urlsToScrape.push(`${base}${i}`);
         }
-      }
-
-      // Filter for product URLs based on site
-      if (isAutosphere) {
-        productUrls = links.filter((link: string) =>
-          link.includes("/fiche-mixte/") || link.includes("/occasion/id-")
-        );
-      } else {
-        productUrls = links.filter((link: string) => {
-          const lower = link.toLowerCase();
-          return (
-            !lower.includes("/cart") &&
-            !lower.includes("/checkout") &&
-            !lower.includes("/my-account") &&
-            !lower.includes("/wp-admin") &&
-            !lower.includes("/wp-login") &&
-            !lower.includes("/tag/") &&
-            !lower.includes("page/") &&
-            !lower.includes("/category/") &&
-            !lower.includes("/recherche") &&
-            !lower.includes("#") &&
-            link !== formattedUrl &&
-            link !== formattedUrl + "/"
-          );
-        });
       }
     }
 
-    // Strategy 2: also try Firecrawl Map API for additional URLs
-    if (productUrls.length < limit) {
+    let productUrls: string[] = [];
+
+    for (const pageUrl of urlsToScrape) {
+      if (productUrls.length >= limit) break;
+
+      console.log("Scraping page:", pageUrl);
+
+      const scrapeResponse = await fetch("https://api.firecrawl.dev/v1/scrape", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: pageUrl,
+          formats: ["markdown", "links"],
+          onlyMainContent: false,
+          waitFor: 3000,
+        }),
+      });
+
+      const scrapeData = await scrapeResponse.json();
+
+      if (scrapeResponse.ok) {
+        const links = scrapeData.data?.links || scrapeData.links || [];
+        const markdown = scrapeData.data?.markdown || scrapeData.markdown || "";
+
+        // Extract links from markdown too
+        const mdLinkPattern = /\[.*?\]\((https?:\/\/[^\s)]+)\)/g;
+        let match;
+        while ((match = mdLinkPattern.exec(markdown)) !== null) {
+          if (!links.includes(match[1])) {
+            links.push(match[1]);
+          }
+        }
+
+        // Filter for product URLs based on site
+        let pageProductUrls: string[] = [];
+
+        if (isAutosphere) {
+          pageProductUrls = links.filter((link: string) =>
+            link.includes("/fiche-mixte/") || link.includes("/occasion/id-")
+          );
+        } else if (isCpmAuto) {
+          pageProductUrls = links.filter((link: string) =>
+            link.includes("/details-") && !productUrls.includes(link)
+          );
+        } else {
+          pageProductUrls = links.filter((link: string) => {
+            const lower = link.toLowerCase();
+            return (
+              !lower.includes("/cart") &&
+              !lower.includes("/checkout") &&
+              !lower.includes("/my-account") &&
+              !lower.includes("/wp-admin") &&
+              !lower.includes("/wp-login") &&
+              !lower.includes("/tag/") &&
+              !lower.includes("page/") &&
+              !lower.includes("/category/") &&
+              !lower.includes("/recherche") &&
+              !lower.includes("#") &&
+              link !== pageUrl &&
+              link !== pageUrl + "/"
+            );
+          });
+        }
+
+        productUrls = [...productUrls, ...pageProductUrls];
+      }
+    }
+
+    // Strategy 2: also try Firecrawl Map API for additional URLs (non-CPM sites)
+    if (!isCpmAuto && productUrls.length < limit) {
       try {
         const mapResponse = await fetch("https://api.firecrawl.dev/v1/map", {
           method: "POST",
