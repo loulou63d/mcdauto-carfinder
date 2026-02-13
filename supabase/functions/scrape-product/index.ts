@@ -75,9 +75,9 @@ async function estimatePrice(
   category: string | null
 ): Promise<number | null> {
   try {
-    const baseUrl = Deno.env.get("VITE_SUPABASE_URL");
+    const baseUrl = Deno.env.get("SUPABASE_URL");
     if (!baseUrl) {
-      console.warn("VITE_SUPABASE_URL not configured");
+      console.warn("SUPABASE_URL not configured");
       return null;
     }
 
@@ -474,6 +474,37 @@ function detectCategory(title: string, description: string): string | null {
   return null;
 }
 
+function detectTransmission(title: string, brand: string | null, model: string): string | null {
+  const text = (title + " " + (brand || "") + " " + model).toLowerCase();
+  
+  // Keywords that strongly indicate automatic transmission
+  const autoKeywords = [
+    "4matic", "4motion", "xdrive", "quattro", "awd", "4wd",
+    "automatique", "automatic", "auto ", "bva", "dsg", "dct", "cvt",
+    "tiptronic", "s tronic", "steptronic", "speedshift", "multitronic",
+    "powershift", "edc", "eat", "at ", "a/t",
+    // Luxury/sport models almost always automatic
+    "amg", "g63", "g500", "escalade", "platinum", "svr", "hse",
+    "cayenne", "macan", "panamera", "tesla",
+    "range rover", "land rover", "velar",
+    "id.4", "id.3", "crozz",
+    "grand cherokee", "wrangler",
+  ];
+  
+  // Keywords that indicate manual
+  const manualKeywords = ["manuelle", "manual", "bvm"];
+  
+  for (const kw of manualKeywords) {
+    if (text.includes(kw)) return "Manuelle";
+  }
+  
+  for (const kw of autoKeywords) {
+    if (text.includes(kw)) return "Automatique";
+  }
+  
+  return null; // unknown - will be determined later
+}
+
 function extractVehicleDataFromSpecs(specs: Record<string, string>): {
   year?: number;
   mileage?: number;
@@ -499,10 +530,10 @@ function extractVehicleDataFromSpecs(specs: Record<string, string>): {
   }
 
   // Transmission
-  const transVal = specs["Boite de vitesse"] || specs["Boîte de vitesse"] || specs["Transmission"];
+  const transVal = specs["Boite de vitesse"] || specs["Boîte de vitesse"] || specs["Transmission"] || specs["Gearbox"];
   if (transVal) {
     const lower = transVal.toLowerCase();
-    if (lower.includes("auto")) result.transmission = "Automatique";
+    if (lower.includes("auto") || lower.includes("dsg") || lower.includes("dct") || lower.includes("cvt") || lower.includes("tiptronic") || lower.includes("s tronic") || lower.includes("steptronic") || lower.includes("speedshift")) result.transmission = "Automatique";
     else if (lower.includes("manu")) result.transmission = "Manuelle";
     else result.transmission = transVal;
   }
@@ -636,6 +667,24 @@ serve(async (req) => {
       category = detectCategory(title, description);
     }
 
+    // Smart transmission detection if not found in specs
+    if (!vehicleData.transmission) {
+      const detectedTrans = detectTransmission(title, brand, title);
+      if (detectedTrans) vehicleData.transmission = detectedTrans;
+    }
+
+    // Auto-estimate price if missing
+    if (!price && brand) {
+      const year = vehicleData.year || new Date().getFullYear();
+      const mileage = vehicleData.mileage || 50000;
+      const energy = vehicleData.energy || "Essence";
+      const estimated = await estimatePrice(brand, title.replace(brand, "").trim().split(/[\s,]/)[0] || title, year, mileage, energy, category);
+      if (estimated) {
+        price = estimated;
+        console.log("Price estimated by AI:", estimated);
+      }
+    }
+
     const product = {
       title,
       price,
@@ -650,7 +699,7 @@ serve(async (req) => {
       raw_markdown: markdown.slice(0, 5000),
     };
 
-    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand, "| category:", category, "| specs:", JSON.stringify(vehicleData));
+    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand, "| category:", category, "| transmission:", vehicleData.transmission, "| specs:", JSON.stringify(vehicleData));
 
     return new Response(
       JSON.stringify({ success: true, data: product }),
