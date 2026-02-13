@@ -572,5 +572,38 @@
   "cgv": {
     "title": "Allgemeine Geschäftsbedingungen",
     "intro": "Es gelten die folgenden allgemeinen Geschäftsbedingungen."
+  },
+  "energyValues": {
+    "Essence": "Benzin",
+    "Diesel": "Diesel",
+    "Électrique": "Elektrisch",
+    "Hybride": "Hybrid",
+    "Hybride rechargeable": "Plug-in-Hybrid",
+    "GPL": "Autogas",
+    "Bioéthanol": "Bioethanol"
+  },
+  "transmissionValues": {
+    "Automatique": "Automatik",
+    "Manuelle": "Schaltgetriebe",
+    "Manuel": "Schaltgetriebe"
+  },
+  "colorValues": {
+    "Noir": "Schwarz",
+    "Blanc": "Weiß",
+    "Gris": "Grau",
+    "Grey": "Grau",
+    "Black": "Schwarz",
+    "White": "Weiß",
+    "Bleu": "Blau",
+    "Blue": "Blau",
+    "Rouge": "Rot",
+    "Red": "Rot",
+    "Vert": "Grün",
+    "Argent": "Silber",
+    "Silver": "Silber",
+    "Beige": "Beige",
+    "Marron": "Braun",
+    "Orange": "Orange",
+    "Jaune": "Gelb"
   }
 }

@@ -31,14 +31,19 @@ const VehicleDetail = () => {
 
   const similar = allVehicles.filter(v => v.id !== vehicle.id).slice(0, 4);
 
+  const translateValue = (key: string, value: string) => {
+    const translated = t(`${key}.${value}`, { defaultValue: '' });
+    return translated || value;
+  };
+
   const specs = [
     { icon: Calendar, label: t('vehicle.year'), value: vehicle.year },
     { icon: Gauge, label: t('vehicle.mileage'), value: `${vehicle.mileage.toLocaleString('de-DE')} km` },
-    { icon: Fuel, label: t('vehicle.energy'), value: vehicle.energy },
-    { icon: Settings2, label: t('vehicle.transmission'), value: vehicle.transmission },
+    { icon: Fuel, label: t('vehicle.energy'), value: translateValue('energyValues', vehicle.energy) },
+    { icon: Settings2, label: t('vehicle.transmission'), value: translateValue('transmissionValues', vehicle.transmission) },
     ...(vehicle.power ? [{ icon: Zap, label: t('vehicle.power'), value: vehicle.power }] : []),
     ...(vehicle.doors ? [{ icon: DoorOpen, label: t('vehicle.doors'), value: vehicle.doors }] : []),
-    ...(vehicle.color ? [{ icon: Palette, label: t('vehicle.color'), value: vehicle.color }] : []),
+    ...(vehicle.color ? [{ icon: Palette, label: t('vehicle.color'), value: translateValue('colorValues', vehicle.color) }] : []),
     ...(vehicle.co2 ? [{ icon: Leaf, label: t('vehicle.co2'), value: vehicle.co2 }] : []),
     ...(vehicle.euro_norm ? [{ icon: Shield, label: t('vehicle.euroNorm'), value: vehicle.euro_norm }] : []),
     ...(vehicle.location ? [{ icon: MapPin, label: t('vehicle.location'), value: vehicle.location }] : []),
