@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
-import { Package, Clock, CheckCircle, LogOut, User, ChevronRight, ExternalLink } from 'lucide-react';
+import { Package, Clock, CheckCircle, LogOut, User, ChevronRight, ExternalLink, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -30,9 +31,34 @@ const Account = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [user, setUser] = useState<SupaUser | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+
+  const downloadInvoice = async (orderId: string) => {
+    setDownloadingInvoice(orderId);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-invoice', {
+        body: { orderId, action: 'get_html' },
+      });
+      if (error) throw error;
+      
+      const blob = new Blob([data.html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `facture-MCD-${orderId.substring(0, 8).toUpperCase()}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: 'Facture téléchargée' });
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setDownloadingInvoice(null);
+    }
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -153,6 +179,24 @@ const Account = () => {
                         <a href={order.receipt_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                           <ExternalLink className="w-3 h-3" /> {t('account.viewReceipt', { defaultValue: 'Voir le reçu' })}
                         </a>
+                      </div>
+                    )}
+
+                    {order.status === 'completed' && (
+                      <div className="mt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => downloadInvoice(order.id)}
+                          disabled={downloadingInvoice === order.id}
+                        >
+                          {downloadingInvoice === order.id ? (
+                            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          ) : (
+                            <FileText className="w-3 h-3 mr-1" />
+                          )}
+                          {t('account.downloadInvoice', { defaultValue: 'Télécharger la facture' })}
+                        </Button>
                       </div>
                     )}
                   </CardContent>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock, Mail, Phone, Eye, CheckCircle, Trash2, ExternalLink } from 'lucide-react';
+import { Clock, Mail, Phone, Eye, CheckCircle, Trash2, ExternalLink, FileText, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,7 @@ const statusLabels: Record<string, string> = {
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
+  const [sendingInvoice, setSendingInvoice] = useState(false);
   const { toast } = useToast();
 
   const fetchOrders = async () => {
@@ -58,6 +59,27 @@ const Orders = () => {
     fetchOrders();
     if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
     toast({ title: `Commande ${statusLabels[status]?.toLowerCase()}` });
+
+    // Auto-send invoice when completing order
+    if (status === 'completed') {
+      sendInvoiceEmail(id);
+    }
+  };
+
+  const sendInvoiceEmail = async (orderId: string) => {
+    setSendingInvoice(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-invoice', {
+        body: { orderId, action: 'send_email' },
+      });
+      if (error) throw error;
+      toast({ title: 'Facture envoyée', description: 'Le client a reçu sa facture par email.' });
+    } catch (err: any) {
+      console.error('Invoice send error:', err);
+      toast({ title: 'Erreur envoi facture', description: err.message, variant: 'destructive' });
+    } finally {
+      setSendingInvoice(false);
+    }
   };
 
   const deleteOrder = async (id: string) => {
@@ -122,6 +144,12 @@ const Orders = () => {
                   {selected.status === 'confirmed' && (
                     <Button size="sm" variant="outline" onClick={() => updateStatus(selected.id, 'completed')}>
                       <CheckCircle className="w-4 h-4 mr-1" /> Terminer
+                    </Button>
+                  )}
+                  {selected.status === 'completed' && (
+                    <Button size="sm" variant="outline" onClick={() => sendInvoiceEmail(selected.id)} disabled={sendingInvoice}>
+                      {sendingInvoice ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <FileText className="w-4 h-4 mr-1" />}
+                      Renvoyer facture
                     </Button>
                   )}
                   <AlertDialog>
