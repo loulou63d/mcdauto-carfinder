@@ -219,10 +219,10 @@ const Index = () => {
   return (
     <div>
       {/* HERO — autosphere style */}
-      <section className={`relative overflow-hidden ${activeTab === 'buy' ? 'h-[500px] md:h-[540px]' : 'min-h-[600px] md:min-h-[640px]'}`}>
+      <section className={`relative overflow-hidden ${activeTab === 'buy' ? 'h-[500px] md:h-[540px]' : 'min-h-[620px] md:min-h-[660px]'}`}>
         <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover" loading="eager" />
         <div className="absolute inset-0 hero-gradient" />
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
+        <div className={`relative z-10 container mx-auto px-4 h-full flex flex-col items-center text-center ${activeTab === 'buy' ? 'justify-center' : 'justify-start pt-24 md:pt-28'}`}>
           {activeTab === 'buy' && (
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
