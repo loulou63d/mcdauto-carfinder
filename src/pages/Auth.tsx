@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, AlertCircle } from 'lucide-react';
+import { Car, AlertCircle, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resetSent, setResetSent] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -26,6 +28,24 @@ const Auth = () => {
         : error.message);
     } else {
       setTimeout(() => navigate('/admin'), 500);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setError('Veuillez entrer votre email');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth`,
+    });
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setResetSent(true);
     }
   };
 
@@ -47,6 +67,12 @@ const Auth = () => {
               {error}
             </div>
           )}
+          {resetSent && (
+            <div className="flex items-center gap-2 p-3 rounded-md bg-green-100 text-green-800 text-sm">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              Un email de réinitialisation a été envoyé à {email}
+            </div>
+          )}
           <div>
             <label className="text-sm font-medium mb-1 block">Email</label>
             <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
@@ -58,6 +84,14 @@ const Auth = () => {
           <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" disabled={loading}>
             {loading ? 'Connexion...' : 'Se connecter'}
           </Button>
+          <button
+            type="button"
+            onClick={handleResetPassword}
+            className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+            disabled={loading}
+          >
+            Mot de passe oublié ?
+          </button>
         </form>
       </div>
     </div>
