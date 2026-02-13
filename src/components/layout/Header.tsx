@@ -32,7 +32,7 @@ const Header = () => {
   const logoIconColor = isHome ? 'text-white' : 'text-primary';
 
   return (
-    <header className={`${isHome ? 'absolute' : 'sticky'} top-0 left-0 right-0 z-50 ${!isHome ? 'bg-card border-b shadow-sm' : ''}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 ${!isHome ? 'bg-card border-b shadow-sm' : ''}`}>
       {/* Top bar */}
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         {/* Left: back button / hamburger + logo */}
