@@ -1,18 +1,30 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Car } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const Auth = () => {
-  const { t } = useTranslation();
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Will be connected to Cloud auth later
+    setLoading(true);
+    const { error } = await signIn(email, password);
+    setLoading(false);
+
+    if (error) {
+      toast({ title: 'Erreur de connexion', description: error.message, variant: 'destructive' });
+    } else {
+      navigate('/admin');
+    }
   };
 
   return (
@@ -23,37 +35,22 @@ const Auth = () => {
             <Car className="w-8 h-8" />
             MCD AUTO
           </div>
-          <p className="text-muted-foreground text-sm">
-            {isLogin ? t('auth.login') : t('auth.signup')}
-          </p>
+          <p className="text-muted-foreground text-sm">Connexion administrateur</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card rounded-lg border p-6 space-y-4">
           <div>
-            <label className="text-sm font-medium mb-1 block">{t('auth.email')}</label>
+            <label className="text-sm font-medium mb-1 block">Email</label>
             <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">{t('auth.password')}</label>
+            <label className="text-sm font-medium mb-1 block">Mot de passe</label>
             <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
           </div>
-          <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-            {isLogin ? t('auth.loginButton') : t('auth.signupButton')}
+          <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" disabled={loading}>
+            {loading ? 'Connexion...' : 'Se connecter'}
           </Button>
-
-          {isLogin && (
-            <button type="button" className="text-sm text-accent hover:underline w-full text-center">
-              {t('auth.forgotPassword')}
-            </button>
-          )}
         </form>
-
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}{' '}
-          <button onClick={() => setIsLogin(!isLogin)} className="text-accent font-medium hover:underline">
-            {isLogin ? t('auth.signup') : t('auth.login')}
-          </button>
-        </p>
       </div>
     </div>
   );
