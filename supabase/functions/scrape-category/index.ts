@@ -34,10 +34,12 @@ serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
 
-    console.log("Mapping category:", formattedUrl, "limit:", limit);
+    const isAutosphere = formattedUrl.includes("autosphere.fr");
 
-    // Use Firecrawl Map API to discover product URLs
-    const response = await fetch("https://api.firecrawl.dev/v1/map", {
+    console.log("Scanning category:", formattedUrl, "limit:", limit);
+
+    // Strategy 1: scrape the listing page to extract product links from markdown
+    const scrapeResponse = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -45,44 +47,97 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         url: formattedUrl,
-        limit: Math.min(limit, 500),
-        includeSubdomains: false,
+        formats: ["markdown", "links"],
+        onlyMainContent: false,
+        waitFor: 3000,
       }),
     });
 
-    const data = await response.json();
+    const scrapeData = await scrapeResponse.json();
+    let productUrls: string[] = [];
 
-    if (!response.ok) {
-      console.error("Firecrawl map error:", data);
-      return new Response(
-        JSON.stringify({ success: false, error: data.error || `Map failed (${response.status})` }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (scrapeResponse.ok) {
+      const links = scrapeData.data?.links || scrapeData.links || [];
+      const markdown = scrapeData.data?.markdown || scrapeData.markdown || "";
+
+      // Extract links from markdown too
+      const mdLinkPattern = /\[.*?\]\((https?:\/\/[^\s)]+)\)/g;
+      let match;
+      while ((match = mdLinkPattern.exec(markdown)) !== null) {
+        if (!links.includes(match[1])) {
+          links.push(match[1]);
+        }
+      }
+
+      // Filter for product URLs based on site
+      if (isAutosphere) {
+        productUrls = links.filter((link: string) =>
+          link.includes("/fiche-mixte/") || link.includes("/occasion/id-")
+        );
+      } else {
+        productUrls = links.filter((link: string) => {
+          const lower = link.toLowerCase();
+          return (
+            !lower.includes("/cart") &&
+            !lower.includes("/checkout") &&
+            !lower.includes("/my-account") &&
+            !lower.includes("/wp-admin") &&
+            !lower.includes("/wp-login") &&
+            !lower.includes("/tag/") &&
+            !lower.includes("page/") &&
+            !lower.includes("/category/") &&
+            !lower.includes("/recherche") &&
+            !lower.includes("#") &&
+            link !== formattedUrl &&
+            link !== formattedUrl + "/"
+          );
+        });
+      }
     }
 
-    const allLinks = data.links || [];
-    
-    // Filter for likely product URLs (not category pages, not admin, not checkout)
-    const productUrls = allLinks.filter((link: string) => {
-      const lower = link.toLowerCase();
-      return (
-        !lower.includes("/cart") &&
-        !lower.includes("/checkout") &&
-        !lower.includes("/my-account") &&
-        !lower.includes("/wp-admin") &&
-        !lower.includes("/wp-login") &&
-        !lower.includes("/tag/") &&
-        !lower.includes("page/") &&
-        !lower.includes("#") &&
-        link !== formattedUrl &&
-        link !== formattedUrl + "/"
-      );
-    }).slice(0, limit);
+    // Strategy 2: also try Firecrawl Map API for additional URLs
+    if (productUrls.length < limit) {
+      try {
+        const mapResponse = await fetch("https://api.firecrawl.dev/v1/map", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: formattedUrl,
+            limit: Math.min(limit * 2, 500),
+            includeSubdomains: false,
+          }),
+        });
 
-    console.log(`Found ${productUrls.length} potential product URLs out of ${allLinks.length} total`);
+        if (mapResponse.ok) {
+          const mapData = await mapResponse.json();
+          const mapLinks = mapData.links || [];
+          
+          const additionalUrls = mapLinks.filter((link: string) => {
+            if (productUrls.includes(link)) return false;
+            if (isAutosphere) {
+              return link.includes("/fiche-mixte/") || link.includes("/occasion/id-");
+            }
+            const lower = link.toLowerCase();
+            return !lower.includes("/cart") && !lower.includes("/checkout") && !lower.includes("/category/");
+          });
+
+          productUrls = [...productUrls, ...additionalUrls];
+        }
+      } catch (e) {
+        console.warn("Map API fallback failed:", e);
+      }
+    }
+
+    // Deduplicate
+    productUrls = [...new Set(productUrls)].slice(0, limit);
+
+    console.log(`Found ${productUrls.length} product URLs`);
 
     return new Response(
-      JSON.stringify({ success: true, data: { urls: productUrls, total: allLinks.length } }),
+      JSON.stringify({ success: true, data: { urls: productUrls, total: productUrls.length } }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
