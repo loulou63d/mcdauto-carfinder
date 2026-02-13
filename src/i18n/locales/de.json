@@ -60,6 +60,24 @@
   "reviews": {
     "title": "Kundenbewertungen"
   },
+  "promo": {
+    "slide1TopLabel": "Bis zu",
+    "slide1MidText": "AUF DEN NEUPREIS*",
+    "slide1SubText": "auf eine Auswahl aktueller Fahrzeuge",
+    "slide1Cta": "Jetzt zugreifen",
+    "slide2MidText": "/Monat",
+    "slide2SubText": "Begrenzte Stückzahl!",
+    "slide2Cta": "Jetzt zugreifen",
+    "slide3Title": "Kostenlose TÜV-Prüfung auf Lebenszeit bei jedem Fahrzeugkauf*",
+    "slide3Sub": "",
+    "slide3Cta": "Mehr erfahren",
+    "slide4Title": "Zufrieden oder Geld zurück — 30 Tage*",
+    "slide4Cta": "Entdecken",
+    "goodDeals": "TOP-ANGEBOTE",
+    "noDeposit": "OHNE ANZAHLUNG",
+    "legalNote": "*Siehe rechtliche Hinweise",
+    "legalNoteFull": "(1) Siehe rechtliche Hinweise"
+  },
   "search": {
     "title": "Suchergebnisse",
     "filters": "Filter",

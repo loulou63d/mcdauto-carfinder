@@ -60,6 +60,24 @@
   "reviews": {
     "title": "Avis clients"
   },
+  "promo": {
+    "slide1TopLabel": "Jusqu'à",
+    "slide1MidText": "SUR LE PRIX DU NEUF*",
+    "slide1SubText": "sur une sélection de véhicules récents",
+    "slide1Cta": "J'en profite",
+    "slide2MidText": "/mois",
+    "slide2SubText": "Quantité limitée !",
+    "slide2Cta": "J'en profite",
+    "slide3Title": "Contrôle technique offert à vie pour tout achat de véhicule*",
+    "slide3Sub": "",
+    "slide3Cta": "En savoir plus",
+    "slide4Title": "Satisfait ou remboursé 30 jours*",
+    "slide4Cta": "Découvrir",
+    "goodDeals": "LES BONNES AFFAIRES",
+    "noDeposit": "SANS APPORT",
+    "legalNote": "*Voir mentions légales",
+    "legalNoteFull": "(1) Voir les mentions légales"
+  },
   "search": {
     "title": "Résultats de recherche",
     "filters": "Filtres",
