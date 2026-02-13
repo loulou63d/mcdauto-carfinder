@@ -42,6 +42,8 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.4 } }),
 };
 
+const BRAND_SCROLL_SPEED = 30; // px per second
+
 const Index = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
@@ -365,25 +367,34 @@ const Index = () => {
         </div>
       </section>
 
-      {/* POPULAR BRANDS */}
-      <section className="section-padding bg-secondary">
+      {/* POPULAR BRANDS — infinite auto-scroll carousel */}
+      <section className="section-padding bg-secondary overflow-hidden">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-8">{t('brands.title')}</h2>
-           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
-             {popularBrands.slice(0, 16).map((brand) => (
-               <Link
-                 key={brand}
-                 to={`/${lang}/search?brand=${brand}`}
-                 className="flex items-center justify-center p-0 bg-card rounded-xl border card-hover aspect-square overflow-hidden"
-               >
-                 <img 
-                   src={brandImages[brand] || ''} 
-                   alt={brand} 
-                   className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                 />
-               </Link>
-             ))}
-           </div>
+        </div>
+        <div className="relative w-full">
+          {/* Fade edges */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-secondary to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-secondary to-transparent" />
+          <div
+            className="flex gap-4 animate-brand-scroll hover:[animation-play-state:paused]"
+            style={{ width: 'max-content' }}
+          >
+            {/* Duplicate list twice for seamless loop */}
+            {[...popularBrands.slice(0, 16), ...popularBrands.slice(0, 16)].map((brand, i) => (
+              <Link
+                key={`${brand}-${i}`}
+                to={`/${lang}/search?brand=${brand}`}
+                className="shrink-0 w-24 h-24 md:w-28 md:h-28 flex flex-col items-center justify-center bg-card rounded-xl border card-hover overflow-hidden group"
+              >
+                <img
+                  src={brandImages[brand] || ''}
+                  alt={brand}
+                  className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                />
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
