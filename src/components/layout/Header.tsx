@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Car, ChevronDown, Search, User, BookmarkCheck, ArrowLeft } from 'lucide-react';
+import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft } from 'lucide-react';
+import logoMcd from '@/assets/logo-mcd.png';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,11 +46,8 @@ const Header = () => {
           <button className={`p-1 ${textColor} ${textHover} transition-colors`} onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
-          <Link to={`/${lang}`} className="flex items-center gap-2 shrink-0">
-            <div className={`w-9 h-9 rounded-full ${logoBg} flex items-center justify-center`}>
-              <Car className={`w-5 h-5 ${logoIconColor}`} />
-            </div>
-            <span className={`font-heading font-bold text-xl ${textColor} tracking-tight`}>MCD AUTO</span>
+          <Link to={`/${lang}`} className="flex items-center shrink-0">
+            <img src={logoMcd} alt="MCD AUTO" className="h-12 w-auto" />
           </Link>
         </div>
 

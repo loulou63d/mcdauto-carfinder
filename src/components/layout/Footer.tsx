@@ -1,7 +1,8 @@
 import { useState, forwardRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Car, Facebook, Instagram, ChevronDown, Star, Handshake, HeartHandshake, MapPin, SlidersHorizontal } from 'lucide-react';
+import { Facebook, Instagram, ChevronDown, Star, Handshake, HeartHandshake, MapPin, SlidersHorizontal } from 'lucide-react';
+import logoMcd from '@/assets/logo-mcd.png';
 
 interface FooterSection {
   title: string;
@@ -130,9 +131,8 @@ const Footer = () => {
       <section className="bg-card border-t">
         <div className="container mx-auto px-4 py-8">
           {/* Logo */}
-          <div className="flex items-center gap-2 font-heading font-bold text-lg mb-4">
-            <Car className="w-6 h-6 text-primary" />
-            <span>MCD AUTO</span>
+          <div className="flex items-center mb-4">
+            <img src={logoMcd} alt="MCD AUTO" className="h-12 w-auto" />
           </div>
 
           {/* Accordion sections */}
