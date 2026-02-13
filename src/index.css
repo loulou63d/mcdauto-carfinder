@@ -108,3 +108,16 @@
     color: hsl(var(--link-color));
   }
 }
+
+@keyframes brand-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-brand-scroll {
+  animation: brand-scroll 25s linear infinite;
+}
