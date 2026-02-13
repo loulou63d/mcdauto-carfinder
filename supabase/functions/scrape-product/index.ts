@@ -193,6 +193,96 @@ function extractSpecsCpmAuto(markdown: string): Record<string, string> {
   return specs;
 }
 
+function extractAutoFrancisData(markdown: string): {
+  brand: string;
+  model: string;
+  title: string;
+  year?: number;
+  mileage?: number;
+  color?: string;
+  description: string;
+  equipment: string[];
+} {
+  const lines = markdown.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+  
+  // Structure: Brand (text before H1), # Model (H1), Year (text after H1)
+  let brand = "";
+  let model = "";
+  let year: number | undefined;
+  
+  const h1Idx = lines.findIndex(l => l.startsWith("# ") && !l.startsWith("## "));
+  if (h1Idx >= 0) {
+    model = lines[h1Idx].replace(/^#\s+/, "").trim();
+    // Brand is the line before H1 (skip navigation items)
+    for (let i = h1Idx - 1; i >= 0; i--) {
+      const line = lines[i];
+      if (line.startsWith("[") || line.startsWith("!") || line.startsWith("#") || line.length < 2) continue;
+      brand = line;
+      break;
+    }
+    // Year is the line after H1
+    if (h1Idx + 1 < lines.length) {
+      const nextLine = lines[h1Idx + 1];
+      const yearMatch = nextLine.match(/^(19|20)\d{2}$/);
+      if (yearMatch) year = parseInt(yearMatch[0]);
+    }
+  }
+  
+  const title = brand && model ? `${brand} ${model}` : model || brand || "Sans titre";
+  
+  // Specs: alternating key/value lines under "## Specifications"
+  let mileage: number | undefined;
+  let color: string | undefined;
+  const specsIdx = lines.findIndex(l => l.toLowerCase().includes("specifications"));
+  if (specsIdx >= 0) {
+    const aboutIdx = lines.findIndex((l, i) => i > specsIdx && (l.startsWith("###") || l.startsWith("## ")));
+    const specsEnd = aboutIdx > 0 ? aboutIdx : lines.length;
+    const specLines = lines.slice(specsIdx + 1, specsEnd);
+    
+    for (let i = 0; i < specLines.length - 1; i++) {
+      const key = specLines[i].toLowerCase();
+      const val = specLines[i + 1];
+      
+      if (key === "year" && !year) {
+        const y = parseInt(val);
+        if (y >= 1990 && y <= 2030) year = y;
+        i++;
+      } else if (key === "mileage" || key === "kilométrage") {
+        const m = parseInt(val.replace(/[,.\s]/g, ""));
+        if (m > 0) mileage = m;
+        i++;
+      } else if (key === "exterior" || key === "couleur") {
+        color = val;
+        i++;
+      } else if (key === "interior") {
+        i++; // skip interior value
+      }
+    }
+  }
+  
+  // Description: under "### About This Vehicle"
+  let description = "";
+  const aboutIdx = lines.findIndex(l => l.toLowerCase().includes("about this vehicle"));
+  if (aboutIdx >= 0) {
+    const featIdx = lines.findIndex((l, i) => i > aboutIdx && l.startsWith("###"));
+    const descEnd = featIdx > 0 ? featIdx : lines.length;
+    description = lines.slice(aboutIdx + 1, descEnd).join(" ").trim().slice(0, 2000);
+  }
+  
+  // Equipment: under "### Features"
+  const equipment: string[] = [];
+  const featIdx = lines.findIndex(l => l.toLowerCase().includes("features") && l.startsWith("###"));
+  if (featIdx >= 0) {
+    for (let i = featIdx + 1; i < lines.length; i++) {
+      const l = lines[i];
+      if (l.startsWith("#") || l.startsWith("[") || l.startsWith("!")) break;
+      if (l.length > 1 && l.length < 60) equipment.push(l);
+    }
+  }
+  
+  return { brand, model, title, year, mileage, color, description, equipment };
+}
+
 function extractTitle(markdown: string, url: string): string {
   const isCpmAuto = url.includes("cpmauto.fr");
   const isAutoFrancis = url.includes("autofrancis.com");
@@ -203,9 +293,8 @@ function extractTitle(markdown: string, url: string): string {
   }
 
   if (isAutoFrancis) {
-    // AutoFrancis: Bold title with brand + model pattern
-    const boldMatch = markdown.match(/\*\*([^*]+)\*\*/);
-    if (boldMatch) return boldMatch[1].trim();
+    const af = extractAutoFrancisData(markdown);
+    return af.title;
   }
 
   // Autosphere: extract from breadcrumb
@@ -241,15 +330,18 @@ function extractSpecs(markdown: string, url: string): Record<string, string> {
   }
 
   if (url.includes("autofrancis.com")) {
-    // AutoFrancis: parse specs from markdown format (year, mileage, etc.)
+    // AutoFrancis: alternating key/value lines under "## Specifications"
     const specs: Record<string, string> = {};
-    const specPattern = /\*\*(.+?)\*\*[\s\n]*(.+?)(?=\n|$)/g;
-    let match;
-    while ((match = specPattern.exec(markdown)) !== null) {
-      const key = match[1].trim();
-      const val = match[2].trim();
-      if (key && val && key !== "---" && val !== "---") {
-        specs[key] = val;
+    const lines = markdown.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+    const specsIdx = lines.findIndex(l => l.toLowerCase().includes("specifications"));
+    if (specsIdx >= 0) {
+      const endIdx = lines.findIndex((l, i) => i > specsIdx && (l.startsWith("###") || l.startsWith("## ")));
+      const specsEnd = endIdx > 0 ? endIdx : lines.length;
+      const specLines = lines.slice(specsIdx + 1, specsEnd);
+      for (let i = 0; i < specLines.length - 1; i += 2) {
+        const key = specLines[i];
+        const val = specLines[i + 1];
+        if (key && val) specs[key] = val;
       }
     }
     return specs;
@@ -304,6 +396,31 @@ function extractDescription(markdown: string): string {
   return "";
 }
 
+function detectCategory(title: string, description: string): string | null {
+  const text = (title + " " + description).toLowerCase();
+  const categoryMap: [string, string[]][] = [
+    ["SUV", ["suv", "crossover", "captiva", "tucson", "sportage", "rav4", "cr-v", "x-trail", "qashqai", "tiguan", "id.4", "glc", "gle", "gla", "x1", "x3", "x5", "q3", "q5", "q7", "asx", "outlander", "cherokee", "compass", "renegade", "forester"]],
+    ["4x4", ["4x4", "4wd", "land rover", "range rover", "discovery", "defender", "wrangler", "g-class", "g63", "g500", "patrol", "land cruiser", "pajero"]],
+    ["Berline", ["berline", "sedan", "c-class", "e-class", "s-class", "serie 3", "serie 5", "a4", "a6", "a8", "c180", "c200", "c300", "e200", "e300", "passat", "camry", "accord", "civic sedan"]],
+    ["Coupé", ["coupé", "coupe", "cayman", "mustang", "camaro", "corvette", "rc"]],
+    ["Cabriolet", ["cabriolet", "convertible", "roadster", "spider", "spyder"]],
+    ["Break", ["break", "wagon", "touring", "estate", "avant", "sw", "sportswagon"]],
+    ["Pick-up", ["pick-up", "pickup", "hilux", "navara", "ranger", "l200", "amarok"]],
+    ["Monospace", ["monospace", "mpv", "van", "sharan", "touran", "scenic", "c4 picasso"]],
+    ["Utilitaire", ["utilitaire", "commercial", "fourgon", "partner", "berlingo", "kangoo", "transit", "sprinter"]],
+    ["Sportive", ["sport", "amg", "rs ", "gti", " st ", "type r", "nismo", "svr", "m sport"]],
+    ["Électrique", ["electric", "électrique", "ev ", "id.", "model 3", "model y", "model s", "model x", "leaf", "zoe", "e-tron"]],
+    ["Compacte", ["compacte", "compact", "golf", "focus", "astra", "civic", "corolla", "308", "megane", "leon"]],
+  ];
+
+  for (const [cat, keywords] of categoryMap) {
+    for (const kw of keywords) {
+      if (text.includes(kw)) return cat;
+    }
+  }
+  return null;
+}
+
 function extractVehicleDataFromSpecs(specs: Record<string, string>): {
   year?: number;
   mileage?: number;
@@ -314,17 +431,17 @@ function extractVehicleDataFromSpecs(specs: Record<string, string>): {
 } {
   const result: any = {};
 
-  // Year
+  // Year (FR + EN)
   const yearVal = specs["Année"] || specs["Annee"] || specs["Year"];
   if (yearVal) {
     const y = parseInt(yearVal);
     if (y >= 1990 && y <= 2030) result.year = y;
   }
 
-  // Mileage
+  // Mileage (FR + EN)
   const mileageVal = specs["Kilométrage"] || specs["Kilometrage"] || specs["Mileage"];
   if (mileageVal) {
-    const m = parseInt(mileageVal.replace(/[\s.km]/gi, ""));
+    const m = parseInt(mileageVal.replace(/[,.\s]/g, "").replace(/km|m$/gi, ""));
     if (m > 0) result.mileage = m;
   }
 
@@ -338,28 +455,28 @@ function extractVehicleDataFromSpecs(specs: Record<string, string>): {
   }
 
   // Energy / Fuel
-  const energyVal = specs["Énergie"] || specs["Energie"] || specs["Carburant"] || specs["Moteur"];
+  const energyVal = specs["Énergie"] || specs["Energie"] || specs["Carburant"] || specs["Moteur"] || specs["Fuel"] || specs["Engine"];
   if (energyVal) {
     const lower = energyVal.toLowerCase();
     if (lower.includes("diesel") || lower.includes("hdi") || lower.includes("dci") || lower.includes("tdi") || lower.includes("blue hdi") || lower.includes("bluehdi")) {
       result.energy = "Diesel";
     } else if (lower.includes("electri") || lower.includes("ev")) {
       result.energy = "Électrique";
-    } else if (lower.includes("hybride")) {
-      result.energy = lower.includes("rechargeable") ? "Hybride rechargeable" : "Hybride";
-    } else if (lower.includes("essence") || lower.includes("tsi") || lower.includes("tce") || lower.includes("puretech") || lower.includes("flexifuel")) {
+    } else if (lower.includes("hybride") || lower.includes("hybrid")) {
+      result.energy = lower.includes("rechargeable") || lower.includes("plug") ? "Hybride rechargeable" : "Hybride";
+    } else if (lower.includes("essence") || lower.includes("gasoline") || lower.includes("petrol") || lower.includes("tsi") || lower.includes("tce") || lower.includes("puretech") || lower.includes("flexifuel")) {
       result.energy = "Essence";
-    } else if (lower.includes("gpl")) {
+    } else if (lower.includes("gpl") || lower.includes("lpg")) {
       result.energy = "GPL";
     }
   }
 
-  // Color
-  const colorVal = specs["Couleur"] || specs["Color"];
+  // Color (FR + EN)
+  const colorVal = specs["Couleur"] || specs["Color"] || specs["Exterior"];
   if (colorVal) result.color = colorVal;
 
   // Power
-  const powerVal = specs["Puissance"] || specs["Puissance fiscale"];
+  const powerVal = specs["Puissance"] || specs["Puissance fiscale"] || specs["Power"] || specs["Horsepower"];
   if (powerVal) result.power = powerVal;
 
   return result;
@@ -422,14 +539,49 @@ serve(async (req) => {
     const markdown = data.data?.markdown || data.markdown || "";
     const html = data.data?.html || data.html || "";
     const fullText = markdown + " " + html;
+    const isAutoFrancis = formattedUrl.includes("autofrancis.com");
 
-    const title = extractTitle(markdown, formattedUrl);
-    const price = parsePrice(fullText);
-    const images = extractImages(markdown, html, formattedUrl);
-    const brand = detectBrand(title);
-    const description = extractDescription(markdown);
-    const specs = extractSpecs(markdown, formattedUrl);
-    const vehicleData = extractVehicleDataFromSpecs(specs);
+    let title: string;
+    let price: number | null;
+    let images: string[];
+    let brand: string | null;
+    let description: string;
+    let specs: Record<string, string>;
+    let vehicleData: any;
+    let equipment: string[] = [];
+    let category: string | null = null;
+
+    if (isAutoFrancis) {
+      // Use dedicated AutoFrancis parser
+      const af = extractAutoFrancisData(markdown);
+      title = af.title;
+      brand = af.brand || detectBrand(af.title);
+      description = af.description;
+      equipment = af.equipment;
+      images = extractImages(markdown, html, formattedUrl);
+      price = parsePrice(fullText); // likely null for this site
+      specs = extractSpecs(markdown, formattedUrl);
+      vehicleData = {
+        year: af.year,
+        mileage: af.mileage,
+        color: af.color,
+        ...extractVehicleDataFromSpecs(specs),
+      };
+      // Override with direct data if available
+      if (af.year) vehicleData.year = af.year;
+      if (af.mileage) vehicleData.mileage = af.mileage;
+      if (af.color) vehicleData.color = af.color;
+      category = detectCategory(title, description);
+    } else {
+      title = extractTitle(markdown, formattedUrl);
+      price = parsePrice(fullText);
+      images = extractImages(markdown, html, formattedUrl);
+      brand = detectBrand(title);
+      description = extractDescription(markdown);
+      specs = extractSpecs(markdown, formattedUrl);
+      vehicleData = extractVehicleDataFromSpecs(specs);
+      category = detectCategory(title, description);
+    }
 
     const product = {
       title,
@@ -439,11 +591,13 @@ serve(async (req) => {
       description,
       specs,
       vehicleData,
+      equipment,
+      category,
       source_url: formattedUrl,
       raw_markdown: markdown.slice(0, 5000),
     };
 
-    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand, "| specs:", JSON.stringify(vehicleData));
+    console.log("Scraped:", title, "| price:", price, "| images:", images.length, "| brand:", brand, "| category:", category, "| specs:", JSON.stringify(vehicleData));
 
     return new Response(
       JSON.stringify({ success: true, data: product }),
