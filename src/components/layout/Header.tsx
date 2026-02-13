@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Car, ChevronDown, Search, User, BookmarkCheck } from 'lucide-react';
+import { Menu, X, Car, ChevronDown, Search, User, BookmarkCheck, ArrowLeft } from 'lucide-react';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,13 @@ import { Input } from '@/components/ui/input';
 const Header = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+
+  // Check if we're on the homepage (/:lang or /:lang/)
+  const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
 
   const navLinks = [
     { label: t('nav.buy'), to: `/${lang}/search` },
@@ -21,20 +26,30 @@ const Header = () => {
     { label: t('nav.contact'), to: `/${lang}/contact` },
   ];
 
+  const textColor = isHome ? 'text-white' : 'text-foreground';
+  const textHover = isHome ? 'hover:text-white/80' : 'hover:text-primary';
+  const logoBg = isHome ? 'bg-white/20 backdrop-blur-sm' : 'bg-primary/10';
+  const logoIconColor = isHome ? 'text-white' : 'text-primary';
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-50">
+    <header className={`${isHome ? 'absolute' : 'sticky'} top-0 left-0 right-0 z-50 ${!isHome ? 'bg-card border-b shadow-sm' : ''}`}>
       {/* Top bar */}
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        {/* Left: hamburger + logo */}
-        <div className="flex items-center gap-3">
-          <button className="p-1 text-white hover:text-white/80 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
+        {/* Left: back button / hamburger + logo */}
+        <div className="flex items-center gap-2">
+          {!isHome && (
+            <button className={`p-1 ${textColor} ${textHover} transition-colors`} onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          )}
+          <button className={`p-1 ${textColor} ${textHover} transition-colors`} onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
           <Link to={`/${lang}`} className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Car className="w-5 h-5 text-white" />
+            <div className={`w-9 h-9 rounded-full ${logoBg} flex items-center justify-center`}>
+              <Car className={`w-5 h-5 ${logoIconColor}`} />
             </div>
-            <span className="font-heading font-bold text-xl text-white tracking-tight">MCD AUTO</span>
+            <span className={`font-heading font-bold text-xl ${textColor} tracking-tight`}>MCD AUTO</span>
           </Link>
         </div>
 
@@ -44,7 +59,7 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
+              className={`flex items-center gap-1 px-2 py-2 text-sm font-medium ${isHome ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'} transition-colors`}
             >
               {(lang as string).toUpperCase()}
               <ChevronDown className="w-3 h-3" />
@@ -65,13 +80,13 @@ const Header = () => {
             )}
           </div>
 
-          <Link to={`/${lang}/search`} className="p-2 text-white hover:text-white/80 transition-colors">
+          <Link to={`/${lang}/search`} className={`p-2 ${textColor} ${textHover} transition-colors`}>
             <Search className="w-6 h-6" />
           </Link>
-          <Link to="/auth" className="p-2 text-white hover:text-white/80 transition-colors">
+          <Link to="/auth" className={`p-2 ${textColor} ${textHover} transition-colors`}>
             <User className="w-6 h-6" />
           </Link>
-          <Link to={`/${lang}/search`} className="hidden md:flex items-center gap-1.5 px-3 py-2 text-sm text-white hover:text-white/80 transition-colors">
+          <Link to={`/${lang}/search`} className={`hidden md:flex items-center gap-1.5 px-3 py-2 text-sm ${textColor} ${textHover} transition-colors`}>
             <BookmarkCheck className="w-5 h-5" />
             <span className="text-sm">{t('nav.favorites')}</span>
           </Link>
