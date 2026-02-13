@@ -99,6 +99,7 @@ const Checkout = () => {
         total_price: total,
         deposit_amount: deposit,
         receipt_url: urlData.publicUrl,
+        lang,
       });
 
       if (orderError) throw orderError;

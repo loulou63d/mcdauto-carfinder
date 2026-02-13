@@ -60,9 +60,31 @@ const Orders = () => {
     if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
     toast({ title: `Commande ${statusLabels[status]?.toLowerCase()}` });
 
-    // Auto-send invoice when completing order
+    // Auto-send invoice + completion notification when completing order
     if (status === 'completed') {
-      sendInvoiceEmail(id);
+      const order = orders.find(o => o.id === id);
+      if (order) {
+        sendInvoiceEmail(id);
+        // Send order completed notification to customer
+        try {
+          await supabase.functions.invoke('send-notification', {
+            body: {
+              type: 'order_completed',
+              lang: (order as any).lang || 'de',
+              to: order.customer_email,
+              data: {
+                name: order.customer_name,
+                vehicles: (order.vehicle_details as any[]) || [],
+                totalPrice: order.total_price,
+                depositAmount: order.deposit_amount,
+                siteUrl: 'https://mcdauto-carfinder.lovable.app',
+              },
+            },
+          });
+        } catch (err) {
+          console.error('Completion notification error:', err);
+        }
+      }
     }
   };
 
