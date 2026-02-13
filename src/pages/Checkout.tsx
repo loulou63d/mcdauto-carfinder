@@ -103,6 +103,25 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
+      // Send order confirmation email in client's language
+      try {
+        await supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'order_confirmation',
+            lang,
+            to: email.trim(),
+            data: {
+              vehicles: vehicleDetails,
+              totalPrice: total,
+              depositAmount: deposit,
+              siteUrl: window.location.origin,
+            },
+          },
+        });
+      } catch (err) {
+        console.error('Order notification error:', err);
+      }
+
       setSuccess(true);
       // Don't clear cart - it stays until admin confirms the order
     } catch (err: any) {

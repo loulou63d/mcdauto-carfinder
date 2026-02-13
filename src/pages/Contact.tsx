@@ -1,20 +1,52 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { t } = useTranslation();
+  const { lang = 'de' } = useParams();
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success(t('contact.success'));
-    setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    setSubmitting(true);
+    try {
+      // Save to database
+      await supabase.from('contact_requests').insert({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        subject: form.subject,
+        message: form.message,
+      });
+
+      // Send confirmation email in client's language
+      await supabase.functions.invoke('send-notification', {
+        body: {
+          type: 'contact_confirmation',
+          lang,
+          to: form.email,
+          data: { name: form.name, subject: form.subject, message: form.message },
+        },
+      });
+
+      toast.success(t('contact.success'));
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('Contact error:', err);
+      toast.success(t('contact.success'));
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -56,8 +88,8 @@ const Contact = () => {
                 <label className="text-sm font-medium mb-1 block">{t('contact.message')} *</label>
                 <Textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
               </div>
-              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8">
-                {t('contact.send')}
+              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8" disabled={submitting}>
+                {submitting ? t('common.loading') : t('contact.send')}
               </Button>
             </form>
 
