@@ -58,7 +58,10 @@
     "title": "Beliebte Marken"
   },
   "reviews": {
-    "title": "Kundenbewertungen"
+    "title": "Kundenbewertungen",
+    "review1": "Exzellenter Service, Fahrzeug entspricht genau der Beschreibung. Schnelle Lieferung und sehr professionelles Team.",
+    "review2": "Sehr zufrieden mit meinem Kauf. Die 12-monatige Garantie ist ein echter Vorteil. Sehr empfehlenswert.",
+    "review3": "Gutes Preis-Leistungs-Verhältnis. Der Kaufprozess ist einfach und transparent."
   },
   "promo": {
     "slide1TopLabel": "Bis zu",
@@ -125,7 +128,8 @@
     "noDeposit": "ohne Anzahlung",
     "from": "Ab",
     "breadcrumbHome": "Startseite",
-    "breadcrumbSearch": "Suche"
+    "breadcrumbSearch": "Suche",
+    "favoriteAdded": "Fahrzeug zu Favoriten hinzugefügt"
   },
   "contact": {
     "title": "Kontaktieren Sie uns",
