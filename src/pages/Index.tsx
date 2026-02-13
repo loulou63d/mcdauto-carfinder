@@ -12,6 +12,14 @@ import promoImg1 from '@/assets/promo-slide1.jpg';
 import promoImg2 from '@/assets/promo-slide2.jpg';
 import promoImg3 from '@/assets/promo-slide3.jpg';
 import promoImg4 from '@/assets/promo-slide4.jpg';
+import catBerline from '@/assets/cat-berline.jpg';
+import catBreak from '@/assets/cat-break.jpg';
+import catSuv from '@/assets/cat-suv.jpg';
+import catUtilitaire from '@/assets/cat-utilitaire.jpg';
+import cat4x4 from '@/assets/cat-4x4.jpg';
+import catCabriolet from '@/assets/cat-cabriolet.jpg';
+import catMonospace from '@/assets/cat-monospace.jpg';
+import catCoupe from '@/assets/cat-coupe.jpg';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -40,6 +48,11 @@ const Index = () => {
 
   const categoryIcons: Record<string, string> = {
     berline: '🚗', break: '🚙', suv: '🏔️', utilitaire: '🚐', '4x4': '🏔️', cabriolet: '🏎️', monospace: '🚌', coupé: '🏎️',
+  };
+
+  const categoryImages: Record<string, string> = {
+    berline: catBerline, break: catBreak, suv: catSuv, utilitaire: catUtilitaire,
+    '4x4': cat4x4, cabriolet: catCabriolet, monospace: catMonospace, 'coupé': catCoupe,
   };
 
   const promoSlides = [
@@ -297,10 +310,10 @@ const Index = () => {
                 <Link
                   key={cat}
                   to={`/${lang}/search?category=${cat}`}
-                  className="shrink-0 flex flex-col items-center gap-3 w-28 group"
+                  className="shrink-0 flex flex-col items-center gap-3 w-32 group"
                 >
-                  <div className="w-24 h-24 rounded-2xl bg-card border flex items-center justify-center text-4xl shadow-sm group-hover:shadow-md transition-shadow">
-                    {categoryIcons[cat] || '🚗'}
+                  <div className="w-28 h-28 rounded-2xl bg-card border overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+                    <img src={categoryImages[cat]} alt={t(`categories.${labelKey}`, cat)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </div>
                   <span className="text-sm font-semibold text-center capitalize">{t(`categories.${labelKey}`, cat)}</span>
                 </Link>
