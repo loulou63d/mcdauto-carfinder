@@ -114,12 +114,12 @@ const AdminImport = () => {
   const handleImportProduct = async (item: ProductImportItem, setter: (item: ProductImportItem) => void) => {
     setter({ ...item, status: 'importing' });
     try {
-      // Check dedup
-      const { data: existing } = await supabase
+      // Check dedup by source_url
+      const { data: existingList } = await (supabase as any)
         .from('vehicles')
         .select('id')
-        .eq('source_url', item.scraped.source_url)
-        .maybeSingle();
+        .eq('source_url', item.scraped.source_url);
+      const existing = existingList && existingList.length > 0 ? existingList[0] : null;
 
       if (existing) {
         setter({ ...item, status: 'duplicate' });
@@ -131,7 +131,7 @@ const AdminImport = () => {
       const yearMatch = item.scraped.title.match(/\b(19|20)\d{2}\b/);
       const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
 
-      const vehicleData = {
+      const vehicleData: any = {
         brand: item.scraped.brand || 'Non détecté',
         model: item.scraped.title,
         year,
@@ -143,10 +143,11 @@ const AdminImport = () => {
         description_translations: item.generated?.description_translations || {},
         equipment_translations: item.generated?.title_translations || {},
         status: 'available',
+        source_url: item.scraped.source_url,
       };
 
       // Insert vehicle
-      const { data: vehicleResult, error: vehicleError } = await supabase
+      const { data: vehicleResult, error: vehicleError } = await (supabase as any)
         .from('vehicles')
         .insert(vehicleData)
         .select()
@@ -268,11 +269,11 @@ const AdminImport = () => {
         setBatchProducts([...updated]);
 
        // Dedup check
-         const { data: existing } = await supabase
+         const { data: batchExistingList } = await (supabase as any)
            .from('vehicles')
            .select('id')
-           .eq('source_url', selected[i].scraped.source_url)
-           .maybeSingle();
+           .eq('source_url', selected[i].scraped.source_url);
+         const existing = batchExistingList && batchExistingList.length > 0 ? batchExistingList[0] : null;
 
          if (existing) {
            updated[idx] = { ...updated[idx], status: 'duplicate' };
@@ -285,7 +286,7 @@ const AdminImport = () => {
          const year = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
 
          // Import vehicle
-         const vehicleData = {
+         const vehicleData: any = {
            brand: selected[i].scraped.brand || 'Non détecté',
            model: selected[i].scraped.title,
            year,
@@ -297,9 +298,10 @@ const AdminImport = () => {
            description_translations: updated[idx].generated?.description_translations || {},
            equipment_translations: updated[idx].generated?.title_translations || {},
            status: 'available',
+           source_url: selected[i].scraped.source_url,
          };
 
-         const { data: vehicleResult, error: vehicleError } = await supabase
+         const { data: vehicleResult, error: vehicleError } = await (supabase as any)
            .from('vehicles')
            .insert(vehicleData)
            .select()

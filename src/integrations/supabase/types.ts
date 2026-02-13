@@ -232,6 +232,7 @@ export type Database = {
           monthly_price: number | null
           power: string | null
           price: number
+          source_url: string | null
           status: string | null
           transmission: string
           updated_at: string
@@ -258,6 +259,7 @@ export type Database = {
           monthly_price?: number | null
           power?: string | null
           price: number
+          source_url?: string | null
           status?: string | null
           transmission?: string
           updated_at?: string
@@ -284,6 +286,7 @@ export type Database = {
           monthly_price?: number | null
           power?: string | null
           price?: number
+          source_url?: string | null
           status?: string | null
           transmission?: string
           updated_at?: string
