@@ -663,6 +663,11 @@
   "checkout": {
     "title": "Bestellung abschließen",
     "customerInfo": "Ihre Daten",
+    "deliveryAddress": "Lieferadresse",
+    "address": "Adresse",
+    "city": "Stadt",
+    "postalCode": "Postleitzahl",
+    "country": "Land",
     "depositTitle": "Pflichtanzahlung (20%)",
     "depositInfo": "Eine Anzahlung von 20% ist erforderlich, um Ihre Bestellung zu bestätigen",
     "depositInstruction": "Überweisen Sie den unten angegebenen Betrag per Banküberweisung und laden Sie den Zahlungsbeleg hoch.",

@@ -75,6 +75,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string | null
+          delivery_address: string | null
           deposit_amount: number
           id: string
           lang: string | null
@@ -92,6 +93,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone?: string | null
+          delivery_address?: string | null
           deposit_amount?: number
           id?: string
           lang?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string | null
+          delivery_address?: string | null
           deposit_amount?: number
           id?: string
           lang?: string | null

@@ -658,6 +658,11 @@
   "checkout": {
     "title": "Complete your order",
     "customerInfo": "Your information",
+    "deliveryAddress": "Delivery address",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postal code",
+    "country": "Country",
     "depositTitle": "Required deposit (20%)",
     "depositInfo": "A 20% deposit is required to confirm your order",
     "depositInstruction": "Make the bank transfer for the amount below, then upload your payment receipt.",

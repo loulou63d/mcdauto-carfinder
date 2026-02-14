@@ -450,6 +450,11 @@
   "checkout": {
     "title": "Completar el pedido",
     "customerInfo": "Sus datos",
+    "deliveryAddress": "Dirección de entrega",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postalCode": "Código postal",
+    "country": "País",
     "depositTitle": "Anticipo obligatorio (20%)",
     "depositInfo": "Se requiere un anticipo del 20% para confirmar su pedido",
     "depositInstruction": "Realice la transferencia bancaria del importe indicado abajo y suba el comprobante de pago.",

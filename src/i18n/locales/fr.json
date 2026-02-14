@@ -663,6 +663,11 @@
   "checkout": {
     "title": "Finaliser la commande",
     "customerInfo": "Vos informations",
+    "deliveryAddress": "Adresse de livraison",
+    "address": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "country": "Pays",
     "depositTitle": "Acompte obligatoire (20%)",
     "depositInfo": "Un acompte de 20% est requis pour valider votre commande",
     "depositInstruction": "Effectuez le virement bancaire du montant ci-dessous, puis uploadez le justificatif de paiement.",
