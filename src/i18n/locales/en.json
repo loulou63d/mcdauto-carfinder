@@ -662,7 +662,7 @@
     "depositInfo": "A 20% deposit is required to confirm your order",
     "depositInstruction": "Make the bank transfer for the amount below, then upload your payment receipt.",
     "depositAmount": "Deposit to pay",
-    "reference": "Reference",
+    "motif": "Payment reason",
     "receiptTitle": "Payment receipt",
     "receiptDesc": "Upload a photo or PDF of your bank transfer receipt",
     "receiptRequired": "Please upload the payment receipt",

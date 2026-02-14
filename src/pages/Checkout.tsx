@@ -27,7 +27,7 @@ const Checkout = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [bankDetails, setBankDetails] = useState({ iban: '', bic: '', name: '' });
+  const [bankDetails, setBankDetails] = useState({ iban: '', bic: '', name: '', motif: '' });
 
   // Check auth - redirect if not logged in
   useEffect(() => {
@@ -44,13 +44,14 @@ const Checkout = () => {
     });
 
     // Fetch bank details
-    supabase.from('site_settings').select('key, value').in('key', ['bank_iban', 'bank_bic', 'bank_name']).then(({ data }) => {
+    supabase.from('site_settings').select('key, value').in('key', ['bank_iban', 'bank_bic', 'bank_name', 'bank_motif']).then(({ data }) => {
       if (data) {
-        const details = { iban: '', bic: '', name: '' };
+        const details = { iban: '', bic: '', name: '', motif: '' };
         data.forEach(s => {
           if (s.key === 'bank_iban') details.iban = s.value;
           if (s.key === 'bank_bic') details.bic = s.value;
           if (s.key === 'bank_name') details.name = s.value;
+          if (s.key === 'bank_motif') details.motif = s.value;
         });
         setBankDetails(details);
       }
@@ -237,7 +238,7 @@ const Checkout = () => {
                 <p><strong>IBAN:</strong> {bankDetails.iban}</p>
                 <p><strong>BIC:</strong> {bankDetails.bic}</p>
                 <p><strong>{t('checkout.beneficiary', { defaultValue: 'Bénéficiaire' })}:</strong> {bankDetails.name}</p>
-                <p><strong>{t('checkout.reference')}:</strong> MCD-{Date.now().toString(36).toUpperCase()}</p>
+                {bankDetails.motif && <p><strong>{t('checkout.motif')}:</strong> {bankDetails.motif}</p>}
               </div>
             </div>
 

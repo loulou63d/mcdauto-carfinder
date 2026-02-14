@@ -454,7 +454,7 @@
     "depositInfo": "Se requiere un anticipo del 20% para confirmar su pedido",
     "depositInstruction": "Realice la transferencia bancaria del importe indicado abajo y suba el comprobante de pago.",
     "depositAmount": "Anticipo a pagar",
-    "reference": "Referencia",
+    "motif": "Motivo del pago",
     "receiptTitle": "Comprobante de pago",
     "receiptDesc": "Suba una foto o PDF de su recibo de transferencia bancaria",
     "receiptRequired": "Por favor suba el comprobante de pago",

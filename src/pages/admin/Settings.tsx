@@ -9,9 +9,10 @@ import { toast } from 'sonner';
 import { Landmark, Lock, Save } from 'lucide-react';
 
 const Settings = () => {
-  const [iban, setIban] = useState('');
+const [iban, setIban] = useState('');
   const [bic, setBic] = useState('');
   const [bankName, setBankName] = useState('');
+  const [bankMotif, setBankMotif] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -26,13 +27,14 @@ const Settings = () => {
       const { data, error } = await supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', ['bank_iban', 'bank_bic', 'bank_name']);
+        .in('key', ['bank_iban', 'bank_bic', 'bank_name', 'bank_motif']);
 
       if (!error && data) {
         data.forEach((s) => {
           if (s.key === 'bank_iban') setIban(s.value);
           if (s.key === 'bank_bic') setBic(s.value);
           if (s.key === 'bank_name') setBankName(s.value);
+          if (s.key === 'bank_motif') setBankMotif(s.value);
         });
       }
       setLoading(false);
@@ -48,6 +50,7 @@ const Settings = () => {
         { key: 'bank_iban', value: iban.trim() },
         { key: 'bank_bic', value: bic.trim() },
         { key: 'bank_name', value: bankName.trim() },
+        { key: 'bank_motif', value: bankMotif.trim() },
       ];
 
       for (const u of updates) {
@@ -139,6 +142,10 @@ const Settings = () => {
             <div>
               <Label htmlFor="bic">BIC / SWIFT</Label>
               <Input id="bic" value={bic} onChange={e => setBic(e.target.value)} required placeholder="COBADEFFXXX" />
+            </div>
+            <div>
+              <Label htmlFor="motif">Motif du virement</Label>
+              <Input id="motif" value={bankMotif} onChange={e => setBankMotif(e.target.value)} placeholder="Ex: Acompte véhicule MCD AUTO" />
             </div>
             <Button type="submit" disabled={saving}>
               <Save className="w-4 h-4 mr-2" />
