@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Clock, Mail, Phone, Eye, CheckCircle, Trash2, ExternalLink, FileText, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,7 +46,7 @@ const Orders = () => {
   const { toast } = useToast();
 
   const fetchOrders = async () => {
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false });
@@ -56,19 +56,17 @@ const Orders = () => {
   useEffect(() => { fetchOrders(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    await supabase.from('orders').update({ status }).eq('id', id);
+    await supabaseAdmin.from('orders').update({ status }).eq('id', id);
     fetchOrders();
     if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
     toast({ title: `Commande ${statusLabels[status]?.toLowerCase()}` });
 
-    // Auto-send invoice + completion notification when completing order
     if (status === 'completed') {
       const order = orders.find(o => o.id === id);
       if (order) {
         sendInvoiceEmail(id);
-        // Send order completed notification to customer
         try {
-          await supabase.functions.invoke('send-notification', {
+          await supabaseAdmin.functions.invoke('send-notification', {
             body: {
               type: 'order_completed',
               lang: (order as any).lang || 'de',
@@ -92,7 +90,7 @@ const Orders = () => {
   const sendInvoiceEmail = async (orderId: string) => {
     setSendingInvoice(true);
     try {
-      const { data, error } = await supabase.functions.invoke('send-invoice', {
+      const { data, error } = await supabaseAdmin.functions.invoke('send-invoice', {
         body: { orderId, action: 'send_email' },
       });
       if (error) throw error;
@@ -106,7 +104,7 @@ const Orders = () => {
   };
 
   const deleteOrder = async (id: string) => {
-    const { error } = await supabase.from('orders').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('orders').delete().eq('id', id);
     if (error) {
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     } else {

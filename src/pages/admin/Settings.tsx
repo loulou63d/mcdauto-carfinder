@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,7 @@ const [iban, setIban] = useState('');
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('site_settings')
         .select('key, value')
         .in('key', ['bank_iban', 'bank_bic', 'bank_name', 'bank_motif']);
@@ -54,7 +54,7 @@ const [iban, setIban] = useState('');
       ];
 
       for (const u of updates) {
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
           .from('site_settings')
           .update({ value: u.value, updated_at: new Date().toISOString() })
           .eq('key', u.key);
@@ -83,10 +83,10 @@ const [iban, setIban] = useState('');
     setChangingPw(true);
     try {
       // Re-authenticate with current password first
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseAdmin.auth.getUser();
       if (!user?.email) throw new Error('Utilisateur non trouvé');
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabaseAdmin.auth.signInWithPassword({
         email: user.email,
         password: currentPassword,
       });
@@ -95,7 +95,7 @@ const [iban, setIban] = useState('');
         return;
       }
 
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      const { error } = await supabaseAdmin.auth.updateUser({ password: newPassword });
       if (error) throw error;
 
       toast.success('Mot de passe modifié avec succès');

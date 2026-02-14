@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Car, MessageSquare, Eye, TrendingUp, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { toast } from 'sonner';
 
 const Dashboard = () => {
@@ -18,10 +18,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       const [vehiclesRes, featuredRes, contactsRes, newContactsRes] = await Promise.all([
-        supabase.from('vehicles').select('id', { count: 'exact', head: true }),
-        supabase.from('vehicles').select('id', { count: 'exact', head: true }).eq('is_featured', true),
-        supabase.from('contact_requests').select('id', { count: 'exact', head: true }),
-        supabase.from('contact_requests').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+        supabaseAdmin.from('vehicles').select('id', { count: 'exact', head: true }),
+        supabaseAdmin.from('vehicles').select('id', { count: 'exact', head: true }).eq('is_featured', true),
+        supabaseAdmin.from('contact_requests').select('id', { count: 'exact', head: true }),
+        supabaseAdmin.from('contact_requests').select('id', { count: 'exact', head: true }).eq('status', 'new'),
       ]);
 
       setStats({
