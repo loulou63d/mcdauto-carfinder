@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Upload, X, Globe, Check, ChevronsUpDown, Plus } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -53,7 +53,7 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
   const [categorySearch, setCategorySearch] = useState('');
 
   useEffect(() => {
-    supabase.from('vehicles').select('brand, category').then(({ data }) => {
+    supabaseAdmin.from('vehicles').select('brand, category').then(({ data }) => {
       if (data) {
         const uniqueBrands = [...new Set(data.map(v => v.brand))].sort();
         setBrands(uniqueBrands);
@@ -130,10 +130,10 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
       let vehicleId = vehicle?.id;
 
       if (vehicle) {
-        const { error } = await supabase.from('vehicles').update(vehicleData).eq('id', vehicle.id);
+        const { error } = await supabaseAdmin.from('vehicles').update(vehicleData).eq('id', vehicle.id);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from('vehicles').insert(vehicleData).select('id').single();
+        const { data, error } = await supabaseAdmin.from('vehicles').insert(vehicleData).select('id').single();
         if (error) throw error;
         vehicleId = data.id;
       }
@@ -143,12 +143,12 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
         const file = imageFiles[i];
         const ext = file.name.split('.').pop();
         const path = `${vehicleId}/${Date.now()}_${i}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from('vehicle-images').upload(path, file);
+        const { error: uploadError } = await supabaseAdmin.storage.from('vehicle-images').upload(path, file);
         if (uploadError) throw uploadError;
 
-        const { data: urlData } = supabase.storage.from('vehicle-images').getPublicUrl(path);
+        const { data: urlData } = supabaseAdmin.storage.from('vehicle-images').getPublicUrl(path);
 
-        await supabase.from('vehicle_images').insert({
+        await supabaseAdmin.from('vehicle_images').insert({
           vehicle_id: vehicleId!,
           image_url: urlData.publicUrl,
           position: existingImages.length + i,
@@ -165,7 +165,7 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
   };
 
   const removeExistingImage = async (url: string) => {
-    await supabase.from('vehicle_images').delete().eq('image_url', url);
+    await supabaseAdmin.from('vehicle_images').delete().eq('image_url', url);
     setExistingImages(prev => prev.filter(i => i !== url));
   };
 

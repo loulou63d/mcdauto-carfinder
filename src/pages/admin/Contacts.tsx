@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Mail, Phone, Clock, CheckCircle, Trash2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,7 @@ const Contacts = () => {
   const { toast } = useToast();
 
   const fetchContacts = async () => {
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
       .from('contact_requests')
       .select('*')
       .order('created_at', { ascending: false });
@@ -41,12 +41,12 @@ const Contacts = () => {
   useEffect(() => { fetchContacts(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    await supabase.from('contact_requests').update({ status }).eq('id', id);
+    await supabaseAdmin.from('contact_requests').update({ status }).eq('id', id);
     fetchContacts();
   };
 
   const deleteContact = async (id: string) => {
-    const { error } = await supabase.from('contact_requests').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('contact_requests').delete().eq('id', id);
     if (error) {
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     } else {

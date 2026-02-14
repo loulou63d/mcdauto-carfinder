@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, Download, Sparkles, Check, AlertTriangle, Link2, FolderSearch } from 'lucide-react';
 
@@ -70,7 +70,7 @@ const AdminImport = () => {
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('categories').select('*').order('name');
+      const { data, error } = await supabaseAdmin.from('categories').select('*').order('name');
       if (error) throw error;
       return data;
     },
@@ -83,7 +83,7 @@ const AdminImport = () => {
     setSingleProduct({ scraped: {} as ScrapedProduct, selected: true, status: 'scraping' });
 
     try {
-      const { data, error } = await supabase.functions.invoke('scrape-product', {
+      const { data, error } = await supabaseAdmin.functions.invoke('scrape-product', {
         body: { url: singleUrl },
       });
       if (error) throw error;
@@ -99,7 +99,7 @@ const AdminImport = () => {
           const mileage = scrapedData.vehicleData?.mileage || 100000;
           const energy = scrapedData.vehicleData?.energy || 'Diesel';
 
-          const { data: priceData, error: priceError } = await supabase.functions.invoke('estimate-vehicle-price', {
+          const { data: priceData, error: priceError } = await supabaseAdmin.functions.invoke('estimate-vehicle-price', {
             body: {
               brand: scrapedData.brand,
               model: scrapedData.title.replace(scrapedData.brand, '').trim().split(/[\s,]/)[0],
@@ -141,7 +141,7 @@ const AdminImport = () => {
   const handleGenerateAI = async (item: ProductImportItem, setter: (item: ProductImportItem) => void) => {
     setter({ ...item, status: 'generating' });
     try {
-      const { data, error } = await supabase.functions.invoke('generate-product-content', {
+      const { data, error } = await supabaseAdmin.functions.invoke('generate-product-content', {
         body: {
           title: item.scraped.title,
           description: item.scraped.description,
@@ -164,7 +164,7 @@ const AdminImport = () => {
     setter({ ...item, status: 'importing' });
     try {
       // Check dedup by source_url
-      const { data: existingList } = await (supabase as any)
+      const { data: existingList } = await (supabaseAdmin as any)
         .from('vehicles')
         .select('id')
         .eq('source_url', item.scraped.source_url);
@@ -203,7 +203,7 @@ const AdminImport = () => {
       };
 
       // Insert vehicle
-      const { data: vehicleResult, error: vehicleError } = await (supabase as any)
+      const { data: vehicleResult, error: vehicleError } = await (supabaseAdmin as any)
         .from('vehicles')
         .insert(vehicleData)
         .select()
@@ -219,7 +219,7 @@ const AdminImport = () => {
           position: idx,
         }));
 
-        const { error: imageError } = await supabase
+        const { error: imageError } = await supabaseAdmin
           .from('vehicle_images')
           .insert(imageData);
 
@@ -242,7 +242,7 @@ const AdminImport = () => {
     setBatchProducts([]);
 
     try {
-      const { data, error } = await supabase.functions.invoke('scrape-category', {
+      const { data, error } = await supabaseAdmin.functions.invoke('scrape-category', {
         body: { url: categoryUrl, limit: batchLimit },
       });
       if (error) throw error;
@@ -267,7 +267,7 @@ const AdminImport = () => {
       seenUrls.add(url);
 
       try {
-        const { data, error } = await supabase.functions.invoke('scrape-product', {
+        const { data, error } = await supabaseAdmin.functions.invoke('scrape-product', {
           body: { url },
         });
         if (error || !data?.success) {
@@ -308,7 +308,7 @@ const AdminImport = () => {
       setBatchProducts([...updated]);
 
       try {
-        const { data } = await supabase.functions.invoke('generate-product-content', {
+        const { data } = await supabaseAdmin.functions.invoke('generate-product-content', {
           body: {
             title: selected[i].scraped.title,
             description: selected[i].scraped.description,
@@ -325,7 +325,7 @@ const AdminImport = () => {
         setBatchProducts([...updated]);
 
        // Dedup check
-         const { data: batchExistingList } = await (supabase as any)
+         const { data: batchExistingList } = await (supabaseAdmin as any)
            .from('vehicles')
            .select('id')
            .eq('source_url', selected[i].scraped.source_url);
@@ -364,7 +364,7 @@ const AdminImport = () => {
            category: batchCatName,
          };
 
-         const { data: vehicleResult, error: vehicleError } = await (supabase as any)
+         const { data: vehicleResult, error: vehicleError } = await (supabaseAdmin as any)
            .from('vehicles')
            .insert(vehicleData)
            .select()
@@ -380,7 +380,7 @@ const AdminImport = () => {
              position: imgIdx,
            }));
 
-           const { error: imageError } = await supabase
+           const { error: imageError } = await supabaseAdmin
              .from('vehicle_images')
              .insert(imageData);
 

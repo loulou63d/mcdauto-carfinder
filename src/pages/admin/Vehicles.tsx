@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Search } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,7 +23,7 @@ const Vehicles = () => {
   const { toast } = useToast();
 
   const fetchVehicles = async () => {
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
       .from('vehicles')
       .select('*, vehicle_images(image_url)')
       .order('created_at', { ascending: false });
@@ -33,7 +33,7 @@ const Vehicles = () => {
   useEffect(() => { fetchVehicles(); }, []);
 
   const deleteVehicle = async (id: string) => {
-    const { error } = await supabase.from('vehicles').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('vehicles').delete().eq('id', id);
     if (error) {
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     } else {
