@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import logoMcd from '@/assets/logo-mcd.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -79,7 +80,12 @@ const Auth = () => {
           </div>
           <div>
             <label className="text-sm font-medium mb-1 block">Mot de passe</label>
-            <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+            <div className="relative">
+              <Input type={showPassword ? 'text' : 'password'} required value={password} onChange={e => setPassword(e.target.value)} className="pr-10" />
+              <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
           <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" disabled={loading}>
             {loading ? 'Connexion...' : 'Se connecter'}
