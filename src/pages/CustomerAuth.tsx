@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle, CheckCircle } from 'lucide-react';
@@ -19,6 +20,7 @@ const CustomerAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const redirectTo = new URLSearchParams(window.location.search).get('redirect') || `/${lang}`;
 
@@ -130,7 +132,12 @@ const CustomerAuth = () => {
           </div>
           <div>
             <label className="text-sm font-medium mb-1 block">{t('auth.password')}</label>
-            <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} minLength={6} />
+            <div className="relative">
+              <Input type={showPassword ? 'text' : 'password'} required value={password} onChange={e => setPassword(e.target.value)} minLength={6} className="pr-10" />
+              <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
