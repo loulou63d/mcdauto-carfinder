@@ -67,6 +67,15 @@ const Account = () => {
         navigate(`/${lang}/login?redirect=/${lang}/account`);
         return;
       }
+
+      // If the current session belongs to an admin, redirect to admin panel
+      // This handles the case where admin login in another tab overwrites the customer session
+      const { data: adminCheck } = await supabase.rpc('is_admin');
+      if (adminCheck) {
+        navigate('/admin', { replace: true });
+        return;
+      }
+
       setUser(session.user);
 
       const { data } = await supabase
