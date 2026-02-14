@@ -218,8 +218,13 @@ const Checkout = () => {
                 <Input id="name" value={name} onChange={e => setName(e.target.value)} required maxLength={100} />
               </div>
               <div>
-                <Label htmlFor="email">{t('contact.email')} *</Label>
+              <Label htmlFor="email">{t('contact.email')} *</Label>
                 <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required maxLength={255} />
+              </div>
+              <div>
+                <Label htmlFor="phone">{t('contact.phone')}</Label>
+                <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} maxLength={20} />
+              </div>
             </div>
 
             {/* Delivery address */}
@@ -242,11 +247,6 @@ const Checkout = () => {
               <div>
                 <Label htmlFor="country">{t('checkout.country')} *</Label>
                 <Input id="country" value={country} onChange={e => setCountry(e.target.value)} required maxLength={60} />
-              </div>
-            </div>
-              <div>
-                <Label htmlFor="phone">{t('contact.phone')}</Label>
-                <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} maxLength={20} />
               </div>
             </div>
 
