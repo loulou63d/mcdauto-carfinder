@@ -91,7 +91,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
                 e.preventDefault();
                 if (!user) {
                   toast.info(t('cart.loginRequired', { defaultValue: 'Connectez-vous pour ajouter au panier' }));
-                  navigate(`/${lang}/customer-auth`);
+                  navigate(`/${lang}/login`);
                   return;
                 }
                 if (isInCart(vehicle.id)) {
