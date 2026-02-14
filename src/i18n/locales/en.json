@@ -608,7 +608,11 @@
     "Gold": "Gold",
     "Purple": "Purple",
     "Pink": "Pink",
-    "Varesine Blue": "Varesine Blue"
+    "Varesine Blue": "Varesine Blue",
+    "Blanche": "White",
+    "Noire": "Black",
+    "Grise": "Grey",
+    "Grise ": "Grey"
   },
   "cart": {
     "title": "My Cart",

@@ -613,7 +613,11 @@
     "Gold": "Gold",
     "Purple": "Lila",
     "Pink": "Rosa",
-    "Varesine Blue": "Varesine Blau"
+    "Varesine Blue": "Varesine Blau",
+    "Blanche": "Weiß",
+    "Noire": "Schwarz",
+    "Grise": "Grau",
+    "Grise ": "Grau"
   },
   "cart": {
     "title": "Mein Warenkorb",
