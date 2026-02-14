@@ -667,7 +667,7 @@
     "depositInfo": "Un acompte de 20% est requis pour valider votre commande",
     "depositInstruction": "Effectuez le virement bancaire du montant ci-dessous, puis uploadez le justificatif de paiement.",
     "depositAmount": "Acompte à payer",
-    "reference": "Référence",
+    "motif": "Motif",
     "receiptTitle": "Justificatif de paiement",
     "receiptDesc": "Uploadez une photo ou un PDF de votre reçu de virement bancaire",
     "receiptRequired": "Veuillez uploader le justificatif de paiement",

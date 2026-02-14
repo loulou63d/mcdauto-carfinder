@@ -454,7 +454,7 @@
     "depositInfo": "É necessário um sinal de 20% para confirmar a sua encomenda",
     "depositInstruction": "Efetue a transferência bancária do valor indicado abaixo e carregue o comprovativo de pagamento.",
     "depositAmount": "Sinal a pagar",
-    "reference": "Referência",
+    "motif": "Motivo do pagamento",
     "receiptTitle": "Comprovativo de pagamento",
     "receiptDesc": "Carregue uma foto ou PDF do seu recibo de transferência bancária",
     "receiptRequired": "Por favor carregue o comprovativo de pagamento",

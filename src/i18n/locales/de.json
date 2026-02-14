@@ -667,7 +667,7 @@
     "depositInfo": "Eine Anzahlung von 20% ist erforderlich, um Ihre Bestellung zu bestätigen",
     "depositInstruction": "Überweisen Sie den unten angegebenen Betrag per Banküberweisung und laden Sie den Zahlungsbeleg hoch.",
     "depositAmount": "Zu zahlende Anzahlung",
-    "reference": "Referenz",
+    "motif": "Verwendungszweck",
     "receiptTitle": "Zahlungsbeleg",
     "receiptDesc": "Laden Sie ein Foto oder PDF Ihres Überweisungsbelegs hoch",
     "receiptRequired": "Bitte laden Sie den Zahlungsbeleg hoch",
