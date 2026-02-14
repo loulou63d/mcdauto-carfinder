@@ -573,6 +573,17 @@
     "title": "Allgemeine Geschäftsbedingungen",
     "intro": "Es gelten die folgenden allgemeinen Geschäftsbedingungen."
   },
+  "categoryValues": {
+    "Berline": "Limousine",
+    "SUV": "SUV",
+    "4x4": "4x4",
+    "Break": "Kombi",
+    "Coupé": "Coupé",
+    "Cabriolet": "Cabriolet",
+    "Monospace": "Van",
+    "Compacte": "Kompakt",
+    "Électrique": "Elektrisch"
+  },
   "energyValues": {
     "Essence": "Benzin",
     "Diesel": "Diesel",

@@ -360,6 +360,17 @@
     "backHome": "Volver al inicio"
   },
   "cgv": { "title": "Condiciones generales de venta", "intro": "Se aplican las siguientes condiciones generales de venta." },
+  "categoryValues": {
+    "Berline": "Berlina",
+    "SUV": "SUV",
+    "4x4": "4x4",
+    "Break": "Familiar",
+    "Coupé": "Coupé",
+    "Cabriolet": "Descapotable",
+    "Monospace": "Monovolumen",
+    "Compacte": "Compacto",
+    "Électrique": "Eléctrico"
+  },
   "energyValues": {
     "Essence": "Gasolina",
     "Diesel": "Diésel",
