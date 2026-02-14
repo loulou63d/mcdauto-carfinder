@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, Upload, X, Globe } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Upload, X, Globe, Check, ChevronsUpDown, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import type { Tables } from '@/integrations/supabase/types';
 
 const LANGUAGES = [
@@ -39,6 +41,20 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
   const [existingImages, setExistingImages] = useState<string[]>(
     vehicle?.vehicle_images?.map(i => i.image_url) ?? []
   );
+
+  // Brand combobox state
+  const [brands, setBrands] = useState<string[]>([]);
+  const [brandOpen, setBrandOpen] = useState(false);
+  const [brandSearch, setBrandSearch] = useState('');
+
+  useEffect(() => {
+    supabase.from('vehicles').select('brand').then(({ data }) => {
+      if (data) {
+        const unique = [...new Set(data.map(v => v.brand))].sort();
+        setBrands(unique);
+      }
+    });
+  }, []);
 
   const initTranslations = (field: 'description_translations' | 'equipment_translations') => {
     const existing = vehicle?.[field] as Record<string, string> | null;
@@ -158,7 +174,61 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
       <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
         {/* Basic info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><Label>Marque *</Label><Input required value={form.brand} onChange={e => update('brand', e.target.value)} /></div>
+          <div>
+            <Label>Marque *</Label>
+            <Popover open={brandOpen} onOpenChange={setBrandOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={brandOpen} className="w-full justify-between font-normal">
+                  {form.brand || 'Sélectionner une marque...'}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                <div className="p-2 border-b">
+                  <Input
+                    placeholder="Rechercher ou ajouter..."
+                    value={brandSearch}
+                    onChange={e => setBrandSearch(e.target.value)}
+                    className="h-8"
+                  />
+                </div>
+                <div className="max-h-48 overflow-y-auto p-1">
+                  {brands
+                    .filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()))
+                    .map(b => (
+                      <button
+                        key={b}
+                        type="button"
+                        className={cn(
+                          'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted cursor-pointer',
+                          form.brand === b && 'bg-primary/10 font-medium'
+                        )}
+                        onClick={() => { update('brand', b); setBrandOpen(false); setBrandSearch(''); }}
+                      >
+                        <Check className={cn('h-3 w-3', form.brand === b ? 'opacity-100' : 'opacity-0')} />
+                        {b}
+                      </button>
+                    ))}
+                  {brandSearch && !brands.some(b => b.toLowerCase() === brandSearch.toLowerCase()) && (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted cursor-pointer text-primary font-medium"
+                      onClick={() => {
+                        const newBrand = brandSearch.trim();
+                        setBrands(prev => [...prev, newBrand].sort());
+                        update('brand', newBrand);
+                        setBrandOpen(false);
+                        setBrandSearch('');
+                      }}
+                    >
+                      <Plus className="h-3 w-3" />
+                      Ajouter "{brandSearch}"
+                    </button>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
           <div><Label>Modèle *</Label><Input required value={form.model} onChange={e => update('model', e.target.value)} /></div>
           <div><Label>Année *</Label><Input type="number" required value={form.year} onChange={e => update('year', +e.target.value)} /></div>
           <div><Label>Prix (€) *</Label><Input type="number" required value={form.price} onChange={e => update('price', +e.target.value)} /></div>
