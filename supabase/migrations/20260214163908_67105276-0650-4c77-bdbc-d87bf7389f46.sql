@@ -1,0 +1,2 @@
+
+ALTER TABLE public.orders ADD COLUMN delivery_address text;

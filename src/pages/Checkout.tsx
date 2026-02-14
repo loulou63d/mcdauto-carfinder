@@ -23,6 +23,10 @@ const Checkout = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('');
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -75,10 +79,12 @@ const Checkout = () => {
       toast({ title: t('checkout.receiptRequired'), variant: 'destructive' });
       return;
     }
-    if (!name.trim() || !email.trim()) {
+    if (!name.trim() || !email.trim() || !address.trim() || !city.trim() || !postalCode.trim() || !country.trim()) {
       toast({ title: t('checkout.fillRequired'), variant: 'destructive' });
       return;
     }
+
+    const fullAddress = `${address.trim()}, ${postalCode.trim()} ${city.trim()}, ${country.trim()}`;
 
     setSubmitting(true);
     try {
@@ -114,6 +120,7 @@ const Checkout = () => {
         total_price: total,
         deposit_amount: deposit,
         receipt_url: urlData.publicUrl,
+        delivery_address: fullAddress,
         lang,
       });
 
@@ -213,7 +220,30 @@ const Checkout = () => {
               <div>
                 <Label htmlFor="email">{t('contact.email')} *</Label>
                 <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required maxLength={255} />
+            </div>
+
+            {/* Delivery address */}
+            <div className="bg-card rounded-lg border p-5 space-y-4">
+              <h3 className="font-heading font-bold text-foreground">{t('checkout.deliveryAddress')}</h3>
+              <div>
+                <Label htmlFor="address">{t('checkout.address')} *</Label>
+                <Input id="address" value={address} onChange={e => setAddress(e.target.value)} required maxLength={200} />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="postalCode">{t('checkout.postalCode')} *</Label>
+                  <Input id="postalCode" value={postalCode} onChange={e => setPostalCode(e.target.value)} required maxLength={10} />
+                </div>
+                <div>
+                  <Label htmlFor="city">{t('checkout.city')} *</Label>
+                  <Input id="city" value={city} onChange={e => setCity(e.target.value)} required maxLength={100} />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="country">{t('checkout.country')} *</Label>
+                <Input id="country" value={country} onChange={e => setCountry(e.target.value)} required maxLength={60} />
+              </div>
+            </div>
               <div>
                 <Label htmlFor="phone">{t('contact.phone')}</Label>
                 <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} maxLength={20} />

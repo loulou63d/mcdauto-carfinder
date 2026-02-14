@@ -450,6 +450,11 @@
   "checkout": {
     "title": "Finalizar encomenda",
     "customerInfo": "Os seus dados",
+    "deliveryAddress": "Morada de entrega",
+    "address": "Morada",
+    "city": "Cidade",
+    "postalCode": "Código postal",
+    "country": "País",
     "depositTitle": "Sinal obrigatório (20%)",
     "depositInfo": "É necessário um sinal de 20% para confirmar a sua encomenda",
     "depositInstruction": "Efetue a transferência bancária do valor indicado abaixo e carregue o comprovativo de pagamento.",

@@ -22,6 +22,7 @@ interface Order {
   receipt_url: string | null;
   status: string;
   admin_notes: string | null;
+  delivery_address: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -195,6 +196,11 @@ const Orders = () => {
               <div className="flex flex-col gap-1 text-sm">
                 <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {selected.customer_email}</p>
                 {selected.customer_phone && <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-muted-foreground" /> {selected.customer_phone}</p>}
+                {selected.delivery_address && (
+                  <div className="mt-2 bg-muted/50 rounded-md p-2 text-sm">
+                    <span className="font-medium">Adresse de livraison :</span> {selected.delivery_address}
+                  </div>
+                )}
               </div>
 
               {/* Vehicles */}

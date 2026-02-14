@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle, CheckCircle } from 'lucide-react';
@@ -21,6 +21,15 @@ const CustomerAuth = () => {
   const [signupSuccess, setSignupSuccess] = useState(false);
 
   const redirectTo = new URLSearchParams(window.location.search).get('redirect') || `/${lang}`;
+
+  // Sign out any existing session (e.g. admin) when landing on customer auth
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabase.auth.signOut();
+      }
+    });
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
