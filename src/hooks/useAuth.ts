@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import type { User, Session } from '@supabase/supabase-js';
 
 export const useAuth = () => {
@@ -14,7 +14,7 @@ export const useAuth = () => {
       return;
     }
     try {
-      const { data, error } = await supabase.rpc('is_admin');
+      const { data, error } = await supabaseAdmin.rpc('is_admin');
       if (error) {
         console.error('is_admin RPC error:', error);
         setIsAdmin(false);
@@ -30,14 +30,12 @@ export const useAuth = () => {
   useEffect(() => {
     let mounted = true;
 
-    // First set up the auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = supabaseAdmin.auth.onAuthStateChange(
       (_event, newSession) => {
         if (!mounted) return;
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
-        // Defer admin check to avoid blocking the callback
         setTimeout(() => {
           if (!mounted) return;
           checkAdmin(newSession?.user ?? null).then(() => {
@@ -47,8 +45,7 @@ export const useAuth = () => {
       }
     );
 
-    // Then get the initial session
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+    supabaseAdmin.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       if (!mounted) return;
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
@@ -63,12 +60,12 @@ export const useAuth = () => {
   }, [checkAdmin]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabaseAdmin.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await supabaseAdmin.auth.signOut();
   };
 
   return { user, session, loading, isAdmin, signIn, signOut };

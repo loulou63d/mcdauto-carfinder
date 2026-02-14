@@ -5,7 +5,7 @@ import logoMcd from '@/assets/logo-mcd.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +39,7 @@ const Auth = () => {
     }
     setError('');
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth`,
     });
     setLoading(false);
