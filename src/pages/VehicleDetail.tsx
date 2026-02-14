@@ -23,7 +23,7 @@ const VehicleDetail = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       toast.info(t('cart.loginRequired', 'Connectez-vous pour ajouter au panier'));
-      navigate(`/${lang}/customer-auth`);
+      navigate(`/${lang}/login`);
       return;
     }
     if (vehicle) {
