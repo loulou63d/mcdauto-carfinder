@@ -47,11 +47,19 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
   const [brandOpen, setBrandOpen] = useState(false);
   const [brandSearch, setBrandSearch] = useState('');
 
+  // Category combobox state
+  const [categories, setCategories] = useState<string[]>(categoryOptions);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+
   useEffect(() => {
-    supabase.from('vehicles').select('brand').then(({ data }) => {
+    supabase.from('vehicles').select('brand, category').then(({ data }) => {
       if (data) {
-        const unique = [...new Set(data.map(v => v.brand))].sort();
-        setBrands(unique);
+        const uniqueBrands = [...new Set(data.map(v => v.brand))].sort();
+        setBrands(uniqueBrands);
+        const dbCategories = data.map(v => v.category).filter(Boolean) as string[];
+        const allCategories = [...new Set([...categoryOptions, ...dbCategories])].sort();
+        setCategories(allCategories);
       }
     });
   }, []);
@@ -254,10 +262,58 @@ const VehicleForm = ({ vehicle, onClose, onSaved }: Props) => {
           </div>
           <div>
             <Label>Catégorie</Label>
-            <Select value={form.category} onValueChange={v => update('category', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{categoryOptions.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
+            <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={categoryOpen} className="w-full justify-between font-normal">
+                  {form.category || 'Sélectionner...'}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                <div className="p-2 border-b">
+                  <Input
+                    placeholder="Rechercher ou ajouter..."
+                    value={categorySearch}
+                    onChange={e => setCategorySearch(e.target.value)}
+                    className="h-8"
+                  />
+                </div>
+                <div className="max-h-48 overflow-y-auto p-1">
+                  {categories
+                    .filter(c => c.toLowerCase().includes(categorySearch.toLowerCase()))
+                    .map(c => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={cn(
+                          'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted cursor-pointer',
+                          form.category === c && 'bg-primary/10 font-medium'
+                        )}
+                        onClick={() => { update('category', c); setCategoryOpen(false); setCategorySearch(''); }}
+                      >
+                        <Check className={cn('h-3 w-3', form.category === c ? 'opacity-100' : 'opacity-0')} />
+                        {c}
+                      </button>
+                    ))}
+                  {categorySearch && !categories.some(c => c.toLowerCase() === categorySearch.toLowerCase()) && (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted cursor-pointer text-primary font-medium"
+                      onClick={() => {
+                        const newCat = categorySearch.trim();
+                        setCategories(prev => [...prev, newCat].sort());
+                        update('category', newCat);
+                        setCategoryOpen(false);
+                        setCategorySearch('');
+                      }}
+                    >
+                      <Plus className="h-3 w-3" />
+                      Ajouter "{categorySearch}"
+                    </button>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <div><Label>Couleur</Label><Input value={form.color} onChange={e => update('color', e.target.value)} /></div>
           <div><Label>Portes</Label><Input type="number" value={form.doors} onChange={e => update('doors', +e.target.value)} /></div>
