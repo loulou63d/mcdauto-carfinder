@@ -22,14 +22,7 @@ const CustomerAuth = () => {
 
   const redirectTo = new URLSearchParams(window.location.search).get('redirect') || `/${lang}`;
 
-  // Sign out any existing session (e.g. admin) when landing on customer auth
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        supabase.auth.signOut();
-      }
-    });
-  }, []);
+  // No need to sign out here - admin uses a separate client with sessionStorage
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
