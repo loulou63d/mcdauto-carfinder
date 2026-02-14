@@ -1,19 +1,38 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom';
-import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2 } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2, ShoppingCart, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import VehicleCard from '@/components/VehicleCard';
 import { useVehicle, useVehicles } from '@/hooks/useVehicles';
+import { useCart } from '@/contexts/CartContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const VehicleDetail = () => {
   const { t } = useTranslation();
   const { lang = 'de', id } = useParams();
+  const navigate = useNavigate();
   const { data: vehicle, isLoading } = useVehicle(id);
   const { data: allVehicles = [] } = useVehicles({ limit: 5 });
   const [selectedImage, setSelectedImage] = useState(0);
+  const { addToCart, isInCart } = useCart();
+
+  const handleAddToCart = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.info(t('cart.loginRequired', 'Connectez-vous pour ajouter au panier'));
+      navigate(`/${lang}/customer-auth`);
+      return;
+    }
+    if (vehicle) {
+      addToCart(vehicle);
+      toast.success(t('cart.added', 'Véhicule ajouté au panier'));
+    }
+  };
+
+  const alreadyInCart = vehicle ? isInCart(vehicle.id) : false;
 
   if (isLoading) {
     return (
@@ -179,6 +198,15 @@ const VehicleDetail = () => {
                     {t('vehicle.reserve')}
                   </Button>
                 </Link>
+                <Button
+                  className="w-full"
+                  variant={alreadyInCart ? "secondary" : "default"}
+                  onClick={handleAddToCart}
+                  disabled={alreadyInCart}
+                >
+                  {alreadyInCart ? <Check className="w-4 h-4 mr-2" /> : <ShoppingCart className="w-4 h-4 mr-2" />}
+                  {alreadyInCart ? t('cart.alreadyInCart', 'Déjà dans le panier') : t('cart.addToCart', 'Ajouter au panier')}
+                </Button>
                 <Button variant="ghost" className="w-full" onClick={() => toast.success(t('vehicle.favoriteAdded'))}>
                   <Heart className="w-4 h-4 mr-2" />
                   {t('vehicle.addFavorite')}
