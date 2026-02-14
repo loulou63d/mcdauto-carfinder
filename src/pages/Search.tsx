@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { SlidersHorizontal, X, ChevronDown, ChevronRight, Search, Loader2 } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown, ChevronRight, Search, Loader2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import VehicleCard from '@/components/VehicleCard';
-import { popularBrands, energyTypes, categoryTypes } from '@/data/mockVehicles';
 import { useVehicles } from '@/hooks/useVehicles';
 
 const SearchPage = () => {
@@ -16,6 +16,7 @@ const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('popularity');
+  const [keyword, setKeyword] = useState(searchParams.get('q') || '');
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.get('brand') ? [searchParams.get('brand')!] : []
   );
@@ -24,45 +25,109 @@ const SearchPage = () => {
     searchParams.get('category') ? [searchParams.get('category')!] : []
   );
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>([]);
-  const [priceMax, setPriceMax] = useState<number>(100000);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 250000]);
+  const [yearRange, setYearRange] = useState<[number, number]>([2010, 2026]);
+  const [mileageMax, setMileageMax] = useState<number>(200000);
   const [brandSearch, setBrandSearch] = useState('');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    categories: true, brands: true, energy: true, transmission: true, price: true,
+    categories: true, brands: true, energy: true, transmission: true, price: true, year: false, mileage: false,
   });
 
   const { data: vehicles = [], isLoading } = useVehicles();
 
+  // Extract dynamic filter options from actual data
+  const dynamicBrands = useMemo(() => {
+    const brands = new Map<string, string>();
+    vehicles.forEach(v => {
+      const normalized = v.brand.trim();
+      const key = normalized.toUpperCase();
+      if (!brands.has(key) || normalized[0] === normalized[0].toUpperCase() && normalized[1] !== normalized[1]?.toUpperCase()) {
+        brands.set(key, normalized);
+      }
+    });
+    return Array.from(brands.values()).sort((a, b) => a.localeCompare(b));
+  }, [vehicles]);
+
+  const dynamicEnergies = useMemo(() => {
+    return [...new Set(vehicles.map(v => v.energy))].sort();
+  }, [vehicles]);
+
+  const dynamicCategories = useMemo(() => {
+    return [...new Set(vehicles.filter(v => v.category).map(v => v.category!))].sort();
+  }, [vehicles]);
+
+  const dynamicTransmissions = useMemo(() => {
+    return [...new Set(vehicles.map(v => v.transmission))].sort();
+  }, [vehicles]);
+
+  // Dynamic models based on selected brands
+  const dynamicModels = useMemo(() => {
+    if (selectedBrands.length === 0) return [];
+    return [...new Set(
+      vehicles
+        .filter(v => selectedBrands.some(b => v.brand.toUpperCase() === b.toUpperCase()))
+        .map(v => v.model)
+    )].sort();
+  }, [vehicles, selectedBrands]);
+
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+
+  const translateFilter = (key: string, value: string) => {
+    const translated = t(`${key}.${value}`, { defaultValue: '' });
+    return translated || value;
+  };
+
   const filtered = useMemo(() => {
     let results = [...vehicles];
-    if (selectedBrands.length > 0) results = results.filter(v => selectedBrands.includes(v.brand));
+
+    // Keyword search
+    const q = keyword.toLowerCase().trim();
+    if (q) results = results.filter(v =>
+      `${v.brand} ${v.model} ${v.category || ''} ${v.color || ''}`.toLowerCase().includes(q)
+    );
+
+    if (selectedBrands.length > 0) results = results.filter(v =>
+      selectedBrands.some(b => v.brand.toUpperCase() === b.toUpperCase())
+    );
+    if (selectedModels.length > 0) results = results.filter(v => selectedModels.includes(v.model));
     if (selectedEnergies.length > 0) results = results.filter(v => selectedEnergies.includes(v.energy));
-    if (selectedCategories.length > 0) results = results.filter(v => v.category && selectedCategories.some(c => c.toLowerCase() === v.category!.toLowerCase()));
+    if (selectedCategories.length > 0) results = results.filter(v =>
+      v.category && selectedCategories.some(c => c.toLowerCase() === v.category!.toLowerCase())
+    );
     if (selectedTransmissions.length > 0) results = results.filter(v => selectedTransmissions.includes(v.transmission));
-    if (priceMax < 100000) results = results.filter(v => Number(v.price) <= priceMax);
-    const q = searchParams.get('q')?.toLowerCase();
-    if (q) results = results.filter(v => `${v.brand} ${v.model}`.toLowerCase().includes(q));
+
+    results = results.filter(v => Number(v.price) >= priceRange[0] && Number(v.price) <= priceRange[1]);
+    results = results.filter(v => v.year >= yearRange[0] && v.year <= yearRange[1]);
+    if (mileageMax < 200000) results = results.filter(v => v.mileage <= mileageMax);
+
     if (sortBy === 'priceAsc') results.sort((a, b) => Number(a.price) - Number(b.price));
     else if (sortBy === 'priceDesc') results.sort((a, b) => Number(b.price) - Number(a.price));
     else if (sortBy === 'year') results.sort((a, b) => b.year - a.year);
     else if (sortBy === 'mileage') results.sort((a, b) => a.mileage - b.mileage);
+
     return results;
-  }, [vehicles, selectedBrands, selectedEnergies, selectedCategories, selectedTransmissions, priceMax, sortBy, searchParams]);
+  }, [vehicles, selectedBrands, selectedModels, selectedEnergies, selectedCategories, selectedTransmissions, priceRange, yearRange, mileageMax, sortBy, keyword]);
 
   const toggleFilter = (arr: string[], setArr: (v: string[]) => void, value: string) => {
     setArr(arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
   };
 
   const clearAll = () => {
-    setSelectedBrands([]); setSelectedEnergies([]); setSelectedCategories([]); setSelectedTransmissions([]); setPriceMax(100000);
+    setSelectedBrands([]); setSelectedModels([]); setSelectedEnergies([]); setSelectedCategories([]);
+    setSelectedTransmissions([]); setPriceRange([0, 250000]); setYearRange([2010, 2026]); setMileageMax(200000);
+    setKeyword('');
   };
 
-  const activeCount = selectedBrands.length + selectedEnergies.length + selectedCategories.length + selectedTransmissions.length + (priceMax < 100000 ? 1 : 0);
-  const filteredBrands = popularBrands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()));
+  const activeCount = selectedBrands.length + selectedModels.length + selectedEnergies.length + selectedCategories.length +
+    selectedTransmissions.length + (priceRange[0] > 0 || priceRange[1] < 250000 ? 1 : 0) +
+    (yearRange[0] > 2010 || yearRange[1] < 2026 ? 1 : 0) + (mileageMax < 200000 ? 1 : 0) + (keyword ? 1 : 0);
+
+  const filteredBrands = dynamicBrands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()));
 
   const toggleSection = (key: string) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
 
   const FilterSection = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
-    <div className="border-b pb-4 mb-4">
+    <div className="border-b border-border/50 pb-4 mb-4">
       <button onClick={() => toggleSection(id)} className="flex items-center justify-between w-full text-left mb-3">
         <h4 className="font-heading font-semibold text-sm">{title}</h4>
         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedSections[id] ? 'rotate-180' : ''}`} />
@@ -70,6 +135,15 @@ const SearchPage = () => {
       {expandedSections[id] && children}
     </div>
   );
+
+  // Active filter pills
+  const activeFilters = [
+    ...selectedBrands.map(b => ({ label: b, onRemove: () => setSelectedBrands(prev => prev.filter(v => v !== b)) })),
+    ...selectedModels.map(m => ({ label: m, onRemove: () => setSelectedModels(prev => prev.filter(v => v !== m)) })),
+    ...selectedCategories.map(c => ({ label: translateFilter('categoryValues', c) || c, onRemove: () => setSelectedCategories(prev => prev.filter(v => v !== c)) })),
+    ...selectedEnergies.map(e => ({ label: translateFilter('energyValues', e), onRemove: () => setSelectedEnergies(prev => prev.filter(v => v !== e)) })),
+    ...selectedTransmissions.map(tr => ({ label: translateFilter('transmissionValues', tr), onRemove: () => setSelectedTransmissions(prev => prev.filter(v => v !== tr)) })),
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,25 +158,52 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {/* Page title */}
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-xl md:text-2xl font-heading font-bold text-center mb-6">
-          {t('search.title')}
-        </h1>
-
-        {/* Filter pills - mobile */}
-        <div className="md:hidden flex gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
-          <Button variant="outline" size="sm" className="shrink-0" onClick={() => setShowFilters(true)}>
-            <SlidersHorizontal className="w-4 h-4 mr-1" />
-            {t('search.filters')} {activeCount > 0 && `(${activeCount})`}
-          </Button>
+        {/* Search bar */}
+        <div className="mb-6">
+          <div className="relative max-w-2xl mx-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              placeholder={t('hero.searchPlaceholder')}
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="pl-10 h-12 text-base rounded-full border-2 border-primary/20 focus:border-primary"
+            />
+            {keyword && (
+              <button onClick={() => setKeyword('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                <X className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Active filter pills */}
+        {activeFilters.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {activeFilters.map((f, i) => (
+              <span key={i} className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
+                {f.label}
+                <button onClick={f.onRemove}><X className="w-3 h-3" /></button>
+              </span>
+            ))}
+            <button onClick={clearAll} className="inline-flex items-center gap-1 px-3 py-1 text-sm text-muted-foreground hover:text-foreground">
+              <RotateCcw className="w-3 h-3" />
+              {t('search.clearAll')}
+            </button>
+          </div>
+        )}
 
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-bold text-foreground text-lg">{filtered.length}</span> {t('search.results')}
-          </p>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" className="md:hidden shrink-0" onClick={() => setShowFilters(true)}>
+              <SlidersHorizontal className="w-4 h-4 mr-1" />
+              {t('search.filters')} {activeCount > 0 && `(${activeCount})`}
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              <span className="font-bold text-foreground text-lg">{filtered.length}</span> {t('search.results')}
+            </p>
+          </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground hidden sm:inline">{t('search.sortBy')} :</span>
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -124,11 +225,9 @@ const SearchPage = () => {
           {/* SIDEBAR */}
           <aside className={`${showFilters ? 'fixed inset-0 z-50 bg-background p-5 overflow-y-auto' : 'hidden'} md:block md:static md:w-[280px] md:shrink-0`}>
             <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <h3 className="font-heading font-bold text-lg">
-                  {t('search.filters')} {activeCount > 0 && <span className="text-primary">({activeCount})</span>}
-                </h3>
-              </div>
+              <h3 className="font-heading font-bold text-lg">
+                {t('search.filters')} {activeCount > 0 && <span className="text-primary">({activeCount})</span>}
+              </h3>
               <div className="flex items-center gap-2">
                 {activeCount > 0 && (
                   <button onClick={clearAll} className="text-sm link-primary hover:underline">{t('search.clearAll')}</button>
@@ -139,21 +238,15 @@ const SearchPage = () => {
               </div>
             </div>
 
-            <div className="relative mb-5">
-              <Input placeholder="Mots-clés" className="pr-10 h-9 text-sm bg-secondary" />
-              <button className="absolute right-1 top-1 w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-                <Search className="w-3.5 h-3.5 text-primary-foreground" />
-              </button>
-            </div>
-
+            {/* Categories */}
             <FilterSection id="categories" title={t('search.category')}>
               <div className="space-y-2.5">
-                {categoryTypes.map(cat => {
+                {dynamicCategories.map(cat => {
                   const count = vehicles.filter(v => v.category && v.category.toLowerCase() === cat.toLowerCase()).length;
                   return (
-                    <label key={cat} className="flex items-center gap-2.5 text-sm cursor-pointer capitalize">
+                    <label key={cat} className="flex items-center gap-2.5 text-sm cursor-pointer">
                       <Checkbox checked={selectedCategories.some(c => c.toLowerCase() === cat.toLowerCase())} onCheckedChange={() => toggleFilter(selectedCategories, setSelectedCategories, cat)} />
-                      <span className="flex-1">{cat}</span>
+                      <span className="flex-1">{translateFilter('categoryValues', cat) || cat}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
                   );
@@ -161,14 +254,15 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
+            {/* Brands */}
             <FilterSection id="brands" title={t('search.brand')}>
-              <Input placeholder="Ex : Renault" value={brandSearch} onChange={(e) => setBrandSearch(e.target.value)} className="mb-3 h-8 text-sm bg-secondary" />
+              <Input placeholder={`Ex : BMW`} value={brandSearch} onChange={(e) => setBrandSearch(e.target.value)} className="mb-3 h-8 text-sm bg-secondary" />
               <div className="space-y-2.5 max-h-48 overflow-y-auto">
                 {filteredBrands.map(brand => {
-                  const count = vehicles.filter(v => v.brand === brand).length;
+                  const count = vehicles.filter(v => v.brand.toUpperCase() === brand.toUpperCase()).length;
                   return (
                     <label key={brand} className="flex items-center gap-2.5 text-sm cursor-pointer">
-                      <Checkbox checked={selectedBrands.includes(brand)} onCheckedChange={() => toggleFilter(selectedBrands, setSelectedBrands, brand)} />
+                      <Checkbox checked={selectedBrands.some(b => b.toUpperCase() === brand.toUpperCase())} onCheckedChange={() => toggleFilter(selectedBrands, setSelectedBrands, brand)} />
                       <span className="flex-1">{brand}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
@@ -177,14 +271,33 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
+            {/* Models (shown when brand selected) */}
+            {dynamicModels.length > 0 && (
+              <FilterSection id="models" title={t('search.model')}>
+                <div className="space-y-2.5 max-h-48 overflow-y-auto">
+                  {dynamicModels.map(model => {
+                    const count = vehicles.filter(v => v.model === model && selectedBrands.some(b => v.brand.toUpperCase() === b.toUpperCase())).length;
+                    return (
+                      <label key={model} className="flex items-center gap-2.5 text-sm cursor-pointer">
+                        <Checkbox checked={selectedModels.includes(model)} onCheckedChange={() => toggleFilter(selectedModels, setSelectedModels, model)} />
+                        <span className="flex-1">{model}</span>
+                        <span className="text-muted-foreground text-xs">({count})</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </FilterSection>
+            )}
+
+            {/* Energy */}
             <FilterSection id="energy" title={t('search.energy')}>
               <div className="space-y-2.5">
-                {energyTypes.map(energy => {
+                {dynamicEnergies.map(energy => {
                   const count = vehicles.filter(v => v.energy === energy).length;
                   return (
-                    <label key={energy} className="flex items-center gap-2.5 text-sm cursor-pointer capitalize">
+                    <label key={energy} className="flex items-center gap-2.5 text-sm cursor-pointer">
                       <Checkbox checked={selectedEnergies.includes(energy)} onCheckedChange={() => toggleFilter(selectedEnergies, setSelectedEnergies, energy)} />
-                      <span className="flex-1">{energy}</span>
+                      <span className="flex-1">{translateFilter('energyValues', energy)}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
                   );
@@ -192,14 +305,15 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
+            {/* Transmission */}
             <FilterSection id="transmission" title={t('search.transmission')}>
               <div className="space-y-2.5">
-                {['Automatique', 'Manuelle'].map(tr => {
+                {dynamicTransmissions.map(tr => {
                   const count = vehicles.filter(v => v.transmission === tr).length;
                   return (
                     <label key={tr} className="flex items-center gap-2.5 text-sm cursor-pointer">
                       <Checkbox checked={selectedTransmissions.includes(tr)} onCheckedChange={() => toggleFilter(selectedTransmissions, setSelectedTransmissions, tr)} />
-                      <span className="flex-1">{tr}</span>
+                      <span className="flex-1">{translateFilter('transmissionValues', tr)}</span>
                       <span className="text-muted-foreground text-xs">({count})</span>
                     </label>
                   );
@@ -207,15 +321,66 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
+            {/* Price range */}
             <FilterSection id="price" title={t('search.price')}>
-              <div className="space-y-3">
-                <input type="range" min={5000} max={100000} step={1000} value={priceMax} onChange={(e) => setPriceMax(Number(e.target.value))} className="w-full accent-primary" />
+              <div className="space-y-4">
+                <Slider
+                  min={0}
+                  max={250000}
+                  step={1000}
+                  value={priceRange}
+                  onValueChange={(v) => setPriceRange(v as [number, number])}
+                  className="w-full"
+                />
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>0 €</span>
-                  <span className="font-medium text-foreground">{priceMax >= 100000 ? '100 000+ €' : `${priceMax.toLocaleString('de-DE')} €`}</span>
+                  <span>{priceRange[0].toLocaleString('de-DE')} €</span>
+                  <span>{priceRange[1] >= 250000 ? '250 000+ €' : `${priceRange[1].toLocaleString('de-DE')} €`}</span>
                 </div>
               </div>
             </FilterSection>
+
+            {/* Year range */}
+            <FilterSection id="year" title={t('search.yearLabel')}>
+              <div className="space-y-4">
+                <Slider
+                  min={2010}
+                  max={2026}
+                  step={1}
+                  value={yearRange}
+                  onValueChange={(v) => setYearRange(v as [number, number])}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{yearRange[0]}</span>
+                  <span>{yearRange[1]}</span>
+                </div>
+              </div>
+            </FilterSection>
+
+            {/* Mileage */}
+            <FilterSection id="mileage" title={t('search.mileageLabel')}>
+              <div className="space-y-4">
+                <Slider
+                  min={0}
+                  max={200000}
+                  step={5000}
+                  value={[mileageMax]}
+                  onValueChange={(v) => setMileageMax(v[0])}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>0 km</span>
+                  <span>{mileageMax >= 200000 ? '200 000+ km' : `${mileageMax.toLocaleString('de-DE')} km`}</span>
+                </div>
+              </div>
+            </FilterSection>
+
+            {/* Apply on mobile */}
+            <div className="md:hidden mt-4">
+              <Button className="w-full" onClick={() => setShowFilters(false)}>
+                {t('search.filters')} — {filtered.length} {t('search.results')}
+              </Button>
+            </div>
           </aside>
 
           {/* RESULTS GRID */}
@@ -229,6 +394,12 @@ const SearchPage = () => {
                 <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
                 <p className="text-lg font-medium">{t('search.noResults')}</p>
                 <p className="text-sm mt-2">{t('search.noResultsHint')}</p>
+                {activeCount > 0 && (
+                  <Button variant="outline" className="mt-4" onClick={clearAll}>
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    {t('search.clearAll')}
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">

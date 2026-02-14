@@ -573,6 +573,17 @@
     "title": "Conditions générales de vente",
     "intro": "Les conditions générales de vente suivantes s'appliquent."
   },
+  "categoryValues": {
+    "Berline": "Berline",
+    "SUV": "SUV",
+    "4x4": "4x4",
+    "Break": "Break",
+    "Coupé": "Coupé",
+    "Cabriolet": "Cabriolet",
+    "Monospace": "Monospace",
+    "Compacte": "Compacte",
+    "Électrique": "Électrique"
+  },
   "energyValues": {
     "Essence": "Essence",
     "Diesel": "Diesel",

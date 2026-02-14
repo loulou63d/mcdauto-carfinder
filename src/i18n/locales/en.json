@@ -568,6 +568,17 @@
     "backHome": "Return to Home"
   },
   "cgv": { "title": "Terms & Conditions", "intro": "The following terms and conditions apply." },
+  "categoryValues": {
+    "Berline": "Sedan",
+    "SUV": "SUV",
+    "4x4": "4x4",
+    "Break": "Estate",
+    "Coupé": "Coupe",
+    "Cabriolet": "Convertible",
+    "Monospace": "MPV",
+    "Compacte": "Compact",
+    "Électrique": "Electric"
+  },
   "energyValues": {
     "Essence": "Gasoline",
     "Diesel": "Diesel",
