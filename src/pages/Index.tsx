@@ -7,6 +7,16 @@ import actionSearchImg from '@/assets/action-search.jpg';
 import actionFinanceImg from '@/assets/action-finance.jpg';
 import actionEstimateImg from '@/assets/action-estimate.jpg';
 import actionMaintenanceImg from '@/assets/action-maintenance.jpg';
+import reviewImg1 from '@/assets/review-1.jpeg';
+import reviewImg2 from '@/assets/review-2.jpeg';
+import reviewImg3 from '@/assets/review-3.jpeg';
+import reviewImg4 from '@/assets/review-4.jpeg';
+import reviewImg5 from '@/assets/review-5.jpeg';
+import reviewImg6 from '@/assets/review-6.jpeg';
+import reviewImg7 from '@/assets/review-7.jpeg';
+import reviewImg8 from '@/assets/review-8.jpeg';
+import reviewImg9 from '@/assets/review-9.jpeg';
+import reviewImg10 from '@/assets/review-10.jpeg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
@@ -213,21 +223,21 @@ const Index = () => {
   const [reviewPage, setReviewPage] = useState(0);
 
   const reviews = [
-    { name: 'Thomas M.', rating: 5, text: t('reviews.review1'), date: '15.12.2025', lang: 'DE' },
-    { name: 'Sophie L.', rating: 5, text: t('reviews.review2'), date: '22.11.2025', lang: 'DE' },
-    { name: 'Marc D.', rating: 4, text: t('reviews.review3'), date: '08.10.2025', lang: 'DE' },
-    { name: 'Carlos R.', rating: 5, text: '¡Increíble servicio! Compré un BMW Serie 3 y todo el proceso fue muy profesional. La entrega fue puntual y el coche estaba impecable.', date: '03.01.2026', lang: 'ES' },
-    { name: 'María G.', rating: 5, text: 'Muy contenta con mi compra. El equipo de MCD AUTO me ayudó a encontrar el coche perfecto para mi familia. Recomiendo 100%.', date: '28.12.2025', lang: 'ES' },
-    { name: 'Alejandro P.', rating: 4, text: 'Buen trato y precios competitivos. El envío a España fue rápido y sin problemas. Volveré a comprar aquí.', date: '15.11.2025', lang: 'ES' },
+    { name: 'Hans W.', rating: 5, text: t('reviews.review1'), date: '15.12.2025', lang: 'DE', avatar: reviewImg1 },
+    { name: 'Carlos R.', rating: 5, text: '¡Increíble servicio! Compré un BMW Serie 3 y todo el proceso fue muy profesional. La entrega fue puntual y el coche estaba impecable.', date: '03.01.2026', lang: 'ES', avatar: reviewImg2 },
+    { name: 'Alejandro P.', rating: 5, text: t('reviews.review2'), date: '22.11.2025', lang: 'DE', avatar: reviewImg3 },
+    { name: 'María G.', rating: 5, text: 'Muy contenta con mi compra. El equipo de MCD AUTO me ayudó a encontrar el coche perfecto para mi familia. Recomiendo 100%.', date: '28.12.2025', lang: 'ES', avatar: reviewImg4 },
+    { name: 'Brigitte K.', rating: 4, text: t('reviews.review3'), date: '08.10.2025', lang: 'DE', avatar: reviewImg5 },
+    { name: 'Helga S.', rating: 5, text: 'Sehr zufrieden mit dem Kauf. Das Auto war genau wie beschrieben und die Lieferung war schnell. Kann MCD AUTO nur empfehlen!', date: '05.01.2026', lang: 'DE', avatar: reviewImg6 },
+    { name: 'Sophie & Antoine D.', rating: 5, text: 'Professionalità e trasparenza. Il team di MCD AUTO ci ha seguito in ogni fase dell\'acquisto. Auto in perfette condizioni.', date: '10.12.2025', lang: 'IT', avatar: reviewImg7 },
+    { name: 'Ana C.', rating: 5, text: 'Muito satisfeita com a minha compra. A equipa foi muito profissional e o carro chegou em perfeitas condições a Lisboa.', date: '25.12.2025', lang: 'PT', avatar: reviewImg8 },
+    { name: 'Céline M.', rating: 5, text: 'Comprei um Renault Mégane e estou muito contente. Todo o processo foi transparente e a entrega foi feita no prazo combinado.', date: '14.09.2025', lang: 'PT', avatar: reviewImg9 },
+    { name: 'Laura B.', rating: 4, text: 'Ottima esperienza di acquisto. Prezzo giusto e veicolo consegnato come descritto. Lo consiglio vivamente a tutti.', date: '05.11.2025', lang: 'IT', avatar: reviewImg10 },
     { name: 'Giovanni T.', rating: 5, text: 'Servizio eccellente! Ho acquistato una Mercedes Classe C e sono rimasto molto soddisfatto. Consegna rapida in Italia.', date: '20.01.2026', lang: 'IT' },
-    { name: 'Francesca B.', rating: 5, text: 'Professionalità e trasparenza. Il team di MCD AUTO mi ha seguito in ogni fase dell\'acquisto. Auto in perfette condizioni.', date: '10.12.2025', lang: 'IT' },
-    { name: 'Marco V.', rating: 4, text: 'Ottima esperienza di acquisto. Prezzo giusto e veicolo consegnato come descritto. Lo consiglio vivamente.', date: '05.11.2025', lang: 'IT' },
-    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT' },
     { name: 'João S.', rating: 5, text: 'Excelente experiência! Comprei um Volkswagen Golf e o serviço foi impecável do início ao fim. Entrega rápida em Portugal.', date: '12.01.2026', lang: 'PT' },
-    { name: 'Ana C.', rating: 5, text: 'Muito satisfeita com a minha compra. A equipa foi muito profissional e o carro chegou em perfeitas condições a Lisboa.', date: '25.12.2025', lang: 'PT' },
     { name: 'Pedro F.', rating: 4, text: 'Bom serviço e preços justos. O transporte para Portugal foi rápido. Recomendo a todos os que procuram um bom carro.', date: '30.10.2025', lang: 'PT' },
-    { name: 'Ricardo L.', rating: 5, text: 'Comprei um Renault Mégane e estou muito contente. Todo o processo foi transparente e a entrega foi feita no prazo combinado.', date: '14.09.2025', lang: 'PT' },
     { name: 'Pablo N.', rating: 5, text: 'Fantástico. Encontré el coche que buscaba a un precio excelente. El transporte a Barcelona fue perfecto y sin sorpresas.', date: '02.02.2026', lang: 'ES' },
+    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT' },
   ];
 
   const reviewsPerPage = 3;
@@ -588,9 +598,18 @@ const Index = () => {
                       <span className="text-xs font-semibold text-muted-foreground bg-secondary px-2 py-0.5 rounded">{review.lang}</span>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{review.text}"</p>
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="font-heading font-semibold text-sm">{review.name}</span>
-                      <span className="text-xs text-muted-foreground">{review.date}</span>
+                    <div className="mt-4 flex items-center gap-3">
+                      {review.avatar ? (
+                        <img src={review.avatar} alt={review.name} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <span className="text-sm font-bold text-primary">{review.name.charAt(0)}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <span className="font-heading font-semibold text-sm block">{review.name}</span>
+                        <span className="text-xs text-muted-foreground">{review.date}</span>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
