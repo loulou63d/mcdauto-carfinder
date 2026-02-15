@@ -17,6 +17,11 @@ import reviewImg7 from '@/assets/review-7.jpeg';
 import reviewImg8 from '@/assets/review-8.jpeg';
 import reviewImg9 from '@/assets/review-9.jpeg';
 import reviewImg10 from '@/assets/review-10.jpeg';
+import reviewImg11 from '@/assets/review-11.jpeg';
+import reviewImg12 from '@/assets/review-12.jpeg';
+import reviewImg13 from '@/assets/review-13.jpeg';
+import reviewImg14 from '@/assets/review-14.jpeg';
+import reviewImg15 from '@/assets/review-15.jpeg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
@@ -233,11 +238,11 @@ const Index = () => {
     { name: 'Ana C.', rating: 5, text: 'Muito satisfeita com a minha compra. A equipa foi muito profissional e o carro chegou em perfeitas condições a Lisboa.', date: '25.12.2025', lang: 'PT', avatar: reviewImg8 },
     { name: 'Céline M.', rating: 5, text: 'Comprei um Renault Mégane e estou muito contente. Todo o processo foi transparente e a entrega foi feita no prazo combinado.', date: '14.09.2025', lang: 'PT', avatar: reviewImg9 },
     { name: 'Laura B.', rating: 4, text: 'Ottima esperienza di acquisto. Prezzo giusto e veicolo consegnato come descritto. Lo consiglio vivamente a tutti.', date: '05.11.2025', lang: 'IT', avatar: reviewImg10 },
-    { name: 'Giovanni T.', rating: 5, text: 'Servizio eccellente! Ho acquistato una Mercedes Classe C e sono rimasto molto soddisfatto. Consegna rapida in Italia.', date: '20.01.2026', lang: 'IT' },
-    { name: 'João S.', rating: 5, text: 'Excelente experiência! Comprei um Volkswagen Golf e o serviço foi impecável do início ao fim. Entrega rápida em Portugal.', date: '12.01.2026', lang: 'PT' },
-    { name: 'Pedro F.', rating: 4, text: 'Bom serviço e preços justos. O transporte para Portugal foi rápido. Recomendo a todos os que procuram um bom carro.', date: '30.10.2025', lang: 'PT' },
-    { name: 'Pablo N.', rating: 5, text: 'Fantástico. Encontré el coche que buscaba a un precio excelente. El transporte a Barcelona fue perfecto y sin sorpresas.', date: '02.02.2026', lang: 'ES' },
-    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT' },
+    { name: 'Giovanni T.', rating: 5, text: 'Servizio eccellente! Ho acquistato una Mercedes Classe C e sono rimasto molto soddisfatto. Consegna rapida in Italia.', date: '20.01.2026', lang: 'IT', avatar: reviewImg11 },
+    { name: 'João S.', rating: 5, text: 'Excelente experiência! Comprei um Volkswagen Golf e o serviço foi impecável do início ao fim. Entrega rápida em Portugal.', date: '12.01.2026', lang: 'PT', avatar: reviewImg12 },
+    { name: 'Pedro F.', rating: 4, text: 'Bom serviço e preços justos. O transporte para Portugal foi rápido. Recomendo a todos os que procuram um bom carro.', date: '30.10.2025', lang: 'PT', avatar: reviewImg13 },
+    { name: 'Pablo N.', rating: 5, text: 'Fantástico. Encontré el coche que buscaba a un precio excelente. El transporte a Barcelona fue perfecto y sin sorpresas.', date: '02.02.2026', lang: 'ES', avatar: reviewImg14 },
+    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT', avatar: reviewImg15 },
   ];
 
   const reviewsPerPage = 3;
