@@ -10,26 +10,26 @@ const Delivery = () => {
     {
       icon: Truck,
       title: t('delivery.option1Title', 'Livraison à domicile'),
-      desc: t('delivery.option1Desc', 'Nous livrons votre véhicule directement à votre adresse'),
-      price: t('delivery.option1Price', 'À partir de 250€'),
+      desc: t('delivery.option1Desc', 'Nous livrons votre véhicule directement à votre adresse, partout en Europe'),
+      price: t('delivery.option1Price', 'À partir de 700 €'),
     },
     {
       icon: MapPin,
       title: t('delivery.option2Title', 'Retrait en showroom'),
-      desc: t('delivery.option2Desc', 'Venez chercher votre véhicule dans l\'un de nos centres'),
+      desc: t('delivery.option2Desc', 'Venez chercher votre véhicule dans notre showroom à Dortmund'),
       price: t('delivery.option2Price', 'Gratuit'),
     },
     {
       icon: Clock,
       title: t('delivery.option3Title', 'Livraison express'),
-      desc: t('delivery.option3Desc', 'Livraison urgente en 24h disponible'),
-      price: t('delivery.option3Price', 'À partir de 500€'),
+      desc: t('delivery.option3Desc', 'Livraison urgente en 24-48h disponible dans toute l\'Europe'),
+      price: t('delivery.option3Price', '1 200 €'),
     },
     {
       icon: Truck,
-      title: t('delivery.option4Title', 'Transport toute France'),
-      desc: t('delivery.option4Desc', 'Nous livrons partout en France métropolitaine'),
-      price: t('delivery.option4Price', 'Selon la région'),
+      title: t('delivery.option4Title', 'Transport toute Europe'),
+      desc: t('delivery.option4Desc', 'Nous livrons partout en Europe : Allemagne, France, Espagne, Portugal, Italie, Belgique...'),
+      price: t('delivery.option4Price', 'Selon la destination'),
     },
   ];
 
@@ -164,7 +164,7 @@ const Delivery = () => {
                 {t('delivery.detail2Title', 'Coûts de transport')}
               </h3>
               <p className="text-muted-foreground text-sm">
-                {t('delivery.detail2Desc', 'Gratuit pour les retraits en showroom. À partir de 250€ pour les livraisons à domicile selon la région.')}
+                {t('delivery.detail2Desc', 'Gratuit pour les retraits en showroom. À partir de 700 € pour les livraisons à domicile selon la destination en Europe.')}
               </p>
             </div>
 

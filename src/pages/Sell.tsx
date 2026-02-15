@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router-dom';
 import { HandshakeIcon, TrendingUp, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 const Sell = () => {
   const { t } = useTranslation();
+  const { lang = 'de' } = useParams();
+  const navigate = useNavigate();
 
   const benefits = [
     {
@@ -82,7 +85,7 @@ const Sell = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate(`/${lang}/contact`)}>
               {t('sell.startButton', 'Commencer la vente')}
             </Button>
           </motion.div>
@@ -195,7 +198,7 @@ const Sell = () => {
           <p className="text-muted-foreground mb-8">
             {t('sell.ctaDesc', 'Contactez-nous dès maintenant pour une évaluation gratuite et sans engagement.')}
           </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90">
+          <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate(`/${lang}/contact`)}>
             {t('sell.ctaButton', 'Démarrer la vente')}
           </Button>
         </div>

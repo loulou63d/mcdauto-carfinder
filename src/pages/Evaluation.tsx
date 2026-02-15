@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Zap, DollarSign, Award, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 const Evaluation = () => {
   const { t } = useTranslation();
+  const { lang = 'de' } = useParams();
+  const navigate = useNavigate();
 
   const steps = [
     {
@@ -75,7 +78,7 @@ const Evaluation = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate(`/${lang}/contact`)}>
               {t('evaluation.startButton', 'Commencer l\'évaluation')}
             </Button>
           </motion.div>
@@ -156,7 +159,7 @@ const Evaluation = () => {
           <p className="text-muted-foreground mb-8">
             {t('evaluation.ctaDesc', 'Obtenez une estimation gratuite maintenant et découvrez la valeur réelle de votre véhicule.')}
           </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90">
+          <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate(`/${lang}/contact`)}>
             {t('evaluation.ctaButton', 'Évaluer mon véhicule')}
           </Button>
         </div>
