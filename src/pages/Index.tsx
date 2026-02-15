@@ -210,11 +210,29 @@ const Index = () => {
     },
   ];
 
+  const [reviewPage, setReviewPage] = useState(0);
+
   const reviews = [
-    { name: 'Thomas M.', rating: 5, text: t('reviews.review1'), date: '15.12.2025' },
-    { name: 'Sophie L.', rating: 5, text: t('reviews.review2'), date: '22.11.2025' },
-    { name: 'Marc D.', rating: 4, text: t('reviews.review3'), date: '08.10.2025' },
+    { name: 'Thomas M.', rating: 5, text: t('reviews.review1'), date: '15.12.2025', lang: 'DE' },
+    { name: 'Sophie L.', rating: 5, text: t('reviews.review2'), date: '22.11.2025', lang: 'DE' },
+    { name: 'Marc D.', rating: 4, text: t('reviews.review3'), date: '08.10.2025', lang: 'DE' },
+    { name: 'Carlos R.', rating: 5, text: '¡Increíble servicio! Compré un BMW Serie 3 y todo el proceso fue muy profesional. La entrega fue puntual y el coche estaba impecable.', date: '03.01.2026', lang: 'ES' },
+    { name: 'María G.', rating: 5, text: 'Muy contenta con mi compra. El equipo de MCD AUTO me ayudó a encontrar el coche perfecto para mi familia. Recomiendo 100%.', date: '28.12.2025', lang: 'ES' },
+    { name: 'Alejandro P.', rating: 4, text: 'Buen trato y precios competitivos. El envío a España fue rápido y sin problemas. Volveré a comprar aquí.', date: '15.11.2025', lang: 'ES' },
+    { name: 'Giovanni T.', rating: 5, text: 'Servizio eccellente! Ho acquistato una Mercedes Classe C e sono rimasto molto soddisfatto. Consegna rapida in Italia.', date: '20.01.2026', lang: 'IT' },
+    { name: 'Francesca B.', rating: 5, text: 'Professionalità e trasparenza. Il team di MCD AUTO mi ha seguito in ogni fase dell\'acquisto. Auto in perfette condizioni.', date: '10.12.2025', lang: 'IT' },
+    { name: 'Marco V.', rating: 4, text: 'Ottima esperienza di acquisto. Prezzo giusto e veicolo consegnato come descritto. Lo consiglio vivamente.', date: '05.11.2025', lang: 'IT' },
+    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT' },
+    { name: 'João S.', rating: 5, text: 'Excelente experiência! Comprei um Volkswagen Golf e o serviço foi impecável do início ao fim. Entrega rápida em Portugal.', date: '12.01.2026', lang: 'PT' },
+    { name: 'Ana C.', rating: 5, text: 'Muito satisfeita com a minha compra. A equipa foi muito profissional e o carro chegou em perfeitas condições a Lisboa.', date: '25.12.2025', lang: 'PT' },
+    { name: 'Pedro F.', rating: 4, text: 'Bom serviço e preços justos. O transporte para Portugal foi rápido. Recomendo a todos os que procuram um bom carro.', date: '30.10.2025', lang: 'PT' },
+    { name: 'Ricardo L.', rating: 5, text: 'Comprei um Renault Mégane e estou muito contente. Todo o processo foi transparente e a entrega foi feita no prazo combinado.', date: '14.09.2025', lang: 'PT' },
+    { name: 'Pablo N.', rating: 5, text: 'Fantástico. Encontré el coche que buscaba a un precio excelente. El transporte a Barcelona fue perfecto y sin sorpresas.', date: '02.02.2026', lang: 'ES' },
   ];
+
+  const reviewsPerPage = 3;
+  const totalReviewPages = Math.ceil(reviews.length / reviewsPerPage);
+  const visibleReviews = reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage);
 
   return (
     <div>
@@ -552,27 +570,53 @@ const Index = () => {
         </div>
       </section>
 
-      {/* REVIEWS */}
+      {/* REVIEWS — swipeable carousel */}
       <section className="section-padding">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-8">{t('reviews.title')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {reviews.map((review, i) => (
-              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <div className="p-6 bg-card rounded-xl border">
-                  <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: review.rating }).map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-accent text-accent" />
-                    ))}
+          <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {visibleReviews.map((review, i) => (
+                <motion.div key={`${reviewPage}-${i}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.05 }}>
+                  <div className="p-6 bg-card rounded-xl border h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: review.rating }).map((_, j) => (
+                          <Star key={j} className="w-4 h-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+                      <span className="text-xs font-semibold text-muted-foreground bg-secondary px-2 py-0.5 rounded">{review.lang}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{review.text}"</p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="font-heading font-semibold text-sm">{review.name}</span>
+                      <span className="text-xs text-muted-foreground">{review.date}</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">"{review.text}"</p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="font-heading font-semibold text-sm">{review.name}</span>
-                    <span className="text-xs text-muted-foreground">{review.date}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
+            {/* Navigation dots */}
+            <div className="flex justify-center gap-2 mt-6">
+              {Array.from({ length: totalReviewPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setReviewPage(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${i === reviewPage ? 'bg-primary' : 'bg-border'}`}
+                />
+              ))}
+            </div>
+            {/* Arrow buttons */}
+            {reviewPage > 0 && (
+              <button onClick={() => setReviewPage(reviewPage - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            {reviewPage < totalReviewPages - 1 && (
+              <button onClick={() => setReviewPage(reviewPage + 1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
+                <ChevronRightIcon className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </section>
