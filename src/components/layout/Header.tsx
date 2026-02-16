@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -50,7 +51,7 @@ const Header = () => {
   const [langOpen, setLangOpen] = useState(false);
   const { itemCount } = useCart();
   const [currentUser, setCurrentUser] = useState<SupaUser | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -148,17 +149,29 @@ const Header = () => {
       </div>
 
       {/* ── Slide-in mobile menu (mobile.de style) ── */}
-      {/* Backdrop */}
-      <div
-        className={`fixed inset-0 top-0 bg-black/40 z-40 transition-opacity duration-300 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-        onClick={close}
-      />
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 top-0 bg-black/40 z-40"
+              onClick={close}
+            />
 
-      {/* Panel */}
-      <div
-        ref={panelRef}
-        className={`fixed top-0 right-0 bottom-0 z-50 w-[85%] max-w-[380px] bg-card shadow-2xl flex flex-col transition-transform duration-300 ease-out ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}
-      >
+            {/* Panel */}
+            <motion.div
+              key="panel"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 bottom-0 z-50 w-[85%] max-w-[380px] bg-card shadow-2xl flex flex-col"
+            >
         {/* Panel header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <span className="text-base font-semibold text-foreground">
@@ -234,7 +247,10 @@ const Header = () => {
             </Link>
           )}
         </div>
-      </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
