@@ -8,7 +8,21 @@
     "services": "Services",
     "login": "Login",
     "favorites": "Favorites",
-    "search": "Search"
+    "search": "Search",
+    "closeMenu": "Close menu",
+    "myAccount": "My MCD AUTO",
+    "overview": "Overview",
+    "mySearches": "My searches",
+    "financing": "Financing",
+    "sellDirect": "Direct sale",
+    "allVehicles": "All vehicles",
+    "advancedSearch": "Advanced search",
+    "sellYourCar": "Sell your car",
+    "estimate": "Free estimate",
+    "maintenance": "Maintenance",
+    "warranty": "Warranty",
+    "info": "Information",
+    "faq": "FAQ"
   },
   "hero": {
     "title": "Guaranteed and inspected used vehicles — the MCD AUTO service",
