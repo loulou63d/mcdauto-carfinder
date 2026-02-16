@@ -191,8 +191,8 @@ const Header = () => {
             <p className="px-6 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t('nav.buy', { defaultValue: 'Acheter' })}
             </p>
-            <MenuLink icon={Search} label={t('nav.mySearches', { defaultValue: 'Mes recherches' })} to={`/${lang}/search`} onClick={close} />
-            <MenuLink icon={Heart} label={t('nav.favorites', { defaultValue: 'Favoris' })} to={`/${lang}/search`} onClick={close} />
+            <MenuLink icon={Search} label={t('nav.mySearches', { defaultValue: 'Mes recherches' })} to={`/${lang}/my-searches`} onClick={close} />
+            <MenuLink icon={Heart} label={t('nav.favorites', { defaultValue: 'Favoris' })} to={`/${lang}/favorites`} onClick={close} />
             <MenuLink icon={Landmark} label={t('nav.financing', { defaultValue: 'Financement' })} to={`/${lang}/services/financing`} onClick={close} />
 
             <p className="px-6 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
