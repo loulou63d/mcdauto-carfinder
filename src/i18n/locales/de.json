@@ -8,7 +8,21 @@
     "services": "Leistungen",
     "login": "Anmelden",
     "favorites": "Favoriten",
-    "search": "Suchen"
+    "search": "Suchen",
+    "closeMenu": "Menü schließen",
+    "myAccount": "Mein MCD AUTO",
+    "overview": "Übersicht",
+    "mySearches": "Meine Suchen",
+    "financing": "Finanzierung",
+    "sellDirect": "Direktverkauf",
+    "allVehicles": "Alle Fahrzeuge",
+    "advancedSearch": "Erweiterte Suche",
+    "sellYourCar": "Verkaufen Sie Ihr Auto",
+    "estimate": "Kostenlose Bewertung",
+    "maintenance": "Wartung",
+    "warranty": "Garantie",
+    "info": "Informationen",
+    "faq": "FAQ"
   },
   "hero": {
     "title": "Geprüfte und garantierte Gebrauchtwagen — der MCD AUTO Service",

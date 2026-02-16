@@ -8,7 +8,21 @@
     "services": "Services",
     "login": "Connexion",
     "favorites": "Favoris",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "closeMenu": "Fermer le menu",
+    "myAccount": "Mon MCD AUTO",
+    "overview": "Vue d'ensemble",
+    "mySearches": "Mes recherches",
+    "financing": "Financement",
+    "sellDirect": "Vente directe",
+    "allVehicles": "Tous les véhicules",
+    "advancedSearch": "Recherche avancée",
+    "sellYourCar": "Vendez votre voiture",
+    "estimate": "Estimation gratuite",
+    "maintenance": "Entretien",
+    "warranty": "Garantie",
+    "info": "Informations",
+    "faq": "FAQ"
   },
   "hero": {
     "title": "Véhicules d'occasion garantis et révisés — le service MCD AUTO en plus",
