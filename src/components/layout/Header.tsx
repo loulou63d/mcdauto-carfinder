@@ -1,14 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, ChevronDown, Search, User, BookmarkCheck, ArrowLeft, ShoppingCart, LogOut } from 'lucide-react';
+import {
+  Menu, X, ChevronDown, ChevronUp, Search, User, BookmarkCheck, ArrowLeft,
+  ShoppingCart, LayoutGrid, Heart, Landmark, Tag, Car, Wrench, Info, Phone,
+  FileText, Shield, HelpCircle, LogOut
+} from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoMcd from '@/assets/logo-mcd.png';
 import { supportedLangs, langLabels, type Lang } from '@/i18n';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import type { User as SupaUser } from '@supabase/supabase-js';
+
+/* ── Accordion section ──────────────────────────────────── */
+const MenuSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-border">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-6 py-4 text-[15px] font-semibold text-foreground hover:bg-muted/50 transition-colors"
+      >
+        {title}
+        {open ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+      </button>
+      {open && <div className="pb-2">{children}</div>}
+    </div>
+  );
+};
+
+const MenuLink = ({ icon: Icon, label, to, onClick }: { icon: React.ElementType; label: string; to: string; onClick: () => void }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className="flex items-center gap-3.5 px-6 py-3 text-[14px] text-foreground hover:bg-muted/60 transition-colors"
+  >
+    <Icon className="w-5 h-5 text-primary" />
+    {label}
+  </Link>
+);
 
 const Header = () => {
   const { t } = useTranslation();
@@ -19,6 +50,7 @@ const Header = () => {
   const [langOpen, setLangOpen] = useState(false);
   const { itemCount } = useCart();
   const [currentUser, setCurrentUser] = useState<SupaUser | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -30,22 +62,17 @@ const Header = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Check if we're on the homepage (/:lang or /:lang/)
-  const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
-  const navLinks = [
-    { label: t('nav.buy'), to: `/${lang}/search` },
-    { label: t('nav.sell'), to: `/${lang}#sell` },
-    { label: t('nav.maintain'), to: `/${lang}#maintain` },
-    { label: t('nav.services'), to: `/${lang}/services` },
-    { label: t('nav.about'), to: `/${lang}/about` },
-    { label: t('nav.contact'), to: `/${lang}/contact` },
-  ];
+  const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
+  const close = () => setMobileOpen(false);
 
   const textColor = 'text-foreground';
   const textHover = 'hover:text-primary';
-  const logoBg = 'bg-primary/10';
-  const logoIconColor = 'text-primary';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b shadow-sm">
@@ -120,48 +147,94 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile nav overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 top-16 bg-card z-40 overflow-y-auto">
-          <div className="px-4 py-3 border-b">
-            <div className="relative">
-              <Input placeholder={t('hero.searchPlaceholder')} className="pr-10 h-10 rounded-full bg-secondary" />
-              <button className="absolute right-1 top-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <Search className="w-4 h-4 text-primary-foreground" />
-              </button>
-            </div>
-          </div>
-          {navLinks.map((l) => (
-            <Link
-              key={l.to + l.label}
-              to={l.to}
-              onClick={() => setMobileOpen(false)}
-              className="block px-4 py-3 text-sm font-medium hover:bg-muted transition-colors border-b text-foreground"
-            >
-              {l.label}
-            </Link>
-          ))}
-          <div className="px-4 py-3 flex gap-2">
-            {currentUser ? (
-              <>
-                <Link to={`/${lang}/account`} onClick={() => setMobileOpen(false)} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full">
-                    <User className="w-4 h-4 mr-2" />
-                    {t('account.myAccount', { defaultValue: 'Mon compte' })}
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <Link to={`/${lang}/login`} onClick={() => setMobileOpen(false)} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full">
-                  <User className="w-4 h-4 mr-2" />
-                  {t('nav.login')}
-                </Button>
-              </Link>
-            )}
-          </div>
+      {/* ── Slide-in mobile menu (mobile.de style) ── */}
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 top-0 bg-black/40 z-40 transition-opacity duration-300 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={close}
+      />
+
+      {/* Panel */}
+      <div
+        ref={panelRef}
+        className={`fixed top-0 right-0 bottom-0 z-50 w-[85%] max-w-[380px] bg-card shadow-2xl flex flex-col transition-transform duration-300 ease-out ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Panel header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <span className="text-base font-semibold text-foreground">
+            {t('nav.closeMenu', { defaultValue: 'Fermer le menu' })}
+          </span>
+          <button onClick={close} className="p-1 text-foreground hover:text-primary transition-colors">
+            <X className="w-6 h-6" />
+          </button>
         </div>
-      )}
+
+        {/* Panel content (scrollable) */}
+        <div className="flex-1 overflow-y-auto">
+          {/* ── My MCD AUTO section ── */}
+          <MenuSection title={t('nav.myAccount', { defaultValue: 'Mon MCD AUTO' })}>
+            <MenuLink icon={LayoutGrid} label={t('nav.overview', { defaultValue: 'Vue d\'ensemble' })} to={`/${lang}/account`} onClick={close} />
+
+            <p className="px-6 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t('nav.buy', { defaultValue: 'Acheter' })}
+            </p>
+            <MenuLink icon={Search} label={t('nav.mySearches', { defaultValue: 'Mes recherches' })} to={`/${lang}/search`} onClick={close} />
+            <MenuLink icon={Heart} label={t('nav.favorites', { defaultValue: 'Favoris' })} to={`/${lang}/search`} onClick={close} />
+            <MenuLink icon={Landmark} label={t('nav.financing', { defaultValue: 'Financement' })} to={`/${lang}/services/financing`} onClick={close} />
+
+            <p className="px-6 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t('nav.sell', { defaultValue: 'Vendre' })}
+            </p>
+            <MenuLink icon={Tag} label={t('nav.sellDirect', { defaultValue: 'Vente directe' })} to={`/${lang}/sell`} onClick={close} />
+          </MenuSection>
+
+          {/* ── Acheter ── */}
+          <MenuSection title={t('nav.buy', { defaultValue: 'Acheter' })}>
+            <MenuLink icon={Car} label={t('nav.allVehicles', { defaultValue: 'Tous les véhicules' })} to={`/${lang}/search`} onClick={close} />
+            <MenuLink icon={Search} label={t('nav.advancedSearch', { defaultValue: 'Recherche avancée' })} to={`/${lang}/search`} onClick={close} />
+          </MenuSection>
+
+          {/* ── Vendre ── */}
+          <MenuSection title={t('nav.sell', { defaultValue: 'Vendre' })}>
+            <MenuLink icon={Tag} label={t('nav.sellYourCar', { defaultValue: 'Vendez votre voiture' })} to={`/${lang}/sell`} onClick={close} />
+            <MenuLink icon={FileText} label={t('nav.estimate', { defaultValue: 'Estimation gratuite' })} to={`/${lang}/services/estimation`} onClick={close} />
+          </MenuSection>
+
+          {/* ── Services ── */}
+          <MenuSection title={t('nav.services', { defaultValue: 'Services' })}>
+            <MenuLink icon={Landmark} label={t('nav.financing', { defaultValue: 'Financement' })} to={`/${lang}/services/financing`} onClick={close} />
+            <MenuLink icon={Wrench} label={t('nav.maintenance', { defaultValue: 'Entretien' })} to={`/${lang}/services/maintenance`} onClick={close} />
+            <MenuLink icon={Shield} label={t('nav.warranty', { defaultValue: 'Garantie' })} to={`/${lang}/warranty`} onClick={close} />
+            <MenuLink icon={FileText} label={t('nav.estimate', { defaultValue: 'Estimation' })} to={`/${lang}/services/estimation`} onClick={close} />
+          </MenuSection>
+
+          {/* ── Informations ── */}
+          <MenuSection title={t('nav.info', { defaultValue: 'Informations' })}>
+            <MenuLink icon={Info} label={t('nav.about', { defaultValue: 'À propos' })} to={`/${lang}/about`} onClick={close} />
+            <MenuLink icon={HelpCircle} label={t('nav.faq', { defaultValue: 'FAQ' })} to={`/${lang}/faq`} onClick={close} />
+            <MenuLink icon={Phone} label={t('nav.contact', { defaultValue: 'Contact' })} to={`/${lang}/contact`} onClick={close} />
+          </MenuSection>
+        </div>
+
+        {/* Panel footer – CTA */}
+        <div className="p-5 border-t border-border">
+          {currentUser ? (
+            <Link to={`/${lang}/account`} onClick={close} className="block">
+              <Button className="w-full h-12 text-[15px] font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground">
+                <User className="w-5 h-5 mr-2" />
+                {t('account.myAccount', { defaultValue: 'Mon compte' })}
+              </Button>
+            </Link>
+          ) : (
+            <Link to={`/${lang}/login`} onClick={close} className="block">
+              <Button className="w-full h-12 text-[15px] font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground">
+                <User className="w-5 h-5 mr-2" />
+                {t('nav.login', { defaultValue: 'Se connecter' })}
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
     </header>
   );
 };
