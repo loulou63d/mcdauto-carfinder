@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart } from 'lucide-react';
+import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
 import { useCart } from '@/contexts/CartContext';
@@ -16,6 +17,45 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { addToCart, isInCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [isFav, setIsFav] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('mcd-favorites');
+    if (stored) {
+      try {
+        const favs = JSON.parse(stored) as { id: string }[];
+        setIsFav(favs.some(f => f.id === vehicle.id));
+      } catch { /* empty */ }
+    }
+  }, [vehicle.id]);
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const stored = localStorage.getItem('mcd-favorites');
+    let favs: any[] = [];
+    try { favs = stored ? JSON.parse(stored) : []; } catch { /* empty */ }
+
+    if (isFav) {
+      favs = favs.filter((f: any) => f.id !== vehicle.id);
+      setIsFav(false);
+      toast.success(t('vehicle.favoriteRemoved'));
+    } else {
+      favs.push({
+        id: vehicle.id,
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        price: vehicle.price,
+        mileage: vehicle.mileage,
+        energy: vehicle.energy,
+        image: vehicle.images?.[0],
+      });
+      setIsFav(true);
+      toast.success(t('vehicle.favoriteAdded'));
+    }
+    localStorage.setItem('mcd-favorites', JSON.stringify(favs));
+  };
 
   const firstImage = vehicle.images?.[0];
 
@@ -39,10 +79,12 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </div>
           )}
           <button
-            onClick={(e) => { e.preventDefault(); toast.success(t('vehicle.favoriteAdded')); }}
-            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center hover:bg-card transition-colors shadow-sm"
+            onClick={toggleFavorite}
+            className={`absolute top-3 right-3 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors shadow-sm ${
+              isFav ? 'bg-accent text-accent-foreground' : 'bg-card/90 hover:bg-card text-muted-foreground'
+            }`}
           >
-            <Heart className="w-4 h-4 text-muted-foreground" />
+            <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
           </button>
         </div>
 
@@ -83,8 +125,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           {/* Guarantee badges + cart button */}
           <div className="mt-3 flex items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5">
+              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded border text-muted-foreground">
+                <ShieldCheck className="w-3 h-3 text-green-600" />{t('vehicle.accidentFree')}
+              </span>
               <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.guarantee12')}</span>
-              <span className="text-[11px] px-2 py-0.5 rounded border text-muted-foreground">{t('search.satisfactionBadge')}</span>
             </div>
             <button
               onClick={(e) => {

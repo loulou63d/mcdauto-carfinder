@@ -154,7 +154,9 @@
     "from": "Ab",
     "breadcrumbHome": "Startseite",
     "breadcrumbSearch": "Suche",
-    "favoriteAdded": "Fahrzeug zu Favoriten hinzugefügt"
+    "favoriteAdded": "Fahrzeug zu Favoriten hinzugefügt",
+    "favoriteRemoved": "Aus Favoriten entfernt",
+    "accidentFree": "Unfallfrei"
   },
   "contact": {
     "title": "Kontaktieren Sie uns",

@@ -154,7 +154,9 @@
     "from": "À partir de",
     "breadcrumbHome": "Accueil",
     "breadcrumbSearch": "Recherche",
-    "favoriteAdded": "Véhicule ajouté aux favoris"
+    "favoriteAdded": "Véhicule ajouté aux favoris",
+    "favoriteRemoved": "Retiré des favoris",
+    "accidentFree": "Sans accident"
   },
   "contact": {
     "title": "Contactez-nous",

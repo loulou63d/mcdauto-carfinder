@@ -152,7 +152,9 @@
     "from": "From",
     "breadcrumbHome": "Home",
     "breadcrumbSearch": "Search",
-    "favoriteAdded": "Vehicle added to favorites"
+    "favoriteAdded": "Vehicle added to favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "accidentFree": "Accident-free"
   },
   "contact": {
     "title": "Contact Us",
