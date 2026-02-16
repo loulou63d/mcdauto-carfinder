@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2, ShoppingCart, Check } from 'lucide-react';
+import { Heart, Phone, ChevronRight, Calendar, Gauge, Fuel, Settings2, Zap, DoorOpen, Palette, Leaf, Shield, Loader2, ShoppingCart, Check, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,45 @@ const VehicleDetail = () => {
   const { data: allVehicles = [] } = useVehicles({ limit: 5 });
   const [selectedImage, setSelectedImage] = useState(0);
   const { addToCart, isInCart } = useCart();
+  const [isFav, setIsFav] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    const stored = localStorage.getItem('mcd-favorites');
+    if (stored) {
+      try {
+        const favs = JSON.parse(stored) as { id: string }[];
+        setIsFav(favs.some(f => f.id === id));
+      } catch { /* empty */ }
+    }
+  }, [id]);
+
+  const toggleFavorite = () => {
+    if (!vehicle) return;
+    const stored = localStorage.getItem('mcd-favorites');
+    let favs: any[] = [];
+    try { favs = stored ? JSON.parse(stored) : []; } catch { /* empty */ }
+
+    if (isFav) {
+      favs = favs.filter((f: any) => f.id !== vehicle.id);
+      setIsFav(false);
+      toast.success(t('vehicle.favoriteRemoved'));
+    } else {
+      favs.push({
+        id: vehicle.id,
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        price: vehicle.price,
+        mileage: vehicle.mileage,
+        energy: vehicle.energy,
+        image: vehicle.images?.[0],
+      });
+      setIsFav(true);
+      toast.success(t('vehicle.favoriteAdded'));
+    }
+    localStorage.setItem('mcd-favorites', JSON.stringify(favs));
+  };
 
   const handleAddToCart = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -182,6 +221,9 @@ const VehicleDetail = () => {
               )}
 
               <div className="mt-4 flex flex-wrap gap-2">
+                <Badge variant="secondary" className="inline-flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-600" />{t('vehicle.accidentFree')}
+                </Badge>
                 <Badge variant="secondary">{t('search.guarantee12')}</Badge>
                 <Badge variant="secondary">{t('search.satisfactionBadge')}</Badge>
               </div>
@@ -207,9 +249,13 @@ const VehicleDetail = () => {
                   {alreadyInCart ? <Check className="w-4 h-4 mr-2" /> : <ShoppingCart className="w-4 h-4 mr-2" />}
                   {alreadyInCart ? t('cart.alreadyInCart', 'Déjà dans le panier') : t('cart.addToCart', 'Ajouter au panier')}
                 </Button>
-                <Button variant="ghost" className="w-full" onClick={() => toast.success(t('vehicle.favoriteAdded'))}>
-                  <Heart className="w-4 h-4 mr-2" />
-                  {t('vehicle.addFavorite')}
+                <Button
+                  variant="ghost"
+                  className={`w-full ${isFav ? 'text-accent' : ''}`}
+                  onClick={toggleFavorite}
+                >
+                  <Heart className={`w-4 h-4 mr-2 ${isFav ? 'fill-current' : ''}`} />
+                  {isFav ? t('vehicle.favoriteRemoved', { defaultValue: 'Retirer des favoris' }) : t('vehicle.addFavorite')}
                 </Button>
               </div>
             </div>
