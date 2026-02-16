@@ -469,5 +469,7 @@
     "submitOrder": "Confirmar encomenda",
     "successTitle": "Encomenda enviada!",
     "successMessage": "A sua encomenda foi registada. A nossa equipa verificará o seu pagamento e contactá-lo-á dentro de 24 horas."
-  }
+  },
+  "favorites": { "title": "Os meus favoritos", "clearAll": "Apagar tudo", "empty": "Sem favoritos guardados", "emptyDesc": "Guarde os veículos que lhe interessam para os encontrar mais tarde.", "browseVehicles": "Explorar veículos", "count": "{{count}} veículo(s) guardado(s)", "viewDetail": "Ver detalhes" },
+  "mySearches": { "title": "As minhas pesquisas", "clearAll": "Apagar tudo", "empty": "Sem pesquisas guardadas", "emptyDesc": "Guarde os seus critérios de pesquisa para encontrar rapidamente veículos que lhe interessem.", "startSearch": "Iniciar pesquisa", "count": "{{count}} pesquisa(s) guardada(s)" }
 }

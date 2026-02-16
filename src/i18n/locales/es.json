@@ -469,5 +469,7 @@
     "submitOrder": "Confirmar pedido",
     "successTitle": "¡Pedido enviado!",
     "successMessage": "Su pedido ha sido registrado. Nuestro equipo verificará su pago y le contactará en un plazo de 24 horas."
-  }
+  },
+  "favorites": { "title": "Mis favoritos", "clearAll": "Eliminar todo", "empty": "Sin favoritos guardados", "emptyDesc": "Guarde los vehículos que le gusten para encontrarlos fácilmente.", "browseVehicles": "Explorar vehículos", "count": "{{count}} vehículo(s) guardado(s)", "viewDetail": "Ver detalle" },
+  "mySearches": { "title": "Mis búsquedas", "clearAll": "Eliminar todo", "empty": "Sin búsquedas guardadas", "emptyDesc": "Guarde sus criterios de búsqueda para encontrar rápidamente vehículos que le interesen.", "startSearch": "Iniciar búsqueda", "count": "{{count}} búsqueda(s) guardada(s)" }
 }

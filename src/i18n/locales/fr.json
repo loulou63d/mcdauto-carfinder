@@ -696,5 +696,22 @@
     "submitOrder": "Confirmer la commande",
     "successTitle": "Commande envoyée !",
     "successMessage": "Votre commande a été enregistrée. Notre équipe vérifiera votre paiement et vous contactera sous 24h."
+  },
+  "favorites": {
+    "title": "Mes favoris",
+    "clearAll": "Tout supprimer",
+    "empty": "Aucun favori enregistré",
+    "emptyDesc": "Sauvegardez les véhicules qui vous plaisent pour les retrouver facilement.",
+    "browseVehicles": "Parcourir les véhicules",
+    "count": "{{count}} véhicule(s) sauvegardé(s)",
+    "viewDetail": "Voir le détail"
+  },
+  "mySearches": {
+    "title": "Mes recherches",
+    "clearAll": "Tout supprimer",
+    "empty": "Aucune recherche sauvegardée",
+    "emptyDesc": "Enregistrez vos critères de recherche pour retrouver rapidement les véhicules qui vous correspondent.",
+    "startSearch": "Lancer une recherche",
+    "count": "{{count}} recherche(s) sauvegardée(s)"
   }
 }

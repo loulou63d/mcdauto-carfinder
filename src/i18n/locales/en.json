@@ -691,5 +691,22 @@
     "submitOrder": "Confirm order",
     "successTitle": "Order submitted!",
     "successMessage": "Your order has been registered. Our team will verify your payment and contact you within 24 hours."
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "clearAll": "Clear all",
+    "empty": "No favorites saved",
+    "emptyDesc": "Save vehicles you like to find them again later.",
+    "browseVehicles": "Browse vehicles",
+    "count": "{{count}} vehicle(s) saved",
+    "viewDetail": "View details"
+  },
+  "mySearches": {
+    "title": "My Searches",
+    "clearAll": "Clear all",
+    "empty": "No saved searches",
+    "emptyDesc": "Save your search criteria to quickly find matching vehicles.",
+    "startSearch": "Start searching",
+    "count": "{{count}} saved search(es)"
   }
 }

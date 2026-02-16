@@ -38,6 +38,8 @@ import AdminSettings from "./pages/admin/Settings";
 import Checkout from "./pages/Checkout";
 import CustomerAuth from "./pages/CustomerAuth";
 import Account from "./pages/Account";
+import Favorites from "./pages/Favorites";
+import MySearches from "./pages/MySearches";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +76,8 @@ const App = () => (
              <Route path="checkout" element={<Checkout />} />
              <Route path="login" element={<CustomerAuth />} />
              <Route path="account" element={<Account />} />
+             <Route path="favorites" element={<Favorites />} />
+             <Route path="my-searches" element={<MySearches />} />
            </Route>
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
