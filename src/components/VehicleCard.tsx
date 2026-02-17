@@ -108,7 +108,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
               )}
             </div>
             <div className="text-right">
-              {vehicle.monthly_price && <p className="text-xs text-muted-foreground">ou</p>}
+              {vehicle.monthly_price && <p className="text-xs text-muted-foreground">{t('vehicle.or', { defaultValue: 'oder' })}</p>}
               <span className="text-lg font-heading font-bold">
                 {Number(vehicle.price).toLocaleString('de-DE')} €
               </span>

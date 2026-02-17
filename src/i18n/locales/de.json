@@ -156,7 +156,8 @@
     "breadcrumbSearch": "Suche",
     "favoriteAdded": "Fahrzeug zu Favoriten hinzugefügt",
     "favoriteRemoved": "Aus Favoriten entfernt",
-    "accidentFree": "Unfallfrei"
+    "accidentFree": "Unfallfrei",
+    "or": "oder"
   },
   "contact": {
     "title": "Kontaktieren Sie uns",
@@ -538,6 +539,12 @@
     "close": "Schließen",
     "seeAll": "Alle anzeigen",
     "currency": "€"
+  },
+  "stats": {
+    "vehiclesAvailable": "Fahrzeuge verfügbar",
+    "happyClients": "Zufriedene Kunden",
+    "yearsExperience": "Jahre Erfahrung",
+    "deliveryTime": "Lieferzeit"
   },
   "auth": {
     "login": "Anmelden",
