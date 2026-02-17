@@ -182,6 +182,8 @@ function cleanModel(title: string, brand: string): string {
   }
   // Remove "Usata" suffix
   model = model.replace(/\s*usata?\s*$/i, "").trim();
+  // Remove Italian energy/fuel type suffixes (already stored in energy field)
+  model = model.replace(/\s+(Diesel|Benzina|Elettrica|Ibrida|GPL|Metano|Ibrida Plug-In)\s*$/i, "").trim();
   return model || title;
 }
 
