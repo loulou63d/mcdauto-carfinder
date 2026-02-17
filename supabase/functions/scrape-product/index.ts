@@ -104,8 +104,11 @@ function translateEnergy(text: string): string {
 
 function translateTransmission(text: string): string {
   const lower = text.toLowerCase().trim();
-  if (lower.includes("automatic") || lower.includes("automatico") || lower.includes("automatica")) return "Automatique";
-  if (lower.includes("manual") || lower.includes("manuale")) return "Manuelle";
+  // Keep the original value if it's already in French
+  if (lower === "automatique" || lower === "manuelle") return text.trim();
+  // Detect automatic variants
+  if (lower.includes("automatic") || lower.includes("automatico") || lower.includes("automatica") || lower.includes("automatik") || lower.includes("dsg") || lower.includes("dct") || lower.includes("cvt") || lower.includes("s tronic") || lower.includes("tiptronic") || lower.includes("steptronic") || lower.includes("powershift") || lower.includes("edc") || lower.includes("eat") || lower.includes("robotizzato") || lower.includes("sequenziale")) return "Automatique";
+  if (lower.includes("manual") || lower.includes("manuale") || lower.includes("manuell")) return "Manuelle";
   return "Manuelle";
 }
 
@@ -340,14 +343,22 @@ serve(async (req) => {
       else if (titleLower.includes("gpl")) energy = "GPL";
     }
 
-    // Transmission
-    const transMatch = specsText.match(/(?:cambio|trasmissione)[:\s]*([^\n,]+)/i);
-    if (transMatch) {
-      transmission = translateTransmission(transMatch[1]);
-    } else {
-      // Check title
+    // Transmission - expanded patterns
+    const transPatterns = [
+      /(?:cambio|trasmissione|getriebe|transmission)[:\s]*([^\n,|]+)/i,
+      /(?:marce|gang|speed)[:\s]*([^\n,|]+)/i,
+    ];
+    for (const pattern of transPatterns) {
+      const transMatch = specsText.match(pattern);
+      if (transMatch) {
+        transmission = translateTransmission(transMatch[1]);
+        break;
+      }
+    }
+    // Fallback: check title for keywords
+    if (transmission === "Manuelle") {
       const titleLower = title.toLowerCase();
-      if (titleLower.includes("automatico") || titleLower.includes("automatica") || titleLower.includes("automatic")) {
+      if (titleLower.includes("automatico") || titleLower.includes("automatica") || titleLower.includes("automatic") || titleLower.includes("dsg") || titleLower.includes("s tronic") || titleLower.includes("tiptronic") || titleLower.includes("steptronic") || titleLower.includes("cvt") || titleLower.includes("eat") || titleLower.includes("edc")) {
         transmission = "Automatique";
       }
     }
