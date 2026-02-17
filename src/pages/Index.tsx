@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon, Quote, Sparkles, TrendingUp, Users, Award, Clock } from 'lucide-react';
 import actionSearchImg from '@/assets/action-search.jpg';
 import actionFinanceImg from '@/assets/action-finance.jpg';
 import actionEstimateImg from '@/assets/action-estimate.jpg';
@@ -79,6 +79,36 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.4 } }),
 };
 
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+/* ── Animated Counter ── */
+const AnimatedCounter = ({ end, suffix = '', duration = 2000 }: { end: number; suffix?: string; duration?: number }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const step = end / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [isInView, end, duration]);
+
+  return <span ref={ref}>{count.toLocaleString('de-DE')}{suffix}</span>;
+};
+
 const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
   const { data: vehicles = [] } = useVehicles({ limit: 8 });
 
@@ -87,13 +117,23 @@ const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
   return (
     <section className="section-padding">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('featured.title')}</h2>
-          <Link to={`/${lang}/search`} className="flex items-center gap-1 link-primary font-medium text-sm hover:underline">
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-xs font-bold uppercase tracking-widest text-primary mb-2 block"
+            >
+              {t('featured.subtitle', { defaultValue: 'Notre sélection' })}
+            </motion.span>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('featured.title')}</h2>
+          </div>
+          <Link to={`/${lang}/search`} className="flex items-center gap-2 bg-primary/5 hover:bg-primary/10 text-primary font-semibold text-sm px-5 py-2.5 rounded-full transition-colors">
             {t('featured.seeAll')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {vehicles.map((vehicle, i) => (
             <motion.div key={vehicle.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
               <VehicleCard vehicle={vehicle} />
@@ -104,8 +144,6 @@ const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
     </section>
   );
 };
-
-const BRAND_SCROLL_SPEED = 30; // px per second
 
 const Index = () => {
   const { t } = useTranslation();
@@ -154,10 +192,6 @@ const Index = () => {
   };
 
   const currentPlate = plateFormats[lang] || plateFormats.fr;
-
-  const categoryIcons: Record<string, string> = {
-    berline: '🚗', break: '🚙', suv: '🏔️', utilitaire: '🚐', '4x4': '🏔️', cabriolet: '🏎️', monospace: '🚌', coupé: '🏎️',
-  };
 
   const categoryImages: Record<string, string> = {
     berline: catBerline, break: catBreak, suv: catSuv, utilitaire: catUtilitaire,
@@ -249,43 +283,73 @@ const Index = () => {
   const totalReviewPages = Math.ceil(reviews.length / reviewsPerPage);
   const visibleReviews = reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage);
 
+  const stats = [
+    { icon: TrendingUp, value: 5200, suffix: '+', label: t('stats.vehiclesSold', { defaultValue: 'Fahrzeuge verkauft' }) },
+    { icon: Users, value: 4800, suffix: '+', label: t('stats.happyClients', { defaultValue: 'Zufriedene Kunden' }) },
+    { icon: Award, value: 15, suffix: '+', label: t('stats.yearsExperience', { defaultValue: 'Jahre Erfahrung' }) },
+    { icon: Clock, value: 48, suffix: 'h', label: t('stats.deliveryTime', { defaultValue: 'Lieferzeit' }) },
+  ];
+
   return (
     <div>
-      {/* HERO — autosphere style */}
-      <section className={`relative overflow-hidden ${activeTab === 'buy' ? 'h-[500px] md:h-[540px]' : 'min-h-[620px] md:min-h-[660px]'}`}>
-        <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover" loading="eager" />
+      {/* ══════════════ HERO ══════════════ */}
+      <section className={`relative overflow-hidden ${activeTab === 'buy' ? 'h-[540px] md:h-[600px]' : 'min-h-[640px] md:min-h-[700px]'}`}>
+        <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover scale-105" loading="eager" />
         <div className="absolute inset-0 hero-gradient" />
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-56 h-56 bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
+        
         <div className={`relative z-10 container mx-auto px-4 h-full flex flex-col items-center text-center ${activeTab === 'buy' ? 'justify-center' : 'justify-start pt-24 md:pt-28'}`}>
           {activeTab === 'buy' && (
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-2xl md:text-4xl lg:text-[2.6rem] font-heading font-bold text-primary-foreground max-w-4xl leading-tight"
-            >
-              {t('hero.title')}
-            </motion.h1>
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-md border border-primary-foreground/20 rounded-full px-5 py-2 mb-6"
+              >
+                <Sparkles className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium text-primary-foreground">{t('hero.badge', { defaultValue: 'Geprüft & Garantiert' })}</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-3xl md:text-5xl lg:text-[3.2rem] font-heading font-bold text-primary-foreground max-w-4xl leading-tight"
+              >
+                {t('hero.title')}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.25 }}
+                className="mt-4 text-base md:text-lg text-primary-foreground/70 max-w-2xl"
+              >
+                {t('hero.subtitle', { defaultValue: 'Finden Sie Ihr Traumfahrzeug aus über 500 geprüften Gebrauchtwagen.' })}
+              </motion.p>
+            </>
           )}
 
-          {/* Tabs — Acheter / Vendre / Entretenir */}
+          {/* Tabs */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            className="mt-6 flex"
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="mt-6 flex bg-primary-foreground/10 backdrop-blur-md rounded-full p-1 border border-primary-foreground/15"
           >
             {[
-              { key: 'buy' as const, label: t('nav.buy'), to: `/${lang}/search` },
-              { key: 'sell' as const, label: t('nav.sell'), to: `/${lang}/contact` },
-              { key: 'maintain' as const, label: t('nav.maintain'), to: `/${lang}/services` },
+              { key: 'buy' as const, label: t('nav.buy') },
+              { key: 'sell' as const, label: t('nav.sell') },
+              { key: 'maintain' as const, label: t('nav.maintain') },
             ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-6 md:px-10 py-2.5 text-sm font-medium border transition-colors ${
+                className={`px-6 md:px-10 py-2.5 text-sm font-semibold transition-all duration-300 rounded-full ${
                   activeTab === tab.key
-                    ? 'bg-card text-foreground border-card rounded-full'
-                    : 'text-primary-foreground/80 border-transparent hover:text-primary-foreground'
+                    ? 'bg-card text-foreground shadow-lg'
+                    : 'text-primary-foreground/80 hover:text-primary-foreground'
                 }`}
               >
                 {tab.label}
@@ -299,32 +363,31 @@ const Index = () => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4 }}
-            className="mt-4 w-full max-w-xl"
+            className="mt-5 w-full max-w-xl"
           >
             {activeTab === 'buy' ? (
               <>
-                <div className="flex w-full">
+                <div className="flex w-full shadow-2xl rounded-xl overflow-hidden">
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder={t('hero.searchPlaceholder')}
-                    className="rounded-r-none h-12 bg-card text-foreground border-0 text-base flex-1"
+                    className="rounded-r-none rounded-l-xl h-14 bg-card text-foreground border-0 text-base flex-1 pl-5"
                   />
-                  <Button onClick={handleSearch} className="rounded-l-none h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+                  <Button onClick={handleSearch} className="rounded-l-none rounded-r-xl h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-base">
                     <Search className="w-5 h-5 mr-2" />
                     {t('hero.searchButton')}
                   </Button>
                 </div>
-                <Link to={`/${lang}/search`} className="inline-block mt-3 text-sm text-primary-foreground/80 underline hover:text-primary-foreground">
+                <Link to={`/${lang}/search`} className="inline-block mt-4 text-sm text-primary-foreground/80 underline hover:text-primary-foreground transition-colors">
                   {t('featured.seeAll')}
                 </Link>
               </>
             ) : (
               <div className="space-y-3">
-                {/* Plate input row */}
-                <div className="flex items-stretch w-full">
-                  <div className="flex items-center gap-1 bg-[hsl(220,60%,45%)] text-white px-3 rounded-l-lg text-sm font-bold">
+                <div className="flex items-stretch w-full shadow-2xl rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-1 bg-[hsl(220,60%,45%)] text-white px-3 text-sm font-bold">
                     <span className="text-xs">{currentPlate.flag}</span>
                     <span>{currentPlate.country}</span>
                   </div>
@@ -332,62 +395,38 @@ const Index = () => {
                     value={plateNumber}
                     onChange={(e) => setPlateNumber(e.target.value)}
                     placeholder={currentPlate.placeholder}
-                    className="rounded-none h-12 bg-card text-foreground border-0 text-base flex-1 text-center font-mono tracking-widest uppercase"
+                    className="rounded-none h-14 bg-card text-foreground border-0 text-base flex-1 text-center font-mono tracking-widest uppercase"
                   />
                   <Button
                     onClick={handlePlateSubmit}
-                    className="rounded-l-none h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-r-lg"
+                    className="rounded-l-none h-14 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold"
                   >
                     {activeTab === 'sell' ? t('hero.estimate') : 'OK'}
                   </Button>
                 </div>
-
-                {/* Links below plate */}
                 <div className="flex items-center justify-center gap-2 text-sm text-primary-foreground/80">
-                  <button
-                    onClick={() => setShowFullForm(!showFullForm)}
-                    className="underline hover:text-primary-foreground"
-                  >
+                  <button onClick={() => setShowFullForm(!showFullForm)} className="underline hover:text-primary-foreground">
                     {t('hero.unknownPlate')}
                   </button>
                 </div>
-
-                {/* Expanded form */}
                 {showFullForm && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="bg-card/95 backdrop-blur-sm rounded-xl p-4 space-y-3"
+                    className="glass-card rounded-xl p-4 space-y-3"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.vinLabel')}</label>
-                        <Input
-                          value={plateForm.vin}
-                          onChange={(e) => setPlateForm({ ...plateForm, vin: e.target.value })}
-                          placeholder={t('hero.vinPlaceholder')}
-                          className="h-10 text-sm bg-secondary border-0 uppercase font-mono"
-                          maxLength={17}
-                        />
+                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.vinLabel')}</label>
+                        <Input value={plateForm.vin} onChange={(e) => setPlateForm({ ...plateForm, vin: e.target.value })} placeholder={t('hero.vinPlaceholder')} className="h-10 text-sm bg-card border-0 uppercase font-mono" maxLength={17} />
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.brandLabel')}</label>
-                        <Input
-                          value={plateForm.brand}
-                          onChange={(e) => setPlateForm({ ...plateForm, brand: e.target.value })}
-                          placeholder={t('hero.brandPlaceholder')}
-                          className="h-10 text-sm bg-secondary border-0"
-                        />
+                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.brandLabel')}</label>
+                        <Input value={plateForm.brand} onChange={(e) => setPlateForm({ ...plateForm, brand: e.target.value })} placeholder={t('hero.brandPlaceholder')} className="h-10 text-sm bg-card border-0" />
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-foreground mb-1 block">{t('hero.mileageLabel')}</label>
-                        <Input
-                          type="number"
-                          value={plateForm.mileage}
-                          onChange={(e) => setPlateForm({ ...plateForm, mileage: e.target.value })}
-                          placeholder={t('hero.mileagePlaceholder')}
-                          className="h-10 text-sm bg-secondary border-0"
-                        />
+                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.mileageLabel')}</label>
+                        <Input type="number" value={plateForm.mileage} onChange={(e) => setPlateForm({ ...plateForm, mileage: e.target.value })} placeholder={t('hero.mileagePlaceholder')} className="h-10 text-sm bg-card border-0" />
                       </div>
                       <div className="flex items-end">
                         <Button onClick={handlePlateSubmit} className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
@@ -403,15 +442,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* PROMO CAROUSEL — autosphere style */}
-      <section className="py-8">
+      {/* ══════════════ PROMO CAROUSEL ══════════════ */}
+      <section className="py-10">
         <div className="container mx-auto px-4">
           <div className="relative">
             {(() => {
               const slide = promoSlides[promoSlide];
               const isDark = slide.dark;
               return (
-                <div className="rounded-2xl overflow-hidden h-52 md:h-64 flex items-stretch relative">
+                <div className="rounded-2xl overflow-hidden h-56 md:h-72 flex items-stretch relative shadow-xl">
                   <img src={slide.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
                   <div className={`absolute inset-0 ${slide.overlay}`} />
                   <div className="flex-1 flex flex-col justify-center px-6 md:px-12 py-6 z-10 relative">
@@ -454,13 +493,7 @@ const Index = () => {
                   )}
                   <div className="absolute bottom-5 right-5 md:bottom-8 md:right-10">
                     <Link to={slide.ctaLink}>
-                      <Button
-                        className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${
-                          isDark
-                            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                            : 'bg-white text-foreground hover:bg-white/90'
-                        }`}
-                      >
+                      <Button className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${isDark ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-white text-foreground hover:bg-white/90'}`}>
                         {slide.cta}
                       </Button>
                     </Link>
@@ -468,60 +501,116 @@ const Index = () => {
                 </div>
               );
             })()}
-            <button onClick={() => setPromoSlide((promoSlide - 1 + promoSlides.length) % promoSlides.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20">
+            <button onClick={() => setPromoSlide((promoSlide - 1 + promoSlides.length) % promoSlides.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-card z-20 transition-colors">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <button onClick={() => setPromoSlide((promoSlide + 1) % promoSlides.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20">
+            <button onClick={() => setPromoSlide((promoSlide + 1) % promoSlides.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-card z-20 transition-colors">
               <ChevronRight className="w-5 h-5" />
             </button>
-            <div className="flex justify-center gap-2 mt-4">
+            <div className="flex justify-center gap-2 mt-5">
               {promoSlides.map((_, i) => (
-                <button key={i} onClick={() => setPromoSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-colors ${i === promoSlide ? 'bg-primary' : 'bg-border'}`} />
+                <button key={i} onClick={() => setPromoSlide(i)} className={`h-2 rounded-full transition-all duration-300 ${i === promoSlide ? 'bg-primary w-8' : 'bg-border w-2.5'}`} />
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST STRIP — autosphere style (horizontal) */}
-      <section className="border-y">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-around py-5 gap-4">
+      {/* ══════════════ TRUST STRIP ══════════════ */}
+      <section className="border-y bg-secondary/50">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-around py-6 gap-5">
           {[
             { icon: RefreshCw, text: t('trust.reconditioned') },
             { icon: Shield, text: t('trust.satisfaction') },
             { icon: CheckCircle, text: t('trust.inspection') },
           ].map((item, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <item.icon className="w-7 h-7 text-primary shrink-0" />
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-center gap-3"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <item.icon className="w-6 h-6 text-primary" />
+              </div>
               <span className="text-sm font-semibold">{item.text}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* FEATURED VEHICLES */}
+      {/* ══════════════ ANIMATED STATS ══════════════ */}
+      <section className="premium-gradient py-16 md:py-20 relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+          >
+            {stats.map((stat, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                custom={i}
+                className="text-center"
+              >
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <stat.icon className="w-7 h-7 text-white" />
+                </div>
+                <div className="text-3xl md:text-4xl font-heading font-extrabold text-white">
+                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                </div>
+                <p className="mt-2 text-sm text-white/70 font-medium">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════ FEATURED VEHICLES ══════════════ */}
       <FeaturedVehiclesSection lang={lang} t={t} />
 
-      {/* ACTION CARDS — "Que souhaitez-vous faire ?" */}
-      <section className="section-padding">
+      {/* ══════════════ ACTION CARDS — Premium overlay style ══════════════ */}
+      <section className="section-padding bg-secondary/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">{t('actions.title')}</h2>
-          <div className="flex flex-col gap-3">
+          <div className="text-center mb-10">
+            <motion.span
+              initial={{ opacity: 0, y: -5 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-xs font-bold uppercase tracking-widest text-primary mb-2 block"
+            >
+              {t('actions.subtitle', { defaultValue: 'Unsere Dienstleistungen' })}
+            </motion.span>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('actions.title')}</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { img: actionSearchImg, title: t('actions.searchVehicle'), desc: t('actions.searchVehicleDesc'), to: `/${lang}/search` },
-              { img: actionFinanceImg, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services/financing` },
-              { img: actionEstimateImg, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/services/estimation` },
-              { img: actionMaintenanceImg, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services/maintenance` },
+              { img: actionSearchImg, title: t('actions.searchVehicle'), desc: t('actions.searchVehicleDesc'), to: `/${lang}/search`, icon: Search },
+              { img: actionFinanceImg, title: t('actions.finance'), desc: t('actions.financeDesc'), to: `/${lang}/services/financing`, icon: CreditCard },
+              { img: actionEstimateImg, title: t('actions.estimate'), desc: t('actions.estimateDesc'), to: `/${lang}/services/estimation`, icon: BarChart3 },
+              { img: actionMaintenanceImg, title: t('actions.maintenance'), desc: t('actions.maintenanceDesc'), to: `/${lang}/services/maintenance`, icon: Wrench },
             ].map((item, i) => (
               <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <Link to={item.to} className="flex items-center bg-secondary/60 rounded-xl overflow-hidden card-hover group">
-                  <img src={item.img} alt={item.title} className="w-28 h-24 md:w-36 md:h-28 object-cover shrink-0" />
-                  <div className="flex-1 px-4 py-3">
-                    <h3 className="font-heading font-bold text-sm md:text-base">{item.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                <Link to={item.to} className="group block relative rounded-2xl overflow-hidden h-64 shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <img src={item.img} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(215,60%,10%)/0.9] via-[hsl(215,60%,10%)/0.4] to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <div className="w-10 h-10 rounded-xl bg-primary/90 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <item.icon className="w-5 h-5 text-primary-foreground" />
+                    </div>
+                    <h3 className="font-heading font-bold text-white text-base">{item.title}</h3>
+                    <p className="text-xs text-white/70 mt-1 line-clamp-2">{item.desc}</p>
                   </div>
-                  <div className="pr-4 shrink-0">
-                    <ChevronRight className="w-6 h-6 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </div>
                 </Link>
               </motion.div>
@@ -530,89 +619,135 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CATEGORIES — horizontal scroll with images */}
-      <section className="section-padding bg-secondary">
+      {/* ══════════════ CATEGORIES ══════════════ */}
+      <section className="section-padding">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold mb-8">{t('categories.title')}</h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-none">
-            {categoryTypes.map((cat) => {
+          <div className="text-center mb-10">
+            <motion.span
+              initial={{ opacity: 0, y: -5 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-xs font-bold uppercase tracking-widest text-primary mb-2 block"
+            >
+              {t('categories.subtitle', { defaultValue: 'Kategorien' })}
+            </motion.span>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('categories.title')}</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {categoryTypes.map((cat, i) => {
               const labelKey = cat === '4x4' ? 'offroad' : cat === 'coupé' ? 'coupe' : cat;
               return (
-                <Link
-                  key={cat}
-                  to={`/${lang}/search?category=${cat}`}
-                  className="shrink-0 flex flex-col items-center gap-3 w-32 group"
-                >
-                  <div className="w-28 h-28 rounded-2xl bg-card border overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
-                    <img src={categoryImages[cat]} alt={t(`categories.${labelKey}`, cat)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
-                  <span className="text-sm font-semibold text-center capitalize">{t(`categories.${labelKey}`, cat)}</span>
-                </Link>
+                <motion.div key={cat} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                  <Link
+                    to={`/${lang}/search?category=${cat}`}
+                    className="group block relative rounded-2xl overflow-hidden h-40 shadow-md hover:shadow-xl transition-all duration-300"
+                  >
+                    <img src={categoryImages[cat]} alt={t(`categories.${labelKey}`, cat)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(215,60%,10%)/0.8] via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <span className="text-sm font-heading font-bold text-white capitalize">{t(`categories.${labelKey}`, cat)}</span>
+                    </div>
+                  </Link>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* POPULAR BRANDS — infinite auto-scroll carousel */}
-      <section className="section-padding bg-secondary overflow-hidden">
+      {/* ══════════════ POPULAR BRANDS ══════════════ */}
+      <section className="section-padding bg-secondary/50 overflow-hidden">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-8">{t('brands.title')}</h2>
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10">{t('brands.title')}</h2>
         </div>
         <div className="relative w-full">
-          {/* Fade edges */}
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-secondary to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-secondary to-transparent" />
-          <div
-            className="flex gap-4 animate-brand-scroll hover:[animation-play-state:paused]"
-            style={{ width: 'max-content' }}
-          >
-            {/* Duplicate list twice for seamless loop */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-background to-transparent" />
+          <div className="flex gap-4 animate-brand-scroll hover:[animation-play-state:paused]" style={{ width: 'max-content' }}>
             {[...popularBrands, ...popularBrands].map((brand, i) => (
               <Link
                 key={`${brand}-${i}`}
                 to={`/${lang}/search?brand=${brand}`}
-                className="shrink-0 w-24 h-24 md:w-28 md:h-28 flex flex-col items-center justify-center bg-card rounded-xl border card-hover overflow-hidden group"
+                className="shrink-0 w-24 h-24 md:w-28 md:h-28 flex flex-col items-center justify-center bg-card rounded-2xl border shadow-sm hover:shadow-lg overflow-hidden group transition-all duration-300"
               >
-                <img
-                  src={brandImages[brand] || ''}
-                  alt={brand}
-                  className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                />
+                <img src={brandImages[brand] || ''} alt={brand} className="w-full h-full object-contain p-2.5 group-hover:scale-110 transition-transform duration-300" />
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* REVIEWS — swipeable carousel */}
+      {/* ══════════════ CTA BANNER ══════════════ */}
+      <section className="relative overflow-hidden">
+        <div className="premium-gradient py-16 md:py-20">
+          <div className="absolute top-0 left-1/2 w-[600px] h-[600px] bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <Sparkles className="w-8 h-8 text-accent mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-heading font-bold text-white max-w-2xl mx-auto leading-tight">
+                {t('cta.title', { defaultValue: 'Bereit, Ihr nächstes Auto zu finden?' })}
+              </h2>
+              <p className="mt-4 text-white/70 max-w-lg mx-auto">
+                {t('cta.subtitle', { defaultValue: 'Über 500 geprüfte Fahrzeuge warten auf Sie. Alle mit Garantie und Rückgaberecht.' })}
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link to={`/${lang}/search`}>
+                  <Button className="bg-white text-foreground hover:bg-white/90 font-bold px-8 py-6 text-base rounded-full shadow-xl">
+                    <Search className="w-5 h-5 mr-2" />
+                    {t('cta.searchButton', { defaultValue: 'Fahrzeuge durchsuchen' })}
+                  </Button>
+                </Link>
+                <Link to={`/${lang}/contact`}>
+                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 font-bold px-8 py-6 text-base rounded-full">
+                    {t('cta.contactButton', { defaultValue: 'Kontakt aufnehmen' })}
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ REVIEWS ══════════════ */}
       <section className="section-padding">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-8">{t('reviews.title')}</h2>
+          <div className="text-center mb-10">
+            <motion.span
+              initial={{ opacity: 0, y: -5 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-xs font-bold uppercase tracking-widest text-primary mb-2 block"
+            >
+              {t('reviews.subtitle', { defaultValue: 'Kundenstimmen' })}
+            </motion.span>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('reviews.title')}</h2>
+          </div>
           <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {visibleReviews.map((review, i) => (
                 <motion.div key={`${reviewPage}-${i}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.05 }}>
-                  <div className="p-6 bg-card rounded-xl border h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="relative p-6 bg-card rounded-2xl border shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+                    {/* Quote decoration */}
+                    <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" />
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex gap-0.5">
                         {Array.from({ length: review.rating }).map((_, j) => (
                           <Star key={j} className="w-4 h-4 fill-accent text-accent" />
                         ))}
                       </div>
-                      <span className="text-xs font-semibold text-muted-foreground bg-secondary px-2 py-0.5 rounded">{review.lang}</span>
+                      <span className="text-xs font-bold text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">{review.lang}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{review.text}"</p>
-                    <div className="mt-4 flex items-center gap-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1 italic">"{review.text}"</p>
+                    <div className="mt-5 pt-4 border-t flex items-center gap-3">
                       {review.avatar ? (
-                        <img src={review.avatar} alt={review.name} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                        <img src={review.avatar} alt={review.name} className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-primary/20" />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                           <span className="text-sm font-bold text-primary">{review.name.charAt(0)}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <span className="font-heading font-semibold text-sm block">{review.name}</span>
+                        <span className="font-heading font-bold text-sm block">{review.name}</span>
                         <span className="text-xs text-muted-foreground">{review.date}</span>
                       </div>
                     </div>
@@ -620,24 +755,18 @@ const Index = () => {
                 </motion.div>
               ))}
             </div>
-            {/* Navigation dots */}
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="flex justify-center gap-2 mt-8">
               {Array.from({ length: totalReviewPages }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setReviewPage(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${i === reviewPage ? 'bg-primary' : 'bg-border'}`}
-                />
+                <button key={i} onClick={() => setReviewPage(i)} className={`h-2 rounded-full transition-all duration-300 ${i === reviewPage ? 'bg-primary w-8' : 'bg-border w-2.5'}`} />
               ))}
             </div>
-            {/* Arrow buttons */}
             {reviewPage > 0 && (
-              <button onClick={() => setReviewPage(reviewPage - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
+              <button onClick={() => setReviewPage(reviewPage - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-card shadow-lg flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
             {reviewPage < totalReviewPages - 1 && (
-              <button onClick={() => setReviewPage(reviewPage + 1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-card shadow-md flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
+              <button onClick={() => setReviewPage(reviewPage + 1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-card shadow-lg flex items-center justify-center hover:bg-muted z-20 hidden md:flex">
                 <ChevronRightIcon className="w-5 h-5" />
               </button>
             )}
