@@ -499,6 +499,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FEATURED VEHICLES */}
+      <FeaturedVehiclesSection lang={lang} t={t} />
+
       {/* ACTION CARDS — "Que souhaitez-vous faire ?" */}
       <section className="section-padding">
         <div className="container mx-auto px-4">
@@ -550,9 +553,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* FEATURED VEHICLES */}
-      <FeaturedVehiclesSection lang={lang} t={t} />
 
       {/* POPULAR BRANDS — infinite auto-scroll carousel */}
       <section className="section-padding bg-secondary overflow-hidden">
