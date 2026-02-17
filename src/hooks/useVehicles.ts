@@ -80,6 +80,9 @@ export function useVehicles(options?: { featured?: boolean; limit?: number }) {
   return useQuery({
     queryKey: ['vehicles', options],
     queryFn: () => fetchVehiclesWithImages(options),
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -88,5 +91,8 @@ export function useVehicle(id: string | undefined) {
     queryKey: ['vehicle', id],
     queryFn: () => fetchVehicleById(id!),
     enabled: !!id,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    staleTime: 5 * 60 * 1000,
   });
 }
