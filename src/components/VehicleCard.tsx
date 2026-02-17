@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
+import { vehicleDisplayName } from '@/lib/utils';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -65,7 +66,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         {/* Image area */}
         <div className="relative aspect-[16/10] bg-muted overflow-hidden">
           {firstImage ? (
-            <img src={firstImage} alt={`${vehicle.brand} ${vehicle.model}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <img src={firstImage} alt={vehicleDisplayName(vehicle.brand, vehicle.model)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 flex items-center justify-center">
               <span className="text-4xl font-heading font-bold text-muted-foreground/15">{vehicle.brand}</span>
@@ -91,7 +92,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         {/* Content */}
         <div className="p-4">
           <h3 className="font-heading font-bold text-base text-foreground">
-            {vehicle.brand} {vehicle.model}
+            {vehicleDisplayName(vehicle.brand, vehicle.model)}
           </h3>
 
           {/* Price row */}

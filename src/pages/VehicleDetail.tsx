@@ -9,6 +9,7 @@ import VehicleCard from '@/components/VehicleCard';
 import { useVehicle, useVehicles } from '@/hooks/useVehicles';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
+import { vehicleDisplayName } from '@/lib/utils';
 
 const VehicleDetail = () => {
   const { t } = useTranslation();
@@ -119,7 +120,7 @@ const VehicleDetail = () => {
           <ChevronRight className="w-3 h-3" />
           <Link to={`/${lang}/search`} className="hover:text-foreground">{t('vehicle.breadcrumbSearch')}</Link>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-foreground">{vehicle.brand} {vehicle.model}</span>
+          <span className="text-foreground">{vehicleDisplayName(vehicle.brand, vehicle.model)}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
@@ -127,11 +128,11 @@ const VehicleDetail = () => {
           <div>
             <div className="bg-card rounded-lg border overflow-hidden aspect-[16/10] flex items-center justify-center relative cursor-pointer">
               {currentImage ? (
-                <img src={currentImage} alt={`${vehicle.brand} ${vehicle.model}`} className="w-full h-full object-cover" />
+                <img src={currentImage} alt={vehicleDisplayName(vehicle.brand, vehicle.model)} className="w-full h-full object-cover" />
               ) : (
                 <>
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
-                  <span className="text-6xl font-heading font-bold text-primary/15 relative z-10">{vehicle.brand} {vehicle.model}</span>
+                  <span className="text-6xl font-heading font-bold text-primary/15 relative z-10">{vehicleDisplayName(vehicle.brand, vehicle.model)}</span>
                 </>
               )}
             </div>
@@ -207,7 +208,7 @@ const VehicleDetail = () => {
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div className="bg-card rounded-lg border p-6">
               <h1 className="font-heading font-bold text-xl">
-                {vehicle.brand} {vehicle.model}
+                {vehicleDisplayName(vehicle.brand, vehicle.model)}
               </h1>
 
               <div className="mt-4">

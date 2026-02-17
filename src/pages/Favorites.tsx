@@ -5,6 +5,7 @@ import { Heart, Trash2, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
+import { vehicleDisplayName } from '@/lib/utils';
 
 interface FavoriteVehicle {
   id: string;
@@ -96,7 +97,7 @@ const Favorites = () => {
                   </button>
                 </div>
                 <CardContent className="p-4">
-                  <h3 className="font-semibold text-foreground">{vehicle.brand} {vehicle.model}</h3>
+                  <h3 className="font-semibold text-foreground">{vehicleDisplayName(vehicle.brand, vehicle.model)}</h3>
                   <p className="text-sm text-muted-foreground">{vehicle.year} · {vehicle.mileage?.toLocaleString()} km · {vehicle.energy}</p>
                   <p className="text-lg font-bold text-primary mt-2">{vehicle.price?.toLocaleString()} €</p>
                   <Link to={`/${lang}/vehicle/${vehicle.id}`} className="block mt-3">
