@@ -14,3 +14,15 @@ verify_jwt = false
 
 [functions.send-notification]
 verify_jwt = false
+
+[functions.download-vehicle-images]
+verify_jwt = false
+
+[functions.estimate-vehicle-price]
+verify_jwt = false
+
+[functions.assign-vehicle-categories]
+verify_jwt = false
+
+[functions.translate-vehicles]
+verify_jwt = false

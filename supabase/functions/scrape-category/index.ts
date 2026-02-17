@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url, limit = 100 } = await req.json();
+    const { url, limit = 50 } = await req.json();
 
     if (!url) {
       return new Response(
@@ -34,42 +34,24 @@ serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
 
-    const isAutosphere = formattedUrl.includes("autosphere.fr");
-    const isCpmAuto = formattedUrl.includes("cpmauto.fr");
-    const isAutoFrancis = formattedUrl.includes("autofrancis.com");
-    const isMultimarcas = formattedUrl.includes("multimarcaspremiumpe.com.br");
+    const isArielCar = formattedUrl.includes("arielcar.it");
 
-    console.log("Scanning category:", formattedUrl, "limit:", limit, "site:", isAutosphere ? "autosphere" : isCpmAuto ? "cpmauto" : isAutoFrancis ? "autofrancis" : isMultimarcas ? "multimarcas" : "generic");
+    console.log("Scanning category:", formattedUrl, "limit:", limit);
 
-    // For CPM Auto, we may need to scan multiple pages (pagination: w1, w2, w3...)
-    const urlsToScrape: string[] = [formattedUrl];
-
-    if (isCpmAuto) {
-      // Detect pagination pattern like /nos-berlines-w1 -> w2, w3, etc.
-      const paginationMatch = formattedUrl.match(/(.+-w)(\d+)$/);
-      if (paginationMatch) {
-        const base = paginationMatch[1];
-        const startPage = parseInt(paginationMatch[2]);
-        // Scan up to 10 extra pages to find enough vehicles
-        const maxPages = Math.min(Math.ceil(limit / 10) + 1, 20);
-        for (let i = startPage + 1; i <= startPage + maxPages; i++) {
-          urlsToScrape.push(`${base}${i}`);
-        }
-      }
-    }
-
-    if (isMultimarcas) {
-      // Pagination: ?zero_km=0&page=2, page=3, etc.
-      const maxPages = Math.min(Math.ceil(limit / 9) + 1, 10);
+    // ArielCar.it pagination: /marca/{brand-slug}/, /marca/{brand-slug}/page/2/, etc.
+    // ~10 vehicles per page
+    const pagesToScrape: string[] = [formattedUrl];
+    if (isArielCar) {
+      const maxPages = Math.min(Math.ceil(limit / 10) + 1, 15);
+      const baseUrl = formattedUrl.replace(/\/page\/\d+\/?$/, "").replace(/\/$/, "");
       for (let i = 2; i <= maxPages; i++) {
-        const separator = formattedUrl.includes("?") ? "&" : "?";
-        urlsToScrape.push(`${formattedUrl}${separator}zero_km=0&page=${i}`);
+        pagesToScrape.push(`${baseUrl}/page/${i}/`);
       }
     }
 
     let productUrls: string[] = [];
 
-    for (const pageUrl of urlsToScrape) {
+    for (const pageUrl of pagesToScrape) {
       if (productUrls.length >= limit) break;
 
       console.log("Scraping page:", pageUrl);
@@ -103,42 +85,24 @@ serve(async (req) => {
           }
         }
 
-        // Filter for product URLs based on site
         let pageProductUrls: string[] = [];
 
-        if (isAutosphere) {
-          pageProductUrls = links.filter((link: string) =>
-            link.includes("/fiche-mixte/") || link.includes("/occasion/id-")
-          );
-        } else if (isCpmAuto) {
-          pageProductUrls = links.filter((link: string) =>
-            link.includes("/details-") && !productUrls.includes(link)
-          );
-        } else if (isAutoFrancis) {
-          pageProductUrls = links.filter((link: string) =>
-            link.includes("/VehicleDetail?id=") && !productUrls.includes(link)
-          );
-        } else if (isMultimarcas) {
-          // Multimarcas product URLs: /estoque/model-slug-year1-year2-id
+        if (isArielCar) {
+          // ArielCar product URLs: /offerte-auto/SLUG-NUMBER/
           pageProductUrls = links.filter((link: string) => {
-            if (productUrls.includes(link)) return false;
-            // Must be under /estoque/ and have a slug with year pattern
-            const match = link.match(/\/estoque\/[\w-]+-\d{4}-\d{4}-\d+$/);
-            return !!match;
+            return /\/offerte-auto\/[\w-]+-\d+\/?$/.test(link) && !productUrls.includes(link);
           });
         } else {
+          // Generic fallback
           pageProductUrls = links.filter((link: string) => {
             const lower = link.toLowerCase();
             return (
               !lower.includes("/cart") &&
               !lower.includes("/checkout") &&
-              !lower.includes("/my-account") &&
               !lower.includes("/wp-admin") &&
-              !lower.includes("/wp-login") &&
               !lower.includes("/tag/") &&
               !lower.includes("page/") &&
               !lower.includes("/category/") &&
-              !lower.includes("/recherche") &&
               !lower.includes("#") &&
               link !== pageUrl &&
               link !== pageUrl + "/"
@@ -147,42 +111,8 @@ serve(async (req) => {
         }
 
         productUrls = [...productUrls, ...pageProductUrls];
-      }
-    }
-
-    // Strategy 2: also try Firecrawl Map API for additional URLs (non-CPM and non-autofrancis sites)
-    if (!isCpmAuto && !isAutoFrancis && !isMultimarcas && productUrls.length < limit) {
-      try {
-        const mapResponse = await fetch("https://api.firecrawl.dev/v1/map", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: formattedUrl,
-            limit: Math.min(limit * 2, 500),
-            includeSubdomains: false,
-          }),
-        });
-
-        if (mapResponse.ok) {
-          const mapData = await mapResponse.json();
-          const mapLinks = mapData.links || [];
-          
-          const additionalUrls = mapLinks.filter((link: string) => {
-            if (productUrls.includes(link)) return false;
-            if (isAutosphere) {
-              return link.includes("/fiche-mixte/") || link.includes("/occasion/id-");
-            }
-            const lower = link.toLowerCase();
-            return !lower.includes("/cart") && !lower.includes("/checkout") && !lower.includes("/category/");
-          });
-
-          productUrls = [...productUrls, ...additionalUrls];
-        }
-      } catch (e) {
-        console.warn("Map API fallback failed:", e);
+      } else {
+        console.warn("Page scrape failed:", pageUrl, scrapeData.error);
       }
     }
 
