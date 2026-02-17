@@ -268,7 +268,7 @@ const Index = () => {
     { name: 'María G.', rating: 5, text: 'Muy contenta con mi compra. El equipo de MCD AUTO me ayudó a encontrar el coche perfecto para mi familia. Recomiendo 100%.', date: '28.12.2025', lang: 'ES', avatar: reviewImg4 },
     { name: 'Brigitte K.', rating: 4, text: t('reviews.review3'), date: '08.10.2025', lang: 'DE', avatar: reviewImg5 },
     { name: 'Helga S.', rating: 5, text: 'Sehr zufrieden mit dem Kauf. Das Auto war genau wie beschrieben und die Lieferung war schnell. Kann MCD AUTO nur empfehlen!', date: '05.01.2026', lang: 'DE', avatar: reviewImg6 },
-    { name: 'Sophie & Antoine D.', rating: 5, text: 'Professionalità e trasparenza. Il team di MCD AUTO ci ha seguito in ogni fase dell\'acquisto. Auto in perfette condizioni.', date: '10.12.2025', lang: 'IT', avatar: reviewImg7 },
+    { name: 'Sophie & Antoine D.', rating: 5, text: "Professionalità e trasparenza. Il team di MCD AUTO ci ha seguito in ogni fase dell'acquisto. Auto in perfette condizioni.", date: '10.12.2025', lang: 'IT', avatar: reviewImg7 },
     { name: 'Ana C.', rating: 5, text: 'Muito satisfeita com a minha compra. A equipa foi muito profissional e o carro chegou em perfeitas condições a Lisboa.', date: '25.12.2025', lang: 'PT', avatar: reviewImg8 },
     { name: 'Céline M.', rating: 5, text: 'Comprei um Renault Mégane e estou muito contente. Todo o processo foi transparente e a entrega foi feita no prazo combinado.', date: '14.09.2025', lang: 'PT', avatar: reviewImg9 },
     { name: 'Laura B.', rating: 4, text: 'Ottima esperienza di acquisto. Prezzo giusto e veicolo consegnato come descritto. Lo consiglio vivamente a tutti.', date: '05.11.2025', lang: 'IT', avatar: reviewImg10 },
@@ -276,7 +276,7 @@ const Index = () => {
     { name: 'João S.', rating: 5, text: 'Excelente experiência! Comprei um Volkswagen Golf e o serviço foi impecável do início ao fim. Entrega rápida em Portugal.', date: '12.01.2026', lang: 'PT', avatar: reviewImg12 },
     { name: 'Pedro F.', rating: 4, text: 'Bom serviço e preços justos. O transporte para Portugal foi rápido. Recomendo a todos os que procuram um bom carro.', date: '30.10.2025', lang: 'PT', avatar: reviewImg13 },
     { name: 'Pablo N.', rating: 5, text: 'Fantástico. Encontré el coche que buscaba a un precio excelente. El transporte a Barcelona fue perfecto y sin sorpresas.', date: '02.02.2026', lang: 'ES', avatar: reviewImg14 },
-    { name: 'Luca M.', rating: 5, text: 'Ho comprato un\'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.', date: '18.09.2025', lang: 'IT', avatar: reviewImg15 },
+    { name: 'Luca M.', rating: 5, text: "Ho comprato un'Audi A4 da MCD AUTO. Processo semplice, documentazione completa e trasporto in Italia senza problemi.", date: '18.09.2025', lang: 'IT', avatar: reviewImg15 },
   ];
 
   const reviewsPerPage = 3;
