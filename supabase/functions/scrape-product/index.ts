@@ -355,12 +355,20 @@ serve(async (req) => {
         break;
       }
     }
-    // Fallback: check title for keywords
+    // Fallback: check title AND source URL for automatic keywords
     if (transmission === "Manuelle") {
+      const autoKeywords = ["automatico", "automatica", "automatic", "dsg", "s-tronic", "s tronic", "tiptronic", "steptronic", "cvt", "e-cvt", "eat", "eat8", "eat6", "edc", "dct", "ddct", "twinamic", "at8", "at6", "at9", "powershift", "autom", "robotizzato", "sequenziale"];
       const titleLower = title.toLowerCase();
-      if (titleLower.includes("automatico") || titleLower.includes("automatica") || titleLower.includes("automatic") || titleLower.includes("dsg") || titleLower.includes("s tronic") || titleLower.includes("tiptronic") || titleLower.includes("steptronic") || titleLower.includes("cvt") || titleLower.includes("eat") || titleLower.includes("edc")) {
+      const urlLower = (formattedUrl || "").toLowerCase();
+      const combinedText = titleLower + " " + urlLower;
+      if (autoKeywords.some(kw => combinedText.includes(kw))) {
         transmission = "Automatique";
       }
+    }
+
+    // Fallback: Tesla / electric vehicles are always automatic
+    if (transmission === "Manuelle" && (brand === "Tesla" || energy === "Électrique")) {
+      transmission = "Automatique";
     }
 
     // Euro Norm
