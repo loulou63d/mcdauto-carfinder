@@ -284,8 +284,8 @@ const Index = () => {
   const visibleReviews = reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage);
 
   const stats = [
-    { icon: TrendingUp, value: 5200, suffix: '+', label: t('stats.vehiclesSold', { defaultValue: 'Fahrzeuge verkauft' }) },
-    { icon: Users, value: 4800, suffix: '+', label: t('stats.happyClients', { defaultValue: 'Zufriedene Kunden' }) },
+    { icon: CarIcon, value: 1200, suffix: '+', label: t('stats.vehiclesAvailable', { defaultValue: 'Fahrzeuge verfügbar' }) },
+    { icon: Users, value: 1200, suffix: '+', label: t('stats.happyClients', { defaultValue: 'Zufriedene Kunden' }) },
     { icon: Award, value: 15, suffix: '+', label: t('stats.yearsExperience', { defaultValue: 'Jahre Erfahrung' }) },
     { icon: Clock, value: 48, suffix: 'h', label: t('stats.deliveryTime', { defaultValue: 'Lieferzeit' }) },
   ];
