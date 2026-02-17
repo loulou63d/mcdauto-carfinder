@@ -413,7 +413,8 @@ const AdminImport = () => {
     setAutoFillRunning(true);
     let progressCount = 0;
 
-    const updatedBrands = [...brands];
+    // Sort brands: underrepresented first (most needed → least needed)
+    const updatedBrands = [...brands].sort((a, b) => b.needed - a.needed);
 
     for (let bi = 0; bi < updatedBrands.length; bi++) {
       if (stopRef.current) break;
