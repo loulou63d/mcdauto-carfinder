@@ -552,7 +552,8 @@
     "online": "Online – Antwortet sofort",
     "mockMsg1": "Willkommen! 👋 Ich bin Ihr KI-Berater. Wie kann ich Ihnen helfen?",
     "mockMsg2": "Ich suche ein SUV unter 20.000€",
-    "mockMsg3": "Ich habe 3 SUVs gefunden, die zu Ihnen passen könnten:"
+    "mockMsg3": "Ich habe 3 SUVs gefunden, die zu Ihnen passen könnten:",
+    "cta": "Jetzt mit dem KI-Berater chatten"
   },
   "stats": {
     "vehiclesAvailable": "Fahrzeuge verfügbar",

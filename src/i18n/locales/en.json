@@ -550,7 +550,8 @@
     "online": "Online – Responds instantly",
     "mockMsg1": "Welcome! 👋 I'm your AI advisor. How can I help you?",
     "mockMsg2": "I'm looking for an SUV under €20,000",
-    "mockMsg3": "I found 3 SUVs that could be a great fit for you:"
+    "mockMsg3": "I found 3 SUVs that could be a great fit for you:",
+    "cta": "Chat with the AI Advisor now"
   },
   "stats": {
     "vehiclesAvailable": "Vehicles available",
