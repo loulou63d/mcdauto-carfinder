@@ -10,9 +10,10 @@ import { vehicleDisplayName } from '@/lib/utils';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
+  isPromo?: boolean;
 }
 
-const VehicleCard = ({ vehicle }: VehicleCardProps) => {
+const VehicleCard = ({ vehicle, isPromo = false }: VehicleCardProps) => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
   const { addToCart, isInCart } = useCart();
@@ -78,6 +79,11 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
                 <div key={i} className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-primary' : 'bg-card/60'}`} />
               ))}
             </div>
+          )}
+          {isPromo && (
+            <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-destructive text-destructive-foreground text-[11px] font-bold uppercase tracking-wider shadow-lg">
+              PROMO
+            </span>
           )}
           <button
             onClick={toggleFavorite}
