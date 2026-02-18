@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Truck, CarFront, Caravan } from 'lucide-react';
+import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
+import catSuv from '@/assets/cat-suv.jpg';
+import catBerline from '@/assets/cat-berline.jpg';
+import catBreak from '@/assets/cat-break.jpg';
+import catUtilitaire from '@/assets/cat-utilitaire.jpg';
 
 const HeroSection = () => {
   const { t } = useTranslation();
@@ -43,10 +47,10 @@ const HeroSection = () => {
   const currentPlate = plateFormats[lang] || plateFormats.de;
 
   const categories = [
-    { key: 'suv', Icon: Car },
-    { key: 'berline', Icon: CarFront },
-    { key: 'break', Icon: Caravan },
-    { key: 'utilitaire', Icon: Truck },
+    { key: 'suv', img: catSuv },
+    { key: 'berline', img: catBerline },
+    { key: 'break', img: catBreak },
+    { key: 'utilitaire', img: catUtilitaire },
   ];
 
   return (
@@ -197,19 +201,29 @@ const HeroSection = () => {
 
                     {/* Category quick links */}
                     <div className="flex gap-3 pt-1">
-                      {categories.map((cat) => (
-                        <Link
+                      {categories.map((cat, i) => (
+                        <motion.div
                           key={cat.key}
-                          to={`/${lang}/search?category=${cat.key}`}
-                          className="group flex flex-col items-center gap-1.5 min-w-[70px]"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1, type: 'spring', stiffness: 200 }}
                         >
-                          <div className="w-12 h-12 rounded-xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/20 group-hover:scale-110 transition-all duration-200">
-                            <cat.Icon className="w-5 h-5 text-primary-foreground/70 group-hover:text-primary-foreground transition-colors" />
-                          </div>
-                          <span className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wide group-hover:text-primary-foreground transition-colors">
-                            {t(`categories.${cat.key}`, { defaultValue: cat.key })}
-                          </span>
-                        </Link>
+                          <Link
+                            to={`/${lang}/search?category=${cat.key}`}
+                            className="group flex flex-col items-center gap-1.5 min-w-[75px]"
+                          >
+                            <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary-foreground/15 group-hover:border-accent group-hover:scale-110 group-hover:shadow-[0_0_20px_hsl(var(--accent)/0.3)] transition-all duration-300">
+                              <img
+                                src={cat.img}
+                                alt={cat.key}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              />
+                            </div>
+                            <span className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wide group-hover:text-accent transition-colors">
+                              {t(`categories.${cat.key}`, { defaultValue: cat.key })}
+                            </span>
+                          </Link>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -287,33 +301,59 @@ const HeroSection = () => {
               transition={{ duration: 0.7, delay: 0.3, type: 'spring', damping: 20 }}
               className="relative w-full max-w-md"
             >
-              <div className="bg-primary-foreground/10 backdrop-blur-xl border border-primary-foreground/15 rounded-3xl p-8 shadow-2xl">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-accent">
-                    {t('hero.promoLabel', { defaultValue: 'Aktuelle Aktion' })}
-                  </span>
+              {/* Animated glow ring behind the card */}
+              <motion.div
+                className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/20 blur-xl pointer-events-none"
+                animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.98, 1.02, 0.98] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              />
+
+              <div className="relative bg-primary-foreground/10 backdrop-blur-xl border border-primary-foreground/15 rounded-3xl p-8 shadow-2xl overflow-hidden">
+                {/* Animated shimmer sweep */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/5 to-transparent -skew-x-12 pointer-events-none"
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
+                />
+
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <motion.div
+                      className="w-2 h-2 rounded-full bg-accent"
+                      animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    />
+                    <span className="text-xs font-bold uppercase tracking-widest text-accent">
+                      {t('hero.promoLabel', { defaultValue: 'Aktuelle Aktion' })}
+                    </span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-primary-foreground leading-tight mb-2">
+                    {t('hero.promoTitle', { defaultValue: 'Bis zu' })}{' '}
+                    <motion.span
+                      className="text-accent inline-block"
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      -35%
+                    </motion.span>
+                  </h2>
+                  <p className="text-primary-foreground/70 text-sm mb-5">
+                    {t('hero.promoDesc', { defaultValue: 'Auf eine Auswahl an Premium-Fahrzeugen. Angebot gültig bis Ende des Monats.' })}
+                  </p>
+                  <Link to={`/${lang}/search`}>
+                    <Button className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full px-6 py-2.5 font-bold text-sm shadow-lg group">
+                      {t('hero.promoBtn', { defaultValue: 'Angebote entdecken' })}
+                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-primary-foreground leading-tight mb-2">
-                  {t('hero.promoTitle', { defaultValue: 'Bis zu' })}{' '}
-                  <span className="text-accent">-35%</span>
-                </h2>
-                <p className="text-primary-foreground/70 text-sm mb-5">
-                  {t('hero.promoDesc', { defaultValue: 'Auf eine Auswahl an Premium-Fahrzeugen. Angebot gültig bis Ende des Monats.' })}
-                </p>
-                <Link to={`/${lang}/search`}>
-                  <Button className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full px-6 py-2.5 font-bold text-sm shadow-lg group">
-                    {t('hero.promoBtn', { defaultValue: 'Angebote entdecken' })}
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
               </div>
 
               {/* Floating stats mini cards */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
+                animate={{ opacity: 1, y: [0, -6, 0] }}
+                transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, opacity: { delay: 0.7, duration: 0.5 } }}
                 className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
               >
                 <div className="flex items-center gap-2">
@@ -329,13 +369,13 @@ const HeroSection = () => {
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, duration: 0.5 }}
+                animate={{ opacity: 1, y: [0, -8, 0] }}
+                transition={{ y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }, opacity: { delay: 0.9, duration: 0.5 } }}
                 className="absolute -top-4 -right-4 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
               >
                 <div className="flex items-center gap-2">
                   <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-accent" />
+                    <Timer className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <p className="text-lg font-bold text-foreground leading-none">48h</p>
