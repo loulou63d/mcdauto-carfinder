@@ -259,7 +259,19 @@ const Index = () => {
   const { lang = 'de' } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: allVehicles = [] } = useVehicles();
   const [promoSlide, setPromoSlide] = useState(0);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allVehicles.forEach(v => {
+      if (v.category) {
+        const key = v.category.toLowerCase();
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [allVehicles]);
 
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
@@ -518,6 +530,9 @@ const Index = () => {
                       <CategorySvg type={cat} />
                     </div>
                     <span className="text-sm font-heading font-bold text-foreground capitalize group-hover:text-primary transition-colors">{t(`categories.${labelKey}`, cat)}</span>
+                    <span className="text-xs text-muted-foreground font-medium -mt-1">
+                      {categoryCounts[cat.toLowerCase()] || 0} {t('search.results', { defaultValue: 'Fahrzeuge' })}
+                    </span>
                   </Link>
                 </motion.div>
               );
