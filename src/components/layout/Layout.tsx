@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supportedLangs } from '@/i18n';
 import Header from './Header';
 import Footer from './Footer';
+import Chatbot from '@/components/chat/Chatbot';
 
 const Layout = () => {
   const { lang } = useParams();
@@ -23,6 +24,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <Chatbot />
     </div>
   );
 };
