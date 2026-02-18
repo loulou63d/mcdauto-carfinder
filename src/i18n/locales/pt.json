@@ -518,6 +518,22 @@
     "perMonth": "/mês",
     "errorRateLimit": "Demasiados pedidos. Por favor, tente novamente num momento.",
     "errorCredits": "O serviço de IA está temporariamente indisponível. Tente mais tarde.",
-    "errorGeneral": "Ocorreu um erro. Por favor, tente novamente."
+    "errorGeneral": "Ocorreu um erro. Por favor, tente novamente.",
+    "deliveryAddress": "Morada de entrega",
+    "street": "Rua e número",
+    "postalCode": "Código postal",
+    "city": "Cidade",
+    "confirmAddress": "Confirmar morada",
+    "addressSaved": "Morada de entrega guardada!",
+    "uploadReceipt": "Carregar comprovativo de transferência",
+    "uploadHint": "Imagem ou PDF do seu comprovativo de transferência (máx. 10 MB)",
+    "selectFile": "Selecionar ficheiro",
+    "sendReceipt": "Enviar comprovativo",
+    "uploading": "A carregar...",
+    "receiptUploaded": "Comprovativo carregado com sucesso!",
+    "receiptReview": "A nossa equipa irá analisá-lo em 24 horas.",
+    "fileTooLarge": "Ficheiro demasiado grande (máx. 10 MB)",
+    "uploadError": "Falha no carregamento",
+    "compareTitle": "Comparação de veículos"
   }
 }

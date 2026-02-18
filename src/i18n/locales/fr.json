@@ -768,6 +768,22 @@
     "perMonth": "/mois",
     "errorRateLimit": "Trop de requêtes. Veuillez réessayer dans un instant.",
     "errorCredits": "Le service IA est temporairement indisponible. Veuillez réessayer plus tard.",
-    "errorGeneral": "Une erreur est survenue. Veuillez réessayer."
+    "errorGeneral": "Une erreur est survenue. Veuillez réessayer.",
+    "deliveryAddress": "Adresse de livraison",
+    "street": "Rue et numéro",
+    "postalCode": "Code postal",
+    "city": "Ville",
+    "confirmAddress": "Confirmer l'adresse",
+    "addressSaved": "Adresse de livraison enregistrée !",
+    "uploadReceipt": "Télécharger le justificatif de virement",
+    "uploadHint": "Image ou PDF de votre justificatif de virement (max. 10 Mo)",
+    "selectFile": "Choisir un fichier",
+    "sendReceipt": "Envoyer le justificatif",
+    "uploading": "Envoi en cours...",
+    "receiptUploaded": "Justificatif envoyé avec succès !",
+    "receiptReview": "Notre équipe le vérifiera sous 24h.",
+    "fileTooLarge": "Fichier trop volumineux (max. 10 Mo)",
+    "uploadError": "Échec de l'envoi",
+    "compareTitle": "Comparaison de véhicules"
   }
 }
