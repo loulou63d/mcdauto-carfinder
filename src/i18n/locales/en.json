@@ -763,6 +763,22 @@
     "perMonth": "/month",
     "errorRateLimit": "Too many requests. Please try again in a moment.",
     "errorCredits": "The AI service is temporarily unavailable. Please try again later.",
-    "errorGeneral": "An error occurred. Please try again."
+    "errorGeneral": "An error occurred. Please try again.",
+    "deliveryAddress": "Delivery address",
+    "street": "Street and number",
+    "postalCode": "Postal code",
+    "city": "City",
+    "confirmAddress": "Confirm address",
+    "addressSaved": "Delivery address saved!",
+    "uploadReceipt": "Upload transfer receipt",
+    "uploadHint": "Image or PDF of your transfer receipt (max. 10 MB)",
+    "selectFile": "Select file",
+    "sendReceipt": "Send receipt",
+    "uploading": "Uploading...",
+    "receiptUploaded": "Receipt uploaded successfully!",
+    "receiptReview": "Our team will review it within 24 hours.",
+    "fileTooLarge": "File too large (max. 10 MB)",
+    "uploadError": "Upload failed",
+    "compareTitle": "Vehicle comparison"
   }
 }

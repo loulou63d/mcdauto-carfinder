@@ -768,6 +768,22 @@
     "perMonth": "/Monat",
     "errorRateLimit": "Zu viele Anfragen. Bitte versuchen Sie es in einem Moment erneut.",
     "errorCredits": "Der AI-Service ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
-    "errorGeneral": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    "errorGeneral": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "deliveryAddress": "Lieferadresse",
+    "street": "Straße und Hausnummer",
+    "postalCode": "PLZ",
+    "city": "Stadt",
+    "confirmAddress": "Adresse bestätigen",
+    "addressSaved": "Lieferadresse gespeichert!",
+    "uploadReceipt": "Überweisungsbeleg hochladen",
+    "uploadHint": "Bild oder PDF Ihres Überweisungsbelegs (max. 10 MB)",
+    "selectFile": "Datei auswählen",
+    "sendReceipt": "Beleg senden",
+    "uploading": "Wird hochgeladen...",
+    "receiptUploaded": "Beleg erfolgreich hochgeladen!",
+    "receiptReview": "Unser Team wird ihn innerhalb von 24h prüfen.",
+    "fileTooLarge": "Datei zu groß (max. 10 MB)",
+    "uploadError": "Upload fehlgeschlagen",
+    "compareTitle": "Fahrzeugvergleich"
   }
 }
