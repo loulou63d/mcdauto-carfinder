@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Timer } from 'lucide-react';
+import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Timer, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useVehicles } from '@/hooks/useVehicles';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
@@ -10,6 +11,142 @@ import catSuv from '@/assets/cat-suv.jpg';
 import catBerline from '@/assets/cat-berline.jpg';
 import catBreak from '@/assets/cat-break.jpg';
 import catUtilitaire from '@/assets/cat-utilitaire.jpg';
+
+/* ── Featured Vehicle Carousel ── */
+const FeaturedCarousel = ({ lang, t }: { lang: string; t: any }) => {
+  const { data: vehicles } = useVehicles({ featured: true, limit: 6 });
+  const [current, setCurrent] = useState(0);
+  const items = vehicles?.filter((v) => v.images?.length > 0) || [];
+
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % items.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [items.length]);
+
+  const go = (dir: 1 | -1) => setCurrent((prev) => (prev + dir + items.length) % items.length);
+
+  if (items.length === 0) return null;
+
+  const vehicle = items[current];
+  const price = vehicle.price?.toLocaleString('de-DE');
+
+  return (
+    <div className="hidden lg:flex flex-col items-center justify-center gap-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, x: 40 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ duration: 0.7, delay: 0.3, type: 'spring', damping: 20 }}
+        className="relative w-full max-w-md"
+      >
+        {/* Glow */}
+        <motion.div
+          className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/20 blur-xl pointer-events-none"
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <div className="relative bg-primary-foreground/10 backdrop-blur-xl border border-primary-foreground/15 rounded-3xl shadow-2xl overflow-hidden">
+          {/* Image */}
+          <div className="relative aspect-[16/10] overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={vehicle.id}
+                src={vehicle.images[0]}
+                alt={`${vehicle.brand} ${vehicle.model}`}
+                className="absolute inset-0 w-full h-full object-cover"
+                initial={{ opacity: 0, scale: 1.08 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.6 }}
+              />
+            </AnimatePresence>
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+
+            {items.length > 1 && (
+              <>
+                <button onClick={() => go(-1)} className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors">
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button onClick={() => go(1)} className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors">
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
+
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {items.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-accent' : 'w-1.5 bg-white/50'}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="p-5">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={vehicle.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <p className="text-xs font-bold uppercase tracking-widest text-accent mb-1">{vehicle.brand}</p>
+                <h3 className="text-xl font-heading font-extrabold text-primary-foreground leading-tight">{vehicle.model}</h3>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-2xl font-extrabold text-accent">{price} €</span>
+                  <Link to={`/${lang}/vehicle/${vehicle.id}`}>
+                    <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full px-5 font-bold text-xs shadow-lg group">
+                      {t('hero.promoBtn', { defaultValue: 'Angebote entdecken' })}
+                      <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Floating stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: [0, -6, 0] }}
+          transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, opacity: { delay: 0.7, duration: 0.5 } }}
+          className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center"><Car className="w-5 h-5 text-primary" /></div>
+            <div>
+              <p className="text-lg font-bold text-foreground leading-none">500+</p>
+              <p className="text-[10px] text-muted-foreground font-medium">{t('hero.carsInStock', { defaultValue: 'Fahrzeuge auf Lager' })}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: [0, -8, 0] }}
+          transition={{ y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }, opacity: { delay: 0.9, duration: 0.5 } }}
+          className="absolute -top-4 -right-4 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center"><Timer className="w-5 h-5 text-accent" /></div>
+            <div>
+              <p className="text-lg font-bold text-foreground leading-none">48h</p>
+              <p className="text-[10px] text-muted-foreground font-medium">{t('hero.fastDelivery', { defaultValue: 'Schnelle Lieferung' })}</p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
 
 const HeroSection = () => {
   const { t } = useTranslation();
@@ -292,99 +429,8 @@ const HeroSection = () => {
             </AnimatePresence>
           </div>
 
-          {/* ══════ RIGHT: Promo / Visual side ══════ */}
-          <div className="hidden lg:flex flex-col items-center justify-center gap-6">
-            {/* Floating glass promo card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, x: 40 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.3, type: 'spring', damping: 20 }}
-              className="relative w-full max-w-md"
-            >
-              {/* Animated glow ring behind the card */}
-              <motion.div
-                className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/20 blur-xl pointer-events-none"
-                animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.98, 1.02, 0.98] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              />
-
-              <div className="relative bg-primary-foreground/10 backdrop-blur-xl border border-primary-foreground/15 rounded-3xl p-8 shadow-2xl overflow-hidden">
-                {/* Animated shimmer sweep */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/5 to-transparent -skew-x-12 pointer-events-none"
-                  animate={{ x: ['-100%', '200%'] }}
-                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
-                />
-
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-3">
-                    <motion.div
-                      className="w-2 h-2 rounded-full bg-accent"
-                      animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                    <span className="text-xs font-bold uppercase tracking-widest text-accent">
-                      {t('hero.promoLabel', { defaultValue: 'Aktuelle Aktion' })}
-                    </span>
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-primary-foreground leading-tight mb-2">
-                    {t('hero.promoTitle', { defaultValue: 'Bis zu' })}{' '}
-                    <motion.span
-                      className="text-accent inline-block"
-                      animate={{ scale: [1, 1.08, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      -35%
-                    </motion.span>
-                  </h2>
-                  <p className="text-primary-foreground/70 text-sm mb-5">
-                    {t('hero.promoDesc', { defaultValue: 'Auf eine Auswahl an Premium-Fahrzeugen. Angebot gültig bis Ende des Monats.' })}
-                  </p>
-                  <Link to={`/${lang}/search`}>
-                    <Button className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full px-6 py-2.5 font-bold text-sm shadow-lg group">
-                      {t('hero.promoBtn', { defaultValue: 'Angebote entdecken' })}
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Floating stats mini cards */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: [0, -6, 0] }}
-                transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, opacity: { delay: 0.7, duration: 0.5 } }}
-                className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Car className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-foreground leading-none">500+</p>
-                    <p className="text-[10px] text-muted-foreground font-medium">{t('hero.carsInStock', { defaultValue: 'Fahrzeuge auf Lager' })}</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: [0, -8, 0] }}
-                transition={{ y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }, opacity: { delay: 0.9, duration: 0.5 } }}
-                className="absolute -top-4 -right-4 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
-                    <Timer className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-foreground leading-none">48h</p>
-                    <p className="text-[10px] text-muted-foreground font-medium">{t('hero.fastDelivery', { defaultValue: 'Schnelle Lieferung' })}</p>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+          {/* ══════ RIGHT: Featured Vehicle Carousel ══════ */}
+          <FeaturedCarousel lang={lang} t={t} />
         </div>
       </div>
     </section>
