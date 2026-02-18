@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import AIAgentSection from '@/components/home/AIAgentSection';
 import HeroSection from '@/components/home/HeroSection';
 import { useTranslation } from 'react-i18next';
@@ -251,6 +251,28 @@ const HomeBestDeals = ({ lang, t, vehicles }: { lang: string; t: any; vehicles: 
   );
 };
 
+/* ── Lazy Section: renders children only when near viewport ── */
+const LazySection = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+      { rootMargin: '200px' }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={className}>
+      {visible ? children : <div className="min-h-[200px]" />}
+    </div>
+  );
+};
+
 const Index = () => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
@@ -425,9 +447,9 @@ const Index = () => {
                       <span className="text-white/70 text-xs font-medium">MCD AUTO</span>
                     </div>
                   )}
-                  <div className="absolute bottom-5 right-5 md:bottom-8 md:right-10">
-                    <Link to={slide.ctaLink}>
-                      <Button className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg ${isDark ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-white text-foreground hover:bg-white/90'}`}>
+                  <div className="absolute bottom-5 right-5 md:bottom-8 md:right-10 z-10">
+                    <Link to={slide.ctaLink} onClick={(e) => e.stopPropagation()}>
+                      <Button className={`rounded-full px-6 py-2.5 font-heading font-bold text-sm shadow-lg pointer-events-auto ${isDark ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-white text-foreground hover:bg-white/90'}`}>
                         {slide.cta}
                       </Button>
                     </Link>
@@ -458,6 +480,7 @@ const Index = () => {
       {/* ══════════════ TOP 20 BEST DEALS ══════════════ */}
       <HomeBestDeals lang={lang} t={t} vehicles={allVehicles} />
 
+      <LazySection>
       {/* ══════════════ ACTION CARDS — Premium overlay style ══════════════ */}
       <section className="section-padding bg-secondary/30">
         <div className="container mx-auto px-4">
@@ -716,6 +739,7 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+      </LazySection>
     </div>
   );
 };
