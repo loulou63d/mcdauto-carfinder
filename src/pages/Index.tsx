@@ -26,7 +26,7 @@ import reviewImg14 from '@/assets/review-14.jpeg';
 import reviewImg15 from '@/assets/review-15.jpeg';
 import { Button } from '@/components/ui/button';
 import VehicleCard from '@/components/VehicleCard';
-import { popularBrands, categoryTypes } from '@/data/mockVehicles';
+import { popularBrands, categoryTypes, type Vehicle } from '@/data/mockVehicles';
 import { useVehicles } from '@/hooks/useVehicles';
 import promoImg1 from '@/assets/promo-slide1.jpg';
 import promoImg2 from '@/assets/promo-slide2.jpg';
@@ -102,8 +102,7 @@ const AnimatedCounter = ({ end, suffix = '', duration = 2000 }: { end: number; s
   return <span ref={ref}>{count.toLocaleString('de-DE')}{suffix}</span>;
 };
 
-const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
-  const { data: vehicles = [] } = useVehicles({ limit: 8 });
+const FeaturedVehiclesSection = ({ lang, t, vehicles }: { lang: string; t: any; vehicles: Vehicle[] }) => {
 
   if (vehicles.length === 0) return null;
 
@@ -139,8 +138,7 @@ const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
 };
 
 /* ── Top 30 Promo Carousel (Homepage) ── */
-const HomePromoCarousel = ({ lang, t }: { lang: string; t: any }) => {
-  const { data: vehicles = [] } = useVehicles();
+const HomePromoCarousel = ({ lang, t, vehicles }: { lang: string; t: any; vehicles: Vehicle[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const promoVehicles = useMemo(() => {
@@ -208,8 +206,7 @@ const HomePromoCarousel = ({ lang, t }: { lang: string; t: any }) => {
 };
 
 /* ── Top 20 Best Deals (Homepage) ── */
-const HomeBestDeals = ({ lang, t }: { lang: string; t: any }) => {
-  const { data: vehicles = [] } = useVehicles();
+const HomeBestDeals = ({ lang, t, vehicles }: { lang: string; t: any; vehicles: Vehicle[] }) => {
 
   const bestDeals = useMemo(() => {
     return [...vehicles]
@@ -453,13 +450,13 @@ const Index = () => {
         </div>
       </section>
       {/* ══════════════ FEATURED VEHICLES ══════════════ */}
-      <FeaturedVehiclesSection lang={lang} t={t} />
+      <FeaturedVehiclesSection lang={lang} t={t} vehicles={allVehicles.slice(0, 8)} />
 
       {/* ══════════════ TOP 30 PROMO ══════════════ */}
-      <HomePromoCarousel lang={lang} t={t} />
+      <HomePromoCarousel lang={lang} t={t} vehicles={allVehicles} />
 
       {/* ══════════════ TOP 20 BEST DEALS ══════════════ */}
-      <HomeBestDeals lang={lang} t={t} />
+      <HomeBestDeals lang={lang} t={t} vehicles={allVehicles} />
 
       {/* ══════════════ ACTION CARDS — Premium overlay style ══════════════ */}
       <section className="section-padding bg-secondary/30">
