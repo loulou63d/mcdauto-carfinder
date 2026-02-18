@@ -9,10 +9,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
-import catSuv from '@/assets/cat-suv.jpg';
-import catBerline from '@/assets/cat-berline.jpg';
-import catBreak from '@/assets/cat-break.jpg';
-import catUtilitaire from '@/assets/cat-utilitaire.jpg';
+import catSuv from '@/assets/cat-icon-suv.png';
+import catBerline from '@/assets/cat-icon-berline.png';
+import catBreak from '@/assets/cat-icon-break.png';
+import catUtilitaire from '@/assets/cat-icon-utilitaire.png';
 
 /* ── Animated Counter ── */
 const AnimatedCount = ({ value, className }: { value: number; className?: string }) => {
@@ -395,11 +395,11 @@ const HeroSection = () => {
                             to={`/${lang}/search?category=${cat.key}`}
                             className="group flex flex-col items-center gap-1.5 min-w-[75px]"
                           >
-                            <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary-foreground/15 group-hover:border-accent group-hover:scale-110 group-hover:shadow-[0_0_20px_hsl(var(--accent)/0.3)] transition-all duration-300">
+                            <div className="w-20 h-14 flex items-center justify-center group-hover:scale-110 transition-all duration-300">
                               <img
                                 src={cat.img}
                                 alt={cat.key}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                className="max-w-full max-h-full object-contain drop-shadow-lg group-hover:drop-shadow-[0_0_12px_hsl(var(--accent)/0.4)] transition-all duration-500"
                               />
                             </div>
                             <span className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wide group-hover:text-accent transition-colors">
