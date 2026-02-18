@@ -32,14 +32,7 @@ import promoImg1 from '@/assets/promo-slide1.jpg';
 import promoImg2 from '@/assets/promo-slide2.jpg';
 import promoImg3 from '@/assets/promo-slide3.jpg';
 import promoImg4 from '@/assets/promo-slide4.jpg';
-import catBerline from '@/assets/cat-berline.jpg';
-import catBreak from '@/assets/cat-break.jpg';
-import catSuv from '@/assets/cat-suv.jpg';
-import catUtilitaire from '@/assets/cat-utilitaire.jpg';
-import cat4x4 from '@/assets/cat-4x4.jpg';
-import catCabriolet from '@/assets/cat-cabriolet.jpg';
-import catMonospace from '@/assets/cat-monospace.jpg';
-import catCoupe from '@/assets/cat-coupe.jpg';
+import CategorySvg from '@/components/CategorySvg';
 import brandAudi from '@/assets/brand-audi.png';
 import brandBmw from '@/assets/brand-bmw.png';
 import brandCitroen from '@/assets/brand-citroen.png';
@@ -160,10 +153,6 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const categoryImages: Record<string, string> = {
-    berline: catBerline, break: catBreak, suv: catSuv, utilitaire: catUtilitaire,
-    '4x4': cat4x4, cabriolet: catCabriolet, monospace: catMonospace, 'coupé': catCoupe,
-  };
 
   const brandImages: Record<string, string> = {
     Audi: brandAudi, BMW: brandBmw, Citroën: brandCitroen, Dacia: brandDacia,
@@ -401,13 +390,12 @@ const Index = () => {
                 <motion.div key={cat} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                   <Link
                     to={`/${lang}/search?category=${cat}`}
-                    className="group block relative rounded-2xl overflow-hidden h-40 shadow-md hover:shadow-xl transition-all duration-300"
+                    className="group flex flex-col items-center justify-center gap-3 rounded-2xl h-40 bg-gradient-to-br from-primary/10 to-accent/5 border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300"
                   >
-                    <img src={categoryImages[cat]} alt={t(`categories.${labelKey}`, cat)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(215,60%,10%)/0.8] via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <span className="text-sm font-heading font-bold text-white capitalize">{t(`categories.${labelKey}`, cat)}</span>
+                    <div className="w-24 h-16 text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300">
+                      <CategorySvg type={cat} />
                     </div>
+                    <span className="text-sm font-heading font-bold text-foreground capitalize group-hover:text-primary transition-colors">{t(`categories.${labelKey}`, cat)}</span>
                   </Link>
                 </motion.div>
               );
