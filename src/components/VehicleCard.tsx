@@ -81,8 +81,8 @@ const VehicleCard = ({ vehicle, isPromo = false }: VehicleCardProps) => {
             </div>
           )}
           {isPromo && (
-            <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-destructive text-destructive-foreground text-[11px] font-bold uppercase tracking-wider shadow-lg">
-              PROMO
+            <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-destructive text-destructive-foreground text-[11px] font-bold uppercase tracking-wider shadow-lg shimmer animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
+              🔥 PROMO
             </span>
           )}
           <button
