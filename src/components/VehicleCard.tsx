@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart, ShieldCheck } from 'lucide-react';
+import { Heart, Calendar, Gauge, Fuel, Settings2, ShoppingCart, ShieldCheck, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Vehicle } from '@/data/mockVehicles';
 import { useCart } from '@/contexts/CartContext';
@@ -87,8 +87,8 @@ const VehicleCard = ({ vehicle, isPromo = false, isBestDeal = false }: VehicleCa
             </span>
           )}
           {isBestDeal && !isPromo && (
-            <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gradient-to-r from-[hsl(45,100%,51%)] to-[hsl(30,100%,50%)] text-[hsl(30,80%,10%)] text-[11px] font-bold uppercase tracking-wider shadow-lg shimmer">
-              ⭐ BEST DEAL
+            <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-[hsl(45,100%,51%)] to-[hsl(30,100%,50%)] text-[hsl(30,80%,10%)] text-[11px] font-semibold tracking-wide shadow-lg shimmer">
+              <Star className="w-3.5 h-3.5 fill-current" /> Best Deal
             </span>
           )}
           <button
