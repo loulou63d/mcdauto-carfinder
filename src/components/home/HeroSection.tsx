@@ -234,7 +234,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative min-h-[600px] md:min-h-[640px] overflow-hidden">
+    <section className="relative min-h-[auto] md:min-h-[640px] overflow-hidden">
       {/* Background image — right side */}
       <img
         src={heroImage}
@@ -256,7 +256,7 @@ const HeroSection = () => {
       </svg>
 
       <div className="relative z-10 container mx-auto px-4 h-full">
-        <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[600px] md:min-h-[640px] py-12">
+        <div className="grid lg:grid-cols-2 gap-8 items-center min-h-0 md:min-h-[640px] py-16 md:py-12">
           {/* ══════ LEFT: Search Panel ══════ */}
           <div className="flex flex-col gap-5 justify-center">
             {/* Badge */}
