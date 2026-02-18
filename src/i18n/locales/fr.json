@@ -540,6 +540,20 @@
     "seeAll": "Voir tout",
     "currency": "€"
   },
+  "aiAgent": {
+    "badge": "Propulsé par l'IA",
+    "title": "Votre conseiller",
+    "titleHighlight": "IA personnel",
+    "description": "Notre agent IA vous accompagne 24h/24 dans votre recherche de véhicule, financement et prise de rendez-vous – en 5 langues.",
+    "feat1": "Recherche intelligente",
+    "feat2": "Comparaison de véhicules",
+    "feat3": "5 langues",
+    "feat4": "Réponses instantanées",
+    "online": "En ligne – Répond instantanément",
+    "mockMsg1": "Bienvenue ! 👋 Je suis votre conseiller IA. Comment puis-je vous aider ?",
+    "mockMsg2": "Je cherche un SUV à moins de 20 000€",
+    "mockMsg3": "J'ai trouvé 3 SUVs qui pourraient vous convenir :"
+  },
   "stats": {
     "vehiclesAvailable": "Véhicules disponibles",
     "happyClients": "Clients satisfaits",

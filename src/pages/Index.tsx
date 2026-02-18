@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import AIAgentSection from '@/components/home/AIAgentSection';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
@@ -648,6 +649,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* ══════════════ AI AGENT ══════════════ */}
+      <AIAgentSection />
 
       {/* ══════════════ REVIEWS ══════════════ */}
       <section className="section-padding">
