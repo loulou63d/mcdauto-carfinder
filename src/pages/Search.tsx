@@ -580,7 +580,7 @@ const PromoCarousel = ({ vehicles, lang, t }: { vehicles: any[]; lang: string; t
               transition={{ delay: i * 0.03, duration: 0.3 }}
               className="min-w-[260px] max-w-[280px] snap-start shrink-0"
             >
-              <VehicleCard vehicle={vehicle} />
+              <VehicleCard vehicle={vehicle} isPromo />
             </motion.div>
           ))}
         </div>
