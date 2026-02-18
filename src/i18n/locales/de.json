@@ -540,6 +540,20 @@
     "seeAll": "Alle anzeigen",
     "currency": "€"
   },
+  "aiAgent": {
+    "badge": "KI-gestützt",
+    "title": "Ihr persönlicher",
+    "titleHighlight": "KI-Berater",
+    "description": "Unser KI-Agent hilft Ihnen rund um die Uhr bei der Fahrzeugsuche, Finanzierung und Terminvereinbarung – in 5 Sprachen.",
+    "feat1": "Intelligente Suche",
+    "feat2": "Fahrzeugvergleich",
+    "feat3": "5 Sprachen",
+    "feat4": "Sofortige Antworten",
+    "online": "Online – Antwortet sofort",
+    "mockMsg1": "Willkommen! 👋 Ich bin Ihr KI-Berater. Wie kann ich Ihnen helfen?",
+    "mockMsg2": "Ich suche ein SUV unter 20.000€",
+    "mockMsg3": "Ich habe 3 SUVs gefunden, die zu Ihnen passen könnten:"
+  },
   "stats": {
     "vehiclesAvailable": "Fahrzeuge verfügbar",
     "happyClients": "Zufriedene Kunden",

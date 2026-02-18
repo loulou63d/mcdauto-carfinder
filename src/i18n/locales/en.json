@@ -538,6 +538,20 @@
     "seeAll": "See all",
     "currency": "€"
   },
+  "aiAgent": {
+    "badge": "AI-Powered",
+    "title": "Your personal",
+    "titleHighlight": "AI Advisor",
+    "description": "Our AI agent helps you 24/7 with vehicle search, financing and appointment booking – in 5 languages.",
+    "feat1": "Smart Search",
+    "feat2": "Vehicle Comparison",
+    "feat3": "5 Languages",
+    "feat4": "Instant Answers",
+    "online": "Online – Responds instantly",
+    "mockMsg1": "Welcome! 👋 I'm your AI advisor. How can I help you?",
+    "mockMsg2": "I'm looking for an SUV under €20,000",
+    "mockMsg3": "I found 3 SUVs that could be a great fit for you:"
+  },
   "stats": {
     "vehiclesAvailable": "Vehicles available",
     "happyClients": "Happy clients",
