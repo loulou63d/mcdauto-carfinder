@@ -27,6 +27,7 @@
   "hero": {
     "title": "Geprüfte und garantierte Gebrauchtwagen — der MCD AUTO Service",
     "subtitle": "Große Auswahl an überprüften Gebrauchtwagen zu fairen Preisen",
+    "findTitle": "Finden Sie Ihr Traumauto!",
     "searchPlaceholder": "Marke, Modell...",
     "searchButton": "Suchen",
     "estimate": "Bewerten",
@@ -37,7 +38,20 @@
     "brandPlaceholder": "z.B. Volkswagen",
     "mileageLabel": "Kilometerstand",
     "mileagePlaceholder": "z.B. 85.000 km",
-    "bookAppointment": "Termin vereinbaren"
+    "bookAppointment": "Termin vereinbaren",
+    "badge": "Geprüft & Garantiert",
+    "petrol": "Benzin",
+    "electric": "Elektro / Hybrid",
+    "advancedSearch": "Erweiterte Suche",
+    "vehiclesAvailable": "Fahrzeuge sofort verfügbar!",
+    "sellSubtitle": "Geben Sie Ihr Kennzeichen ein für eine Sofortbewertung",
+    "maintainSubtitle": "Geben Sie Ihr Kennzeichen ein um einen Termin zu buchen",
+    "promoLabel": "Aktuelle Aktion",
+    "promoTitle": "Bis zu",
+    "promoDesc": "Auf eine Auswahl an Premium-Fahrzeugen. Angebot gültig bis Ende des Monats.",
+    "promoBtn": "Angebote entdecken",
+    "carsInStock": "Fahrzeuge auf Lager",
+    "fastDelivery": "Schnelle Lieferung"
   },
   "trust": {
     "reconditioned": "Aufbereitete und garantierte Fahrzeuge",

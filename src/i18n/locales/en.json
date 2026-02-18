@@ -27,6 +27,7 @@
   "hero": {
     "title": "Guaranteed and inspected used vehicles — the MCD AUTO service",
     "subtitle": "Wide selection of inspected used cars at fair prices",
+    "findTitle": "Find your dream car!",
     "searchPlaceholder": "Brand, model...",
     "searchButton": "Search",
     "estimate": "Estimate",
@@ -37,7 +38,20 @@
     "brandPlaceholder": "e.g. Ford",
     "mileageLabel": "Mileage",
     "mileagePlaceholder": "e.g. 85,000 km",
-    "bookAppointment": "Book an appointment"
+    "bookAppointment": "Book an appointment",
+    "badge": "Inspected & Guaranteed",
+    "petrol": "Petrol",
+    "electric": "Electric / Hybrid",
+    "advancedSearch": "Advanced Search",
+    "vehiclesAvailable": "vehicles available now!",
+    "sellSubtitle": "Enter your plate number for an instant valuation",
+    "maintainSubtitle": "Enter your plate number to book an appointment",
+    "promoLabel": "Current Offer",
+    "promoTitle": "Up to",
+    "promoDesc": "On a selection of premium vehicles. Offer valid until the end of the month.",
+    "promoBtn": "Discover offers",
+    "carsInStock": "cars in stock",
+    "fastDelivery": "Fast delivery"
   },
   "trust": {
     "reconditioned": "Reconditioned and guaranteed vehicles",
