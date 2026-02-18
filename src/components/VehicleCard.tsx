@@ -11,9 +11,10 @@ import { vehicleDisplayName } from '@/lib/utils';
 interface VehicleCardProps {
   vehicle: Vehicle;
   isPromo?: boolean;
+  isBestDeal?: boolean;
 }
 
-const VehicleCard = ({ vehicle, isPromo = false }: VehicleCardProps) => {
+const VehicleCard = ({ vehicle, isPromo = false, isBestDeal = false }: VehicleCardProps) => {
   const { t } = useTranslation();
   const { lang = 'de' } = useParams();
   const { addToCart, isInCart } = useCart();
@@ -83,6 +84,11 @@ const VehicleCard = ({ vehicle, isPromo = false }: VehicleCardProps) => {
           {isPromo && (
             <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-destructive text-destructive-foreground text-[11px] font-bold uppercase tracking-wider shadow-lg shimmer animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
               🔥 PROMO
+            </span>
+          )}
+          {isBestDeal && !isPromo && (
+            <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gradient-to-r from-[hsl(45,100%,51%)] to-[hsl(30,100%,50%)] text-[hsl(30,80%,10%)] text-[11px] font-bold uppercase tracking-wider shadow-lg shimmer">
+              ⭐ BEST DEAL
             </span>
           )}
           <button
