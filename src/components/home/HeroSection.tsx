@@ -156,11 +156,11 @@ const FeaturedCarousel = ({ lang, t, vehicleCount }: { lang: string; t: any; veh
         </div>
 
         {/* Floating stats */}
-        <motion.div
+       <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: [0, -6, 0] }}
           transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, opacity: { delay: 0.7, duration: 0.5 } }}
-          className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
+          className="absolute -bottom-10 -left-8 bg-card rounded-2xl shadow-xl px-5 py-3 border border-border"
         >
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center"><Car className="w-5 h-5 text-primary" /></div>
