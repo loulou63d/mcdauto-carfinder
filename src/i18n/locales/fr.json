@@ -552,7 +552,8 @@
     "online": "En ligne – Répond instantanément",
     "mockMsg1": "Bienvenue ! 👋 Je suis votre conseiller IA. Comment puis-je vous aider ?",
     "mockMsg2": "Je cherche un SUV à moins de 20 000€",
-    "mockMsg3": "J'ai trouvé 3 SUVs qui pourraient vous convenir :"
+    "mockMsg3": "J'ai trouvé 3 SUVs qui pourraient vous convenir :",
+    "cta": "Discuter avec le conseiller IA"
   },
   "stats": {
     "vehiclesAvailable": "Véhicules disponibles",

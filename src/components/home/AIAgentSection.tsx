@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Bot, MessageCircle, Zap, Brain, Car, Globe, Sparkles } from 'lucide-react';
+import { Bot, MessageCircle, Zap, Brain, Car, Globe, Sparkles, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const typingTexts = [
   'SUV unter 20.000€?',
@@ -151,6 +152,23 @@ export default function AIAgentSection() {
                 </motion.div>
               ))}
             </div>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.7, duration: 0.5 }}
+              className="mt-8"
+            >
+              <Button
+                onClick={() => window.dispatchEvent(new CustomEvent('open-chatbot'))}
+                className="bg-gradient-to-r from-primary to-[hsl(280,60%,50%)] hover:from-primary/90 hover:to-[hsl(280,60%,45%)] text-white font-bold px-8 py-6 text-base rounded-full shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 group"
+              >
+                <MessageCircle className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                {t('aiAgent.cta', { defaultValue: 'Jetzt mit dem KI-Berater chatten' })}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </motion.div>
           </motion.div>
 
           {/* Right: Interactive mockup */}

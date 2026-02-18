@@ -93,6 +93,13 @@ export default function Chatbot() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Listen for open-chatbot event
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener('open-chatbot', handler);
+    return () => window.removeEventListener('open-chatbot', handler);
+  }, []);
+
   // Scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
