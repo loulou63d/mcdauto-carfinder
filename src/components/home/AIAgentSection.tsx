@@ -1,8 +1,44 @@
 import { useTranslation } from 'react-i18next';
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { Bot, MessageCircle, Zap, Brain, Car, Globe, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+/* ── Starfield particles ── */
+const Starfield = ({ count = 60 }: { count?: number }) => {
+  const stars = useMemo(() =>
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2.5 + 0.8,
+      delay: Math.random() * 5,
+      duration: Math.random() * 3 + 2,
+      opacity: Math.random() * 0.5 + 0.15,
+    })), [count]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {stars.map(s => (
+        <motion.div
+          key={s.id}
+          className="absolute rounded-full bg-white"
+          style={{ left: `${s.x}%`, top: `${s.y}%`, width: s.size, height: s.size }}
+          animate={{
+            opacity: [s.opacity, s.opacity * 2.5, s.opacity],
+            scale: [1, 1.6, 1],
+          }}
+          transition={{
+            duration: s.duration,
+            delay: s.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const typingTexts = [
   'SUV unter 20.000€?',
@@ -75,6 +111,9 @@ export default function AIAgentSection() {
     <section ref={ref} className="relative overflow-hidden py-20 md:py-28">
       {/* Deep dark background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(216,73%,6%)] via-[hsl(228,67%,12%)] to-[hsl(216,73%,6%)]" />
+
+      {/* ★ Starfield particles */}
+      <Starfield />
 
       {/* Animated grid pattern */}
       <div
