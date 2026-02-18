@@ -159,7 +159,105 @@ serve(async (req) => {
     if (action === "create_appointment") {
       const { data, error } = await supabaseAdmin.from("appointments").insert(actionData).select().single();
       if (error) throw error;
+
+      // Send email notification to customer
+      const SUPABASE_URL_VAL = Deno.env.get("SUPABASE_URL")!;
+      const appointmentLang = COUNTRY_LANG[customer?.country] || actionData.lang || "de";
+      try {
+        await fetch(`${SUPABASE_URL_VAL}/functions/v1/send-notification`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "appointment_confirmation",
+            lang: appointmentLang,
+            to: actionData.customer_email,
+            data: {
+              name: actionData.customer_name,
+              date: actionData.preferred_date,
+              time: actionData.preferred_time,
+              appointmentType: actionData.appointment_type,
+              vehicleInfo: actionData.vehicle_info || "",
+            },
+          }),
+        });
+      } catch (e) { console.error("Failed to send appointment email:", e); }
+
+      // Also notify admin
+      try {
+        await fetch(`${SUPABASE_URL_VAL}/functions/v1/send-notification`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "appointment_confirmation",
+            lang: "de",
+            to: "contact@mcd-auto.com",
+            data: {
+              name: actionData.customer_name,
+              date: actionData.preferred_date,
+              time: actionData.preferred_time,
+              appointmentType: actionData.appointment_type,
+              vehicleInfo: actionData.vehicle_info || "",
+            },
+          }),
+        });
+      } catch (e) { console.error("Failed to send admin appointment email:", e); }
+
       return new Response(JSON.stringify({ ok: true, appointment: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "create_estimate") {
+      const appointmentLang = COUNTRY_LANG[customer?.country] || "de";
+      const SUPABASE_URL_VAL2 = Deno.env.get("SUPABASE_URL")!;
+
+      // Send email to customer
+      if (actionData.email) {
+        try {
+          await fetch(`${SUPABASE_URL_VAL2}/functions/v1/send-notification`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type: "estimate_request",
+              lang: appointmentLang,
+              to: actionData.email,
+              data: {
+                name: actionData.name || "",
+                brand: actionData.brand,
+                model: actionData.model,
+                year: actionData.year,
+                mileage: actionData.mileage,
+                energy: actionData.energy,
+                condition: actionData.condition,
+              },
+            }),
+          });
+        } catch (e) { console.error("Failed to send estimate email:", e); }
+      }
+
+      // Notify admin
+      try {
+        await fetch(`${SUPABASE_URL_VAL2}/functions/v1/send-notification`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "estimate_request",
+            lang: "de",
+            to: "contact@mcd-auto.com",
+            data: {
+              name: actionData.name || customer?.lastName || "",
+              brand: actionData.brand,
+              model: actionData.model,
+              year: actionData.year,
+              mileage: actionData.mileage,
+              energy: actionData.energy,
+              condition: actionData.condition,
+            },
+          }),
+        });
+      } catch (e) { console.error("Failed to send admin estimate email:", e); }
+
+      return new Response(JSON.stringify({ ok: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-type NotificationType = "welcome" | "order_confirmation" | "order_completed" | "contact_confirmation";
+type NotificationType = "welcome" | "order_confirmation" | "order_completed" | "contact_confirmation" | "appointment_confirmation" | "estimate_request";
 type Lang = "de" | "fr" | "en" | "es" | "pt";
 
 interface NotificationPayload {
@@ -440,6 +440,120 @@ function contactEmail(lang: Lang, data: Record<string, unknown>): { subject: str
   return { subject: t(lang, "contact_subject"), html: baseTemplate(lang, t(lang, "contact_title"), content) };
 }
 
+function appointmentEmail(lang: Lang, data: Record<string, unknown>): { subject: string; html: string } {
+  const name = (data.name as string) || "";
+  const date = (data.date as string) || "";
+  const time = (data.time as string) || "";
+  const type = (data.appointmentType as string) || "test_drive";
+  const vehicleInfo = (data.vehicleInfo as string) || "";
+
+  const typeLabels: Record<string, Record<Lang, string>> = {
+    test_drive: { de: "Probefahrt", fr: "Essai routier", en: "Test drive", es: "Prueba de conducción", pt: "Test drive" },
+    consultation: { de: "Beratung", fr: "Consultation", en: "Consultation", es: "Consulta", pt: "Consulta" },
+    inspection: { de: "Besichtigung", fr: "Visite", en: "Inspection", es: "Inspección", pt: "Inspeção" },
+  };
+
+  const subjects: Record<Lang, string> = {
+    de: "MCD AUTO — Ihr Termin wurde bestätigt",
+    fr: "MCD AUTO — Votre rendez-vous est confirmé",
+    en: "MCD AUTO — Your appointment is confirmed",
+    es: "MCD AUTO — Su cita ha sido confirmada",
+    pt: "MCD AUTO — A sua consulta está confirmada",
+  };
+
+  const titles: Record<Lang, string> = {
+    de: "Termin bestätigt!", fr: "Rendez-vous confirmé !", en: "Appointment confirmed!",
+    es: "¡Cita confirmada!", pt: "Consulta confirmada!",
+  };
+
+  const bodies: Record<Lang, string> = {
+    de: `${name ? `${name}, ` : ""}Ihr Termin wurde erfolgreich registriert.`,
+    fr: `${name ? `${name}, ` : ""}Votre rendez-vous a été enregistré avec succès.`,
+    en: `${name ? `${name}, ` : ""}Your appointment has been successfully registered.`,
+    es: `${name ? `${name}, ` : ""}Su cita se ha registrado con éxito.`,
+    pt: `${name ? `${name}, ` : ""}A sua consulta foi registada com sucesso.`,
+  };
+
+  const detailLabels: Record<Lang, { date: string; time: string; type: string; vehicle: string }> = {
+    de: { date: "Datum", time: "Uhrzeit", type: "Art", vehicle: "Fahrzeug" },
+    fr: { date: "Date", time: "Heure", type: "Type", vehicle: "Véhicule" },
+    en: { date: "Date", time: "Time", type: "Type", vehicle: "Vehicle" },
+    es: { date: "Fecha", time: "Hora", type: "Tipo", vehicle: "Vehículo" },
+    pt: { date: "Data", time: "Hora", type: "Tipo", vehicle: "Veículo" },
+  };
+
+  const dl = detailLabels[lang] || detailLabels.de;
+  const typeLabel = typeLabels[type]?.[lang] || type;
+
+  const content = `
+    <p style="color:#444;line-height:1.7;font-size:15px;">${bodies[lang] || bodies.de}</p>
+    <div style="background:#f7f9fb;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #39B54A;">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;font-weight:600;">${dl.date}:</td><td style="padding:6px 0 6px 12px;font-size:14px;color:#0A1F3F;">${date}</td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;font-weight:600;">${dl.time}:</td><td style="padding:6px 0 6px 12px;font-size:14px;color:#0A1F3F;">${time}</td></tr>
+        <tr><td style="padding:6px 0;font-size:14px;color:#555;font-weight:600;">${dl.type}:</td><td style="padding:6px 0 6px 12px;font-size:14px;color:#0A1F3F;">${typeLabel}</td></tr>
+        ${vehicleInfo ? `<tr><td style="padding:6px 0;font-size:14px;color:#555;font-weight:600;">${dl.vehicle}:</td><td style="padding:6px 0 6px 12px;font-size:14px;color:#0A1F3F;">${vehicleInfo}</td></tr>` : ""}
+      </table>
+    </div>`;
+  return { subject: subjects[lang] || subjects.de, html: baseTemplate(lang, titles[lang] || titles.de, content) };
+}
+
+function estimateEmail(lang: Lang, data: Record<string, unknown>): { subject: string; html: string } {
+  const name = (data.name as string) || "";
+  const brand = (data.brand as string) || "";
+  const model = (data.model as string) || "";
+  const year = (data.year as string) || "";
+  const mileage = (data.mileage as string) || "";
+  const energy = (data.energy as string) || "";
+  const condition = (data.condition as string) || "";
+
+  const subjects: Record<Lang, string> = {
+    de: "MCD AUTO — Ihre Fahrzeugschätzung wurde angefragt",
+    fr: "MCD AUTO — Votre demande d'estimation a été reçue",
+    en: "MCD AUTO — Your vehicle estimate request has been received",
+    es: "MCD AUTO — Su solicitud de estimación ha sido recibida",
+    pt: "MCD AUTO — O seu pedido de estimativa foi recebido",
+  };
+
+  const titles: Record<Lang, string> = {
+    de: "Schätzung angefragt!", fr: "Estimation reçue !", en: "Estimate requested!",
+    es: "¡Estimación solicitada!", pt: "Estimativa solicitada!",
+  };
+
+  const bodies: Record<Lang, string> = {
+    de: `${name ? `${name}, ` : ""}Ihre Anfrage zur Fahrzeugschätzung wurde empfangen. Unser Team wird sich innerhalb von 24 Stunden bei Ihnen melden.`,
+    fr: `${name ? `${name}, ` : ""}Votre demande d'estimation a bien été reçue. Notre équipe vous répondra sous 24 heures.`,
+    en: `${name ? `${name}, ` : ""}Your vehicle estimate request has been received. Our team will get back to you within 24 hours.`,
+    es: `${name ? `${name}, ` : ""}Su solicitud de estimación ha sido recibida. Nuestro equipo se pondrá en contacto en 24 horas.`,
+    pt: `${name ? `${name}, ` : ""}O seu pedido de estimativa foi recebido. A nossa equipa contactá-lo-á dentro de 24 horas.`,
+  };
+
+  const labels: Record<Lang, Record<string, string>> = {
+    de: { brand: "Marke", model: "Modell", year: "Baujahr", mileage: "km", energy: "Kraftstoff", condition: "Zustand", vehicle: "Fahrzeugdaten" },
+    fr: { brand: "Marque", model: "Modèle", year: "Année", mileage: "km", energy: "Énergie", condition: "État", vehicle: "Données du véhicule" },
+    en: { brand: "Brand", model: "Model", year: "Year", mileage: "Mileage", energy: "Fuel", condition: "Condition", vehicle: "Vehicle details" },
+    es: { brand: "Marca", model: "Modelo", year: "Año", mileage: "km", energy: "Combustible", condition: "Estado", vehicle: "Datos del vehículo" },
+    pt: { brand: "Marca", model: "Modelo", year: "Ano", mileage: "km", energy: "Combustível", condition: "Estado", vehicle: "Dados do veículo" },
+  };
+
+  const l = labels[lang] || labels.de;
+
+  const content = `
+    <p style="color:#444;line-height:1.7;font-size:15px;">${bodies[lang] || bodies.de}</p>
+    <div style="background:#f7f9fb;border-radius:10px;padding:20px;margin:20px 0;border-left:4px solid #E63946;">
+      <p style="font-weight:700;margin:0 0 10px;color:#0A1F3F;font-size:14px;">${l.vehicle}</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">
+        ${brand ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.brand}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${brand}</td></tr>` : ""}
+        ${model ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.model}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${model}</td></tr>` : ""}
+        ${year ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.year}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${year}</td></tr>` : ""}
+        ${mileage ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.mileage}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${Number(mileage).toLocaleString("de-DE")} km</td></tr>` : ""}
+        ${energy ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.energy}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${energy}</td></tr>` : ""}
+        ${condition ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;font-weight:600;">${l.condition}:</td><td style="padding:4px 0 4px 12px;font-size:14px;color:#0A1F3F;">${condition}</td></tr>` : ""}
+      </table>
+    </div>`;
+  return { subject: subjects[lang] || subjects.de, html: baseTemplate(lang, titles[lang] || titles.de, content) };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -468,6 +582,12 @@ serve(async (req) => {
         break;
       case "contact_confirmation":
         emailContent = contactEmail(lang, data);
+        break;
+      case "appointment_confirmation":
+        emailContent = appointmentEmail(lang, data);
+        break;
+      case "estimate_request":
+        emailContent = estimateEmail(lang, data);
         break;
       default:
         throw new Error(`Unknown notification type: ${type}`);
