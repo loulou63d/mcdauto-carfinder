@@ -62,6 +62,7 @@
     "inspectionDesc": "Le contrôle technique est inclus à chaque achat"
   },
   "actions": {
+    "subtitle": "Nos services",
     "title": "Que souhaitez-vous faire ?",
     "searchVehicle": "Rechercher un véhicule d'occasion",
     "searchVehicleDesc": "Parcourez notre inventaire",
@@ -82,10 +83,13 @@
     "convertible": "Cabriolet",
     "minivan": "Monospace",
     "coupe": "Coupé",
-    "seeMore": "Voir plus"
+    "seeMore": "Voir plus",
+    "subtitle": "Catégories",
+    "vehicleCount": "véhicules"
   },
   "featured": {
     "title": "Véhicules en vedette",
+    "subtitle": "Notre sélection",
     "perMonth": "/mois",
     "seeDetail": "Voir détail",
     "from": "À partir de",
@@ -96,6 +100,7 @@
   },
   "reviews": {
     "title": "Avis clients",
+    "subtitle": "Témoignages clients",
     "review1": "Excellent service, véhicule conforme à la description. Livraison rapide et équipe très professionnelle.",
     "review2": "Très satisfaite de mon achat. La garantie 12 mois est un vrai plus. Je recommande vivement.",
     "review3": "Bon rapport qualité/prix. Le processus d'achat est simple et transparent."
@@ -117,6 +122,18 @@
     "noDeposit": "SANS APPORT",
     "legalNote": "*Voir mentions légales",
     "legalNoteFull": "(1) Voir les mentions légales"
+  },
+  "stats": {
+    "vehiclesAvailable": "Véhicules disponibles",
+    "happyClients": "Clients satisfaits",
+    "yearsExperience": "Années d'expérience",
+    "deliveryTime": "Délai de livraison"
+  },
+  "cta": {
+    "title": "Prêt à trouver votre prochaine voiture ?",
+    "subtitle": "Plus de 500 véhicules contrôlés vous attendent. Tous avec garantie et droit de retour.",
+    "searchButton": "Parcourir les véhicules",
+    "contactButton": "Nous contacter"
   },
   "search": {
     "title": "Résultats de recherche",
@@ -143,7 +160,11 @@
     "guarantee12": "Garantie 12 mois",
     "satisfactionBadge": "Satisfait ou remboursé",
     "noResults": "Aucun véhicule trouvé",
-    "noResultsHint": "Essayez de modifier les filtres ou d'effectuer une autre recherche"
+    "noResultsHint": "Essayez de modifier les filtres ou d'effectuer une autre recherche",
+    "promoTitle": "Top 30 — Promotions",
+    "promoDesc": "Nos meilleurs prix du moment",
+    "bestDeals": "Top 20 — Meilleures Affaires",
+    "bestDealsDesc": "Le meilleur rapport qualité-prix-année"
   },
   "vehicle": {
     "contact": "Contacter",

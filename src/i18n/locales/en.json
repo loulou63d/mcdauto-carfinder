@@ -62,6 +62,7 @@
     "inspectionDesc": "Technical inspection is included with every purchase"
   },
   "actions": {
+    "subtitle": "Our Services",
     "title": "What would you like to do?",
     "searchVehicle": "Search for a used vehicle",
     "searchVehicleDesc": "Browse our inventory",
@@ -82,10 +83,13 @@
     "convertible": "Convertible",
     "minivan": "Minivan",
     "coupe": "Coupé",
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "subtitle": "Categories",
+    "vehicleCount": "vehicles"
   },
   "featured": {
     "title": "Featured Vehicles",
+    "subtitle": "Our Selection",
     "perMonth": "/month",
     "seeDetail": "View details",
     "from": "From",
@@ -94,6 +98,7 @@
   "brands": { "title": "Popular Brands" },
   "reviews": {
     "title": "Customer Reviews",
+    "subtitle": "Customer Testimonials",
     "review1": "Excellent service, vehicle exactly as described. Fast delivery and a very professional team.",
     "review2": "Very happy with my purchase. The 12-month warranty is a real bonus. Highly recommended.",
     "review3": "Great value for money. The buying process is simple and transparent."
@@ -115,6 +120,18 @@
     "noDeposit": "NO DEPOSIT",
     "legalNote": "*See legal notice",
     "legalNoteFull": "(1) See legal notice"
+  },
+  "stats": {
+    "vehiclesAvailable": "Vehicles available",
+    "happyClients": "Happy customers",
+    "yearsExperience": "Years of experience",
+    "deliveryTime": "Delivery time"
+  },
+  "cta": {
+    "title": "Ready to find your next car?",
+    "subtitle": "Over 500 inspected vehicles await you. All with warranty and return policy.",
+    "searchButton": "Browse vehicles",
+    "contactButton": "Get in touch"
   },
   "search": {
     "title": "Search Results",
@@ -141,7 +158,11 @@
     "guarantee12": "12 months warranty",
     "satisfactionBadge": "Satisfied or refunded",
     "noResults": "No vehicles found",
-    "noResultsHint": "Try adjusting the filters or performing a different search"
+    "noResultsHint": "Try adjusting the filters or performing a different search",
+    "promoTitle": "Top 30 — Promotions",
+    "promoDesc": "Our best prices right now",
+    "bestDeals": "Top 20 — Best Deals",
+    "bestDealsDesc": "Best value for money"
   },
   "vehicle": {
     "contact": "Contact",

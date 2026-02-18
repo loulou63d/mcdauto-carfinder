@@ -62,6 +62,7 @@
     "inspectionDesc": "Der TÜV ist bei jedem Kauf inklusive"
   },
   "actions": {
+    "subtitle": "Unsere Dienstleistungen",
     "title": "Was möchten Sie tun?",
     "searchVehicle": "Gebrauchtwagen suchen",
     "searchVehicleDesc": "Durchsuchen Sie unseren Bestand",
@@ -82,10 +83,13 @@
     "convertible": "Cabriolet",
     "minivan": "Van",
     "coupe": "Coupé",
-    "seeMore": "Mehr anzeigen"
+    "seeMore": "Mehr anzeigen",
+    "subtitle": "Kategorien",
+    "vehicleCount": "Fahrzeuge"
   },
   "featured": {
     "title": "Ausgewählte Fahrzeuge",
+    "subtitle": "Unsere Auswahl",
     "perMonth": "/Monat",
     "seeDetail": "Details anzeigen",
     "from": "Ab",
@@ -96,6 +100,7 @@
   },
   "reviews": {
     "title": "Kundenbewertungen",
+    "subtitle": "Kundenstimmen",
     "review1": "Exzellenter Service, Fahrzeug entspricht genau der Beschreibung. Schnelle Lieferung und sehr professionelles Team.",
     "review2": "Sehr zufrieden mit meinem Kauf. Die 12-monatige Garantie ist ein echter Vorteil. Sehr empfehlenswert.",
     "review3": "Gutes Preis-Leistungs-Verhältnis. Der Kaufprozess ist einfach und transparent."
@@ -117,6 +122,18 @@
     "noDeposit": "OHNE ANZAHLUNG",
     "legalNote": "*Siehe rechtliche Hinweise",
     "legalNoteFull": "(1) Siehe rechtliche Hinweise"
+  },
+  "stats": {
+    "vehiclesAvailable": "Fahrzeuge verfügbar",
+    "happyClients": "Zufriedene Kunden",
+    "yearsExperience": "Jahre Erfahrung",
+    "deliveryTime": "Lieferzeit"
+  },
+  "cta": {
+    "title": "Bereit, Ihr nächstes Auto zu finden?",
+    "subtitle": "Über 500 geprüfte Fahrzeuge warten auf Sie. Alle mit Garantie und Rückgaberecht.",
+    "searchButton": "Fahrzeuge durchsuchen",
+    "contactButton": "Kontakt aufnehmen"
   },
   "search": {
     "title": "Suchergebnisse",
@@ -143,7 +160,11 @@
     "guarantee12": "12 Monate Garantie",
     "satisfactionBadge": "Zufrieden oder Geld zurück",
     "noResults": "Keine Fahrzeuge gefunden",
-    "noResultsHint": "Versuchen Sie, die Filter anzupassen oder eine andere Suche durchzuführen"
+    "noResultsHint": "Versuchen Sie, die Filter anzupassen oder eine andere Suche durchzuführen",
+    "promoTitle": "Top 30 — Aktionen",
+    "promoDesc": "Unsere besten Preise im Moment",
+    "bestDeals": "Top 20 — Beste Angebote",
+    "bestDealsDesc": "Das beste Preis-Leistungs-Verhältnis"
   },
   "vehicle": {
     "contact": "Kontaktieren",
