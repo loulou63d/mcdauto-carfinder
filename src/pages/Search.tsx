@@ -230,7 +230,7 @@ const SearchPage = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {bestDeals.map(vehicle => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              <VehicleCard key={vehicle.id} vehicle={vehicle} isBestDeal />
             ))}
           </div>
         </section>

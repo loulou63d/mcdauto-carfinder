@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import AIAgentSection from '@/components/home/AIAgentSection';
 import HeroSection from '@/components/home/HeroSection';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon, Quote, Sparkles, TrendingUp, Users, Award, Clock } from 'lucide-react';
+import { Search, Shield, RefreshCw, CheckCircle, Car as CarIcon, CreditCard, BarChart3, Wrench, ChevronRight, Star, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon, Quote, Sparkles, TrendingUp, Users, Award, Clock, Flame, TrendingDown } from 'lucide-react';
 import actionSearchImg from '@/assets/action-search.jpg';
 import actionFinanceImg from '@/assets/action-finance.jpg';
 import actionEstimateImg from '@/assets/action-estimate.jpg';
@@ -130,6 +130,122 @@ const FeaturedVehiclesSection = ({ lang, t }: { lang: string; t: any }) => {
           {vehicles.map((vehicle, i) => (
             <motion.div key={vehicle.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
               <VehicleCard vehicle={vehicle} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── Top 30 Promo Carousel (Homepage) ── */
+const HomePromoCarousel = ({ lang, t }: { lang: string; t: any }) => {
+  const { data: vehicles = [] } = useVehicles();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const promoVehicles = useMemo(() => {
+    return [...vehicles]
+      .filter(v => v.images && v.images.length > 0)
+      .sort((a, b) => Number(a.price) - Number(b.price))
+      .slice(0, 30);
+  }, [vehicles]);
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    const amount = scrollRef.current.clientWidth * 0.8;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
+
+  if (promoVehicles.length === 0) return null;
+
+  return (
+    <section className="section-padding bg-gradient-to-r from-destructive/5 to-accent/5">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-destructive" />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-heading font-extrabold">
+                {t('search.promoTitle', { defaultValue: 'Top 30 — Promotions' })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('search.promoDesc', { defaultValue: 'Nos meilleurs prix du moment' })}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => scroll('left')}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => scroll('right')}>
+              <ChevronRightIcon className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {promoVehicles.map((vehicle, i) => (
+            <motion.div
+              key={vehicle.id}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.03, duration: 0.3 }}
+              className="min-w-[260px] max-w-[280px] snap-start shrink-0"
+            >
+              <VehicleCard vehicle={vehicle} isPromo />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── Top 20 Best Deals (Homepage) ── */
+const HomeBestDeals = ({ lang, t }: { lang: string; t: any }) => {
+  const { data: vehicles = [] } = useVehicles();
+
+  const bestDeals = useMemo(() => {
+    return [...vehicles]
+      .filter(v => v.images && v.images.length > 0 && v.year >= 2018)
+      .map(v => ({ ...v, score: Number(v.price) / Math.max(1, v.year - 2015) }))
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 20);
+  }, [vehicles]);
+
+  if (bestDeals.length === 0) return null;
+
+  return (
+    <section className="section-padding">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(45,100%,51%)] to-[hsl(30,100%,50%)] flex items-center justify-center shadow-md">
+              <TrendingDown className="w-5 h-5 text-[hsl(30,80%,10%)]" />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-heading font-extrabold">
+                {t('search.bestDeals', { defaultValue: 'Top 20 — Meilleures Affaires' })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('search.bestDealsDesc', { defaultValue: 'Le meilleur rapport qualité-prix-année' })}
+              </p>
+            </div>
+          </div>
+          <Link to={`/${lang}/search`} className="flex items-center gap-2 bg-primary/5 hover:bg-primary/10 text-primary font-semibold text-sm px-5 py-2.5 rounded-full transition-colors">
+            {t('featured.seeAll', { defaultValue: 'Alle sehen' })} <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {bestDeals.map((vehicle, i) => (
+            <motion.div key={vehicle.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <VehicleCard vehicle={vehicle} isBestDeal />
             </motion.div>
           ))}
         </div>
@@ -326,6 +442,12 @@ const Index = () => {
       </section>
       {/* ══════════════ FEATURED VEHICLES ══════════════ */}
       <FeaturedVehiclesSection lang={lang} t={t} />
+
+      {/* ══════════════ TOP 30 PROMO ══════════════ */}
+      <HomePromoCarousel lang={lang} t={t} />
+
+      {/* ══════════════ TOP 20 BEST DEALS ══════════════ */}
+      <HomeBestDeals lang={lang} t={t} />
 
       {/* ══════════════ ACTION CARDS — Premium overlay style ══════════════ */}
       <section className="section-padding bg-secondary/30">
