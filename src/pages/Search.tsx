@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { SlidersHorizontal, X, ChevronDown, ChevronRight, Search, Loader2, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, RotateCcw, Flame, TrendingDown, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import VehicleCard from '@/components/VehicleCard';
 import { useVehicles } from '@/hooks/useVehicles';
+
+const ITEMS_PER_PAGE = 24;
 
 const SearchPage = () => {
   const { t } = useTranslation();
@@ -29,9 +32,12 @@ const SearchPage = () => {
   const [yearRange, setYearRange] = useState<[number, number]>([2010, 2026]);
   const [mileageMax, setMileageMax] = useState<number>(200000);
   const [brandSearch, setBrandSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     categories: true, brands: true, energy: true, transmission: true, price: true, year: false, mileage: false,
   });
+
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: vehicles = [], isLoading } = useVehicles();
 
@@ -60,7 +66,6 @@ const SearchPage = () => {
     return [...new Set(vehicles.map(v => v.transmission))].sort();
   }, [vehicles]);
 
-  // Dynamic models based on selected brands
   const dynamicModels = useMemo(() => {
     if (selectedBrands.length === 0) return [];
     return [...new Set(
@@ -77,10 +82,27 @@ const SearchPage = () => {
     return translated || value;
   };
 
+  // ── Top 30 Promo: cheapest vehicles with images ──
+  const promoVehicles = useMemo(() => {
+    return [...vehicles]
+      .filter(v => v.images && v.images.length > 0)
+      .sort((a, b) => Number(a.price) - Number(b.price))
+      .slice(0, 30);
+  }, [vehicles]);
+
+  // ── Top 20 Best Deals: best price/year ratio ──
+  const bestDeals = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return [...vehicles]
+      .filter(v => v.images && v.images.length > 0 && v.year >= 2018)
+      .map(v => ({ ...v, score: Number(v.price) / Math.max(1, v.year - 2015) }))
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 20);
+  }, [vehicles]);
+
   const filtered = useMemo(() => {
     let results = [...vehicles];
 
-    // Keyword search
     const q = keyword.toLowerCase().trim();
     if (q) results = results.filter(v =>
       `${v.brand} ${v.model} ${v.category || ''} ${v.color || ''}`.toLowerCase().includes(q)
@@ -108,6 +130,21 @@ const SearchPage = () => {
     return results;
   }, [vehicles, selectedBrands, selectedModels, selectedEnergies, selectedCategories, selectedTransmissions, priceRange, yearRange, mileageMax, sortBy, keyword]);
 
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedResults = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, currentPage]);
+
+  // Reset page when filters change
+  useMemo(() => { setCurrentPage(1); }, [selectedBrands, selectedModels, selectedEnergies, selectedCategories, selectedTransmissions, priceRange, yearRange, mileageMax, sortBy, keyword]);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const toggleFilter = (arr: string[], setArr: (v: string[]) => void, value: string) => {
     setArr(arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]);
   };
@@ -121,6 +158,8 @@ const SearchPage = () => {
   const activeCount = selectedBrands.length + selectedModels.length + selectedEnergies.length + selectedCategories.length +
     selectedTransmissions.length + (priceRange[0] > 0 || priceRange[1] < 250000 ? 1 : 0) +
     (yearRange[0] > 2010 || yearRange[1] < 2026 ? 1 : 0) + (mileageMax < 200000 ? 1 : 0) + (keyword ? 1 : 0);
+
+  const hasActiveFilters = activeCount > 0;
 
   const filteredBrands = dynamicBrands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()));
 
@@ -136,7 +175,6 @@ const SearchPage = () => {
     </div>
   );
 
-  // Active filter pills
   const activeFilters = [
     ...selectedBrands.map(b => ({ label: b, onRemove: () => setSelectedBrands(prev => prev.filter(v => v !== b)) })),
     ...selectedModels.map(m => ({ label: m, onRemove: () => setSelectedModels(prev => prev.filter(v => v !== m)) })),
@@ -144,6 +182,17 @@ const SearchPage = () => {
     ...selectedEnergies.map(e => ({ label: translateFilter('energyValues', e), onRemove: () => setSelectedEnergies(prev => prev.filter(v => v !== e)) })),
     ...selectedTransmissions.map(tr => ({ label: translateFilter('transmissionValues', tr), onRemove: () => setSelectedTransmissions(prev => prev.filter(v => v !== tr)) })),
   ];
+
+  // Pagination range
+  const pageRange = useMemo(() => {
+    const range: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+    for (let i = start; i <= end; i++) range.push(i);
+    return range;
+  }, [currentPage, totalPages]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -158,7 +207,36 @@ const SearchPage = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      {/* ══════ TOP 30 PROMO CAROUSEL ══════ */}
+      {!hasActiveFilters && promoVehicles.length > 0 && (
+        <PromoCarousel vehicles={promoVehicles} lang={lang} t={t} />
+      )}
+
+      {/* ══════ TOP 20 BEST DEALS GRID ══════ */}
+      {!hasActiveFilters && bestDeals.length > 0 && (
+        <section className="container mx-auto px-4 py-8">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+              <TrendingDown className="w-5 h-5 text-accent" />
+            </div>
+            <div>
+              <h2 className="text-xl font-heading font-extrabold">
+                {t('search.bestDeals', { defaultValue: 'Top 20 — Meilleures Affaires' })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('search.bestDealsDesc', { defaultValue: 'Le meilleur rapport qualité-prix-année' })}
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {bestDeals.map(vehicle => (
+              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="container mx-auto px-4 py-6" ref={resultsRef}>
         {/* Search bar */}
         <div className="mb-6">
           <div className="relative max-w-2xl mx-auto">
@@ -202,6 +280,11 @@ const SearchPage = () => {
             </Button>
             <p className="text-sm text-muted-foreground">
               <span className="font-bold text-foreground text-lg">{filtered.length}</span> {t('search.results')}
+              {totalPages > 1 && (
+                <span className="ml-2 text-xs">
+                  — {t('search.page', { defaultValue: 'Page' })} {currentPage}/{totalPages}
+                </span>
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -271,7 +354,7 @@ const SearchPage = () => {
               </div>
             </FilterSection>
 
-            {/* Models (shown when brand selected) */}
+            {/* Models */}
             {dynamicModels.length > 0 && (
               <FilterSection id="models" title={t('search.model')}>
                 <div className="space-y-2.5 max-h-48 overflow-y-auto">
@@ -324,14 +407,7 @@ const SearchPage = () => {
             {/* Price range */}
             <FilterSection id="price" title={t('search.price')}>
               <div className="space-y-4">
-                <Slider
-                  min={0}
-                  max={250000}
-                  step={1000}
-                  value={priceRange}
-                  onValueChange={(v) => setPriceRange(v as [number, number])}
-                  className="w-full"
-                />
+                <Slider min={0} max={250000} step={1000} value={priceRange} onValueChange={(v) => setPriceRange(v as [number, number])} className="w-full" />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>{priceRange[0].toLocaleString('de-DE')} €</span>
                   <span>{priceRange[1] >= 250000 ? '250 000+ €' : `${priceRange[1].toLocaleString('de-DE')} €`}</span>
@@ -342,14 +418,7 @@ const SearchPage = () => {
             {/* Year range */}
             <FilterSection id="year" title={t('search.yearLabel')}>
               <div className="space-y-4">
-                <Slider
-                  min={2010}
-                  max={2026}
-                  step={1}
-                  value={yearRange}
-                  onValueChange={(v) => setYearRange(v as [number, number])}
-                  className="w-full"
-                />
+                <Slider min={2010} max={2026} step={1} value={yearRange} onValueChange={(v) => setYearRange(v as [number, number])} className="w-full" />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>{yearRange[0]}</span>
                   <span>{yearRange[1]}</span>
@@ -360,14 +429,7 @@ const SearchPage = () => {
             {/* Mileage */}
             <FilterSection id="mileage" title={t('search.mileageLabel')}>
               <div className="space-y-4">
-                <Slider
-                  min={0}
-                  max={200000}
-                  step={5000}
-                  value={[mileageMax]}
-                  onValueChange={(v) => setMileageMax(v[0])}
-                  className="w-full"
-                />
+                <Slider min={0} max={200000} step={5000} value={[mileageMax]} onValueChange={(v) => setMileageMax(v[0])} className="w-full" />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>0 km</span>
                   <span>{mileageMax >= 200000 ? '200 000+ km' : `${mileageMax.toLocaleString('de-DE')} km`}</span>
@@ -383,7 +445,7 @@ const SearchPage = () => {
             </div>
           </aside>
 
-          {/* RESULTS GRID */}
+          {/* RESULTS GRID + PAGINATION */}
           <div className="flex-1 min-w-0">
             {isLoading ? (
               <div className="flex justify-center py-20">
@@ -402,16 +464,128 @@ const SearchPage = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filtered.map(vehicle => (
-                  <VehicleCard key={vehicle.id} vehicle={vehicle} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {paginatedResults.map(vehicle => (
+                    <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-1 mt-8 mb-4">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+
+                    {pageRange[0] > 1 && (
+                      <>
+                        <Button variant={currentPage === 1 ? 'default' : 'outline'} size="sm" className="h-9 w-9" onClick={() => goToPage(1)}>1</Button>
+                        {pageRange[0] > 2 && <span className="px-1 text-muted-foreground">…</span>}
+                      </>
+                    )}
+
+                    {pageRange.map(p => (
+                      <Button
+                        key={p}
+                        variant={currentPage === p ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-9 w-9"
+                        onClick={() => goToPage(p)}
+                      >
+                        {p}
+                      </Button>
+                    ))}
+
+                    {pageRange[pageRange.length - 1] < totalPages && (
+                      <>
+                        {pageRange[pageRange.length - 1] < totalPages - 1 && <span className="px-1 text-muted-foreground">…</span>}
+                        <Button variant={currentPage === totalPages ? 'default' : 'outline'} size="sm" className="h-9 w-9" onClick={() => goToPage(totalPages)}>{totalPages}</Button>
+                      </>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
     </div>
+  );
+};
+
+/* ══════ PROMO CAROUSEL COMPONENT ══════ */
+const PromoCarousel = ({ vehicles, lang, t }: { vehicles: any[]; lang: string; t: any }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    const amount = scrollRef.current.clientWidth * 0.8;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
+
+  return (
+    <section className="bg-gradient-to-r from-primary/5 to-accent/5 py-8 border-b">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-destructive" />
+            </div>
+            <div>
+              <h2 className="text-xl font-heading font-extrabold">
+                {t('search.promoTitle', { defaultValue: 'Top 30 — Promotions' })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('search.promoDesc', { defaultValue: 'Nos meilleurs prix du moment' })}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => scroll('left')}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => scroll('right')}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {vehicles.map((vehicle, i) => (
+            <motion.div
+              key={vehicle.id}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.03, duration: 0.3 }}
+              className="min-w-[260px] max-w-[280px] snap-start shrink-0"
+            >
+              <VehicleCard vehicle={vehicle} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 
