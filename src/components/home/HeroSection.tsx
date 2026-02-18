@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight } from 'lucide-react';
+import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Truck, CarFront, Caravan } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
@@ -43,10 +43,10 @@ const HeroSection = () => {
   const currentPlate = plateFormats[lang] || plateFormats.de;
 
   const categories = [
-    { key: 'suv', icon: '🚙' },
-    { key: 'berline', icon: '🚗' },
-    { key: 'break', icon: '🚐' },
-    { key: 'utilitaire', icon: '🚛' },
+    { key: 'suv', Icon: Car },
+    { key: 'berline', Icon: CarFront },
+    { key: 'break', Icon: Caravan },
+    { key: 'utilitaire', Icon: Truck },
   ];
 
   return (
@@ -203,8 +203,8 @@ const HeroSection = () => {
                           to={`/${lang}/search?category=${cat.key}`}
                           className="group flex flex-col items-center gap-1.5 min-w-[70px]"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 flex items-center justify-center text-xl group-hover:bg-primary-foreground/20 group-hover:scale-110 transition-all duration-200">
-                            {cat.icon}
+                          <div className="w-12 h-12 rounded-xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 flex items-center justify-center group-hover:bg-primary-foreground/20 group-hover:scale-110 transition-all duration-200">
+                            <cat.Icon className="w-5 h-5 text-primary-foreground/70 group-hover:text-primary-foreground transition-colors" />
                           </div>
                           <span className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wide group-hover:text-primary-foreground transition-colors">
                             {t(`categories.${cat.key}`, { defaultValue: cat.key })}
