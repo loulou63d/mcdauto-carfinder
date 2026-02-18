@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import AIAgentSection from '@/components/home/AIAgentSection';
+import HeroSection from '@/components/home/HeroSection';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
@@ -24,11 +25,9 @@ import reviewImg13 from '@/assets/review-13.jpeg';
 import reviewImg14 from '@/assets/review-14.jpeg';
 import reviewImg15 from '@/assets/review-15.jpeg';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import VehicleCard from '@/components/VehicleCard';
 import { popularBrands, categoryTypes } from '@/data/mockVehicles';
 import { useVehicles } from '@/hooks/useVehicles';
-import heroImage from '@/assets/hero-showroom.jpg';
 import promoImg1 from '@/assets/promo-slide1.jpg';
 import promoImg2 from '@/assets/promo-slide2.jpg';
 import promoImg3 from '@/assets/promo-slide3.jpg';
@@ -151,22 +150,7 @@ const Index = () => {
   const { lang = 'de' } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'maintain'>('buy');
   const [promoSlide, setPromoSlide] = useState(0);
-  const [plateNumber, setPlateNumber] = useState('');
-  const [showFullForm, setShowFullForm] = useState(false);
-  const [plateForm, setPlateForm] = useState({ vin: '', brand: '', mileage: '' });
-
-  // Read hash and set active tab
-  useEffect(() => {
-    const hash = location.hash.slice(1) as 'buy' | 'sell' | 'maintain';
-    if (hash === 'sell' || hash === 'maintain') {
-      setActiveTab(hash);
-    } else {
-      setActiveTab('buy');
-    }
-  }, [location.hash]);
 
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
@@ -175,24 +159,6 @@ const Index = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleSearch = () => {
-    navigate(`/${lang}/search${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`);
-  };
-
-  const handlePlateSubmit = () => {
-    navigate(`/${lang}/contact`);
-  };
-
-  const plateFormats: Record<string, { placeholder: string; flag: string; country: string }> = {
-    fr: { placeholder: 'AA-000-AA', flag: '🇫🇷', country: 'F' },
-    de: { placeholder: 'B-AB 1234', flag: '🇩🇪', country: 'D' },
-    es: { placeholder: '0000 AAA', flag: '🇪🇸', country: 'E' },
-    pt: { placeholder: 'AA-00-AA', flag: '🇵🇹', country: 'P' },
-    en: { placeholder: 'AB12 CDE', flag: '🇬🇧', country: 'GB' },
-  };
-
-  const currentPlate = plateFormats[lang] || plateFormats.fr;
 
   const categoryImages: Record<string, string> = {
     berline: catBerline, break: catBreak, suv: catSuv, utilitaire: catUtilitaire,
@@ -294,154 +260,7 @@ const Index = () => {
   return (
     <div>
       {/* ══════════════ HERO ══════════════ */}
-      <section className={`relative overflow-hidden ${activeTab === 'buy' ? 'h-[540px] md:h-[600px]' : 'min-h-[640px] md:min-h-[700px]'}`}>
-        <img src={heroImage} alt="MCD AUTO Showroom" className="absolute inset-0 w-full h-full object-cover scale-105" loading="eager" />
-        <div className="absolute inset-0 hero-gradient" />
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-56 h-56 bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
-        
-        <div className={`relative z-10 container mx-auto px-4 h-full flex flex-col items-center text-center ${activeTab === 'buy' ? 'justify-center' : 'justify-start pt-24 md:pt-28'}`}>
-          {activeTab === 'buy' && (
-            <>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-md border border-primary-foreground/20 rounded-full px-5 py-2 mb-6"
-              >
-                <Sparkles className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium text-primary-foreground">{t('hero.badge', { defaultValue: 'Geprüft & Garantiert' })}</span>
-              </motion.div>
-              <motion.h1
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-3xl md:text-5xl lg:text-[3.2rem] font-heading font-bold text-primary-foreground max-w-4xl leading-tight"
-              >
-                {t('hero.title')}
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.25 }}
-                className="mt-4 text-base md:text-lg text-primary-foreground/70 max-w-2xl"
-              >
-                {t('hero.subtitle', { defaultValue: 'Finden Sie Ihr Traumfahrzeug aus über 500 geprüften Gebrauchtwagen.' })}
-              </motion.p>
-            </>
-          )}
-
-          {/* Tabs */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-            className="mt-6 flex bg-primary-foreground/10 backdrop-blur-md rounded-full p-1 border border-primary-foreground/15"
-          >
-            {[
-              { key: 'buy' as const, label: t('nav.buy') },
-              { key: 'sell' as const, label: t('nav.sell') },
-              { key: 'maintain' as const, label: t('nav.maintain') },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-6 md:px-10 py-2.5 text-sm font-semibold transition-all duration-300 rounded-full ${
-                  activeTab === tab.key
-                    ? 'bg-card text-foreground shadow-lg'
-                    : 'text-primary-foreground/80 hover:text-primary-foreground'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </motion.div>
-
-          {/* Tab content */}
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.4 }}
-            className="mt-5 w-full max-w-xl"
-          >
-            {activeTab === 'buy' ? (
-              <>
-                <div className="flex w-full shadow-2xl rounded-xl overflow-hidden">
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder={t('hero.searchPlaceholder')}
-                    className="rounded-r-none rounded-l-xl h-14 bg-card text-foreground border-0 text-base flex-1 pl-5"
-                  />
-                  <Button onClick={handleSearch} className="rounded-l-none rounded-r-xl h-14 px-8 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-base">
-                    <Search className="w-5 h-5 mr-2" />
-                    {t('hero.searchButton')}
-                  </Button>
-                </div>
-                <Link to={`/${lang}/search`} className="inline-block mt-4 text-sm text-primary-foreground/80 underline hover:text-primary-foreground transition-colors">
-                  {t('featured.seeAll')}
-                </Link>
-              </>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-stretch w-full shadow-2xl rounded-xl overflow-hidden">
-                  <div className="flex items-center gap-1 bg-[hsl(220,60%,45%)] text-white px-3 text-sm font-bold">
-                    <span className="text-xs">{currentPlate.flag}</span>
-                    <span>{currentPlate.country}</span>
-                  </div>
-                  <Input
-                    value={plateNumber}
-                    onChange={(e) => setPlateNumber(e.target.value)}
-                    placeholder={currentPlate.placeholder}
-                    className="rounded-none h-14 bg-card text-foreground border-0 text-base flex-1 text-center font-mono tracking-widest uppercase"
-                  />
-                  <Button
-                    onClick={handlePlateSubmit}
-                    className="rounded-l-none h-14 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold"
-                  >
-                    {activeTab === 'sell' ? t('hero.estimate') : 'OK'}
-                  </Button>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-sm text-primary-foreground/80">
-                  <button onClick={() => setShowFullForm(!showFullForm)} className="underline hover:text-primary-foreground">
-                    {t('hero.unknownPlate')}
-                  </button>
-                </div>
-                {showFullForm && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="glass-card rounded-xl p-4 space-y-3"
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.vinLabel')}</label>
-                        <Input value={plateForm.vin} onChange={(e) => setPlateForm({ ...plateForm, vin: e.target.value })} placeholder={t('hero.vinPlaceholder')} className="h-10 text-sm bg-card border-0 uppercase font-mono" maxLength={17} />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.brandLabel')}</label>
-                        <Input value={plateForm.brand} onChange={(e) => setPlateForm({ ...plateForm, brand: e.target.value })} placeholder={t('hero.brandPlaceholder')} className="h-10 text-sm bg-card border-0" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-primary-foreground/90 mb-1 block">{t('hero.mileageLabel')}</label>
-                        <Input type="number" value={plateForm.mileage} onChange={(e) => setPlateForm({ ...plateForm, mileage: e.target.value })} placeholder={t('hero.mileagePlaceholder')} className="h-10 text-sm bg-card border-0" />
-                      </div>
-                      <div className="flex items-end">
-                        <Button onClick={handlePlateSubmit} className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-                          {activeTab === 'sell' ? t('hero.estimate') : t('hero.bookAppointment')}
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            )}
-          </motion.div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ══════════════ PROMO CAROUSEL ══════════════ */}
       <section className="py-10">
