@@ -10,6 +10,9 @@ import { WelcomeForm, type CustomerInfo } from './WelcomeForm';
 import { VehicleCardInline } from './VehicleCardInline';
 import { AppointmentFormInline } from './AppointmentFormInline';
 import { EstimateFormInline } from './EstimateFormInline';
+import { VehicleCompareInline } from './VehicleCompareInline';
+import { CheckoutFormInline } from './CheckoutFormInline';
+import { UploadReceiptInline } from './UploadReceiptInline';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const SESSION_KEY = 'mcd-chat-session';
@@ -28,7 +31,7 @@ function getSessionId(): string {
 
 function parseInlineComponents(content: string): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
-  const regex = /\[VEHICLE_CARD:(\{[\s\S]*?\})\]|\[APPOINTMENT_FORM\]|\[ESTIMATE_FORM\]|\[SIGNUP_FORM\]/g;
+  const regex = /\[VEHICLE_CARD:(\{[\s\S]*?\})\]|\[VEHICLE_COMPARE:(\{[\s\S]*?\})\]|\[APPOINTMENT_FORM\]|\[ESTIMATE_FORM\]|\[CHECKOUT_FORM\]|\[UPLOAD_RECEIPT(?::(\{[\s\S]*?\}))?\]|\[SIGNUP_FORM\]/g;
   let lastIndex = 0;
   let match;
 
@@ -42,10 +45,24 @@ function parseInlineComponents(content: string): React.ReactNode[] {
       parts.push(<AppointmentFormInline key={`apt-${match.index}`} />);
     } else if (match[0] === '[ESTIMATE_FORM]') {
       parts.push(<EstimateFormInline key={`est-${match.index}`} />);
+    } else if (match[0] === '[CHECKOUT_FORM]') {
+      parts.push(<CheckoutFormInline key={`chk-${match.index}`} />);
+    } else if (match[0].startsWith('[UPLOAD_RECEIPT')) {
+      let orderId: string | undefined;
+      try { if (match[3]) orderId = JSON.parse(match[3]).orderId; } catch {}
+      parts.push(<UploadReceiptInline key={`upl-${match.index}`} orderId={orderId} />);
     } else if (match[0] === '[SIGNUP_FORM]') {
       parts.push(<div key={`signup-${match.index}`} className="my-2 p-3 rounded-lg bg-primary/5 border text-sm text-center">
         <a href={`/${document.documentElement.lang || 'de'}/login`} className="text-primary font-semibold hover:underline">Konto erstellen →</a>
       </div>);
+    } else if (match[2]) {
+      try {
+        const data = JSON.parse(match[2]);
+        const vehicles = data.vehicles || data;
+        if (Array.isArray(vehicles)) {
+          parts.push(<VehicleCompareInline key={`cmp-${match.index}`} vehicles={vehicles} />);
+        }
+      } catch {}
     } else if (match[1]) {
       try {
         const data = JSON.parse(match[1]);

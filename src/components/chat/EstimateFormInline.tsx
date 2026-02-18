@@ -4,12 +4,33 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator } from 'lucide-react';
+import { Calculator, Loader2 } from 'lucide-react';
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 export function EstimateFormInline() {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ brand: '', model: '', year: '', mileage: '', energy: '', condition: '' });
+  const [form, setForm] = useState({ brand: '', model: '', year: '', mileage: '', energy: '', condition: '', email: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!form.brand || !form.model) return;
+    setLoading(true);
+    try {
+      await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        body: JSON.stringify({
+          action: 'create_estimate',
+          actionData: form,
+          customer: JSON.parse(localStorage.getItem('mcd-chat-customer') || '{}'),
+        }),
+      });
+      setSubmitted(true);
+    } catch { /* silent */ }
+    setLoading(false);
+  };
 
   if (submitted) {
     return (
@@ -64,9 +85,14 @@ export function EstimateFormInline() {
             </SelectContent>
           </Select>
         </div>
+        <div className="col-span-2">
+          <Label className="text-[10px]">{t('contact.email', { defaultValue: 'E-Mail' })}</Label>
+          <Input className="h-8 text-xs" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="email@example.com" />
+        </div>
       </div>
-      <Button size="sm" className="w-full h-8 text-xs" onClick={() => setSubmitted(true)} disabled={!form.brand || !form.model}>
-        {t('chatbot.submitEstimate', { defaultValue: 'Schätzung anfordern' })}
+      <Button size="sm" className="w-full h-8 text-xs" onClick={handleSubmit} disabled={loading || !form.brand || !form.model}>
+        {loading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+        {loading ? '...' : t('chatbot.submitEstimate', { defaultValue: 'Schätzung anfordern' })}
       </Button>
     </div>
   );
