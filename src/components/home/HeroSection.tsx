@@ -1,9 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Search, Sparkles, Car, Fuel, DollarSign, Settings2, ArrowRight, Timer, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useVehicles } from '@/hooks/useVehicles';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
@@ -12,8 +14,51 @@ import catBerline from '@/assets/cat-berline.jpg';
 import catBreak from '@/assets/cat-break.jpg';
 import catUtilitaire from '@/assets/cat-utilitaire.jpg';
 
+/* ── Animated Counter ── */
+const AnimatedCount = ({ value, className }: { value: number; className?: string }) => {
+  const [displayed, setDisplayed] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView || value === 0) return;
+    const duration = 1500;
+    const steps = 40;
+    const increment = value / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= value) {
+        setDisplayed(value);
+        clearInterval(timer);
+      } else {
+        setDisplayed(Math.floor(current));
+      }
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [isInView, value]);
+
+  return <span ref={ref} className={className}>{displayed.toLocaleString('de-DE')}+</span>;
+};
+
+/* ── Vehicle Count Hook ── */
+const useVehicleCount = () => {
+  return useQuery({
+    queryKey: ['vehicle-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('vehicles')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'available');
+      if (error) throw error;
+      return count ?? 0;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 /* ── Featured Vehicle Carousel ── */
-const FeaturedCarousel = ({ lang, t }: { lang: string; t: any }) => {
+const FeaturedCarousel = ({ lang, t, vehicleCount }: { lang: string; t: any; vehicleCount: number }) => {
   const { data: vehicles } = useVehicles({ featured: true, limit: 6 });
   const [current, setCurrent] = useState(0);
   const items = vehicles?.filter((v) => v.images?.length > 0) || [];
@@ -123,7 +168,7 @@ const FeaturedCarousel = ({ lang, t }: { lang: string; t: any }) => {
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center"><Car className="w-5 h-5 text-primary" /></div>
             <div>
-              <p className="text-lg font-bold text-foreground leading-none">500+</p>
+              <p className="text-lg font-bold text-foreground leading-none"><AnimatedCount value={vehicleCount} /></p>
               <p className="text-[10px] text-muted-foreground font-medium">{t('hero.carsInStock', { defaultValue: 'Fahrzeuge auf Lager' })}</p>
             </div>
           </div>
@@ -153,6 +198,7 @@ const HeroSection = () => {
   const { lang = 'de' } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: vehicleCount = 0 } = useVehicleCount();
 
   const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'maintain'>('buy');
   const [searchQuery, setSearchQuery] = useState('');
@@ -332,7 +378,7 @@ const HeroSection = () => {
                       transition={{ delay: 0.5 }}
                       className="text-sm text-primary-foreground/70 font-medium"
                     >
-                      <span className="text-accent font-bold">500+</span>{' '}
+                      <AnimatedCount value={vehicleCount} className="text-accent font-bold" />{' '}
                       {t('hero.vehiclesAvailable', { defaultValue: 'Fahrzeuge sofort verfügbar!' })}
                     </motion.p>
 
@@ -430,7 +476,7 @@ const HeroSection = () => {
           </div>
 
           {/* ══════ RIGHT: Featured Vehicle Carousel ══════ */}
-          <FeaturedCarousel lang={lang} t={t} />
+          <FeaturedCarousel lang={lang} t={t} vehicleCount={vehicleCount} />
         </div>
       </div>
     </section>
