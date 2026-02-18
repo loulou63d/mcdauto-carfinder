@@ -9,10 +9,53 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import heroImage from '@/assets/hero-showroom.jpg';
-import catSuv from '@/assets/cat-icon-suv.png';
-import catBerline from '@/assets/cat-icon-berline.png';
-import catBreak from '@/assets/cat-icon-break.png';
-import catUtilitaire from '@/assets/cat-icon-utilitaire.png';
+
+/* ── Category SVG Icons ── */
+const CategorySvg = ({ type }: { type: string }) => {
+  const cls = "w-full h-full";
+  switch (type) {
+    case 'suv':
+      return (
+        <svg viewBox="0 0 120 50" className={cls} fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 38h8a7 7 0 0 1 14 0h36a7 7 0 0 1 14 0h18c2 0 4-1 4-3V28l-8-10c-1-1.5-3-2.5-5-2.5H68l-12-6H32c-3 0-6 1.5-8 4l-8 10-8 3v8c0 2 1.5 3.5 4 3.5z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"/>
+          <circle cx="25" cy="38" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <circle cx="89" cy="38" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <path d="M30 18h24l8 10H18z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.5"/>
+        </svg>
+      );
+    case 'berline':
+      return (
+        <svg viewBox="0 0 120 50" className={cls} fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 36h10a7 7 0 0 1 14 0h40a7 7 0 0 1 14 0h14c3 0 5-2 5-4v-4l-4-4-14-8H70l-16-6H34c-3 0-5 1-7 3l-10 11-9 4v4c0 2 1 4 4 4z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"/>
+          <circle cx="25" cy="36" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <circle cx="89" cy="36" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <path d="M34 16h20l12 8H24z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.5"/>
+        </svg>
+      );
+    case 'break':
+      return (
+        <svg viewBox="0 0 120 50" className={cls} fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 36h10a7 7 0 0 1 14 0h40a7 7 0 0 1 14 0h14c3 0 5-2 5-4V20l-2-2H90l-14-6H38c-3 0-5 1-7 3L20 26l-12 2v4c0 2 1 4 4 4z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"/>
+          <circle cx="25" cy="36" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <circle cx="89" cy="36" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <path d="M38 14h32l8 10H28z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.5"/>
+          <line x1="88" y1="14" x2="88" y2="24" stroke="currentColor" strokeWidth="1.5" opacity="0.4"/>
+        </svg>
+      );
+    case 'utilitaire':
+      return (
+        <svg viewBox="0 0 120 55" className={cls} fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 42h10a7 7 0 0 1 14 0h44a7 7 0 0 1 14 0h12c3 0 5-2 5-4V18c0-3-2-5-5-5H70v-3c0-2-2-4-4-4H14c-3 0-5 2-5 5v31z" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"/>
+          <circle cx="23" cy="42" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <circle cx="91" cy="42" r="5.5" stroke="currentColor" strokeWidth="2.2"/>
+          <rect x="74" y="18" width="24" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.5"/>
+          <line x1="66" y1="8" x2="66" y2="42" stroke="currentColor" strokeWidth="1.5" opacity="0.3"/>
+        </svg>
+      );
+    default:
+      return null;
+  }
+};
 
 /* ── Animated Counter ── */
 const AnimatedCount = ({ value, className }: { value: number; className?: string }) => {
@@ -230,10 +273,10 @@ const HeroSection = () => {
   const currentPlate = plateFormats[lang] || plateFormats.de;
 
   const categories = [
-    { key: 'suv', img: catSuv },
-    { key: 'berline', img: catBerline },
-    { key: 'break', img: catBreak },
-    { key: 'utilitaire', img: catUtilitaire },
+    { key: 'suv' },
+    { key: 'berline' },
+    { key: 'break' },
+    { key: 'utilitaire' },
   ];
 
   return (
@@ -395,12 +438,8 @@ const HeroSection = () => {
                             to={`/${lang}/search?category=${cat.key}`}
                             className="group flex flex-col items-center gap-1.5 min-w-[75px]"
                           >
-                            <div className="w-20 h-14 flex items-center justify-center group-hover:scale-110 transition-all duration-300">
-                              <img
-                                src={cat.img}
-                                alt={cat.key}
-                                className="max-w-full max-h-full object-contain drop-shadow-lg group-hover:drop-shadow-[0_0_12px_hsl(var(--accent)/0.4)] transition-all duration-500"
-                              />
+                            <div className="w-20 h-12 flex items-center justify-center text-primary-foreground/80 group-hover:text-accent group-hover:scale-110 transition-all duration-300 drop-shadow-lg">
+                              <CategorySvg type={cat.key} />
                             </div>
                             <span className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wide group-hover:text-accent transition-colors">
                               {t(`categories.${cat.key}`, { defaultValue: cat.key })}
