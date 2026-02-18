@@ -515,65 +515,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* ══════════════ TRUST STRIP ══════════════ */}
-      <section className="border-y bg-secondary/50">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-around py-6 gap-5">
-          {[
-            { icon: RefreshCw, text: t('trust.reconditioned') },
-            { icon: Shield, text: t('trust.satisfaction') },
-            { icon: CheckCircle, text: t('trust.inspection') },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-3"
-            >
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <item.icon className="w-6 h-6 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">{item.text}</span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════ ANIMATED STATS ══════════════ */}
-      <section className="premium-gradient py-16 md:py-20 relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
-          >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                custom={i}
-                className="text-center"
-              >
-                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                  <stat.icon className="w-7 h-7 text-white" />
-                </div>
-                <div className="text-3xl md:text-4xl font-heading font-extrabold text-white">
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-                </div>
-                <p className="mt-2 text-sm text-white/70 font-medium">{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* ══════════════ FEATURED VEHICLES ══════════════ */}
       <FeaturedVehiclesSection lang={lang} t={t} />
 
@@ -771,6 +712,63 @@ const Index = () => {
               </button>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════ TRUST STRIP ══════════════ */}
+      <section className="border-y bg-secondary/50">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-around py-6 gap-5">
+          {[
+            { icon: RefreshCw, text: t('trust.reconditioned') },
+            { icon: Shield, text: t('trust.satisfaction') },
+            { icon: CheckCircle, text: t('trust.inspection') },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-center gap-3"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <item.icon className="w-6 h-6 text-primary" />
+              </div>
+              <span className="text-sm font-semibold">{item.text}</span>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════ ANIMATED STATS ══════════════ */}
+      <section className="premium-gradient py-16 md:py-20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+          >
+            {stats.map((stat, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                custom={i}
+                className="text-center"
+              >
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <stat.icon className="w-7 h-7 text-white" />
+                </div>
+                <div className="text-3xl md:text-4xl font-heading font-extrabold text-white">
+                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                </div>
+                <p className="mt-2 text-sm text-white/70 font-medium">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </div>
