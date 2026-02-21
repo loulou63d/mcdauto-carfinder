@@ -61,25 +61,44 @@ const Account = () => {
   };
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    let mounted = true;
+
+    const loadOrders = async (userId: string) => {
+      const { data } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      if (mounted && data) setOrders(data as Order[]);
+      if (mounted) setLoading(false);
+    };
+
+    // Listen for auth state changes (handles refresh + initial load)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
       if (!session) {
         navigate(`/${lang}/login?redirect=/${lang}/account`);
         return;
       }
-
       setUser(session.user);
+      loadOrders(session.user.id);
+    });
 
-      const { data } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false });
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      if (!session) {
+        navigate(`/${lang}/login?redirect=/${lang}/account`);
+        return;
+      }
+      setUser(session.user);
+      loadOrders(session.user.id);
+    });
 
-      if (data) setOrders(data as Order[]);
-      setLoading(false);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
     };
-    init();
   }, [lang, navigate]);
 
   const handleLogout = async () => {

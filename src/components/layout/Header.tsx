@@ -54,12 +54,16 @@ const Header = () => {
   
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user ?? null);
-    });
+    // Set up listener FIRST (before getSession) to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setCurrentUser(session?.user ?? null);
     });
+
+    // Then check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user ?? null);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
