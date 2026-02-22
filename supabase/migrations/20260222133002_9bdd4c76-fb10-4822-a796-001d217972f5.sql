@@ -1,0 +1,1 @@
+UPDATE public.vehicles SET price = price * 2, monthly_price = monthly_price * 2;
