@@ -20,6 +20,9 @@ const Vehicles = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [creating, setCreating] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const importRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const fetchVehicles = async () => {
