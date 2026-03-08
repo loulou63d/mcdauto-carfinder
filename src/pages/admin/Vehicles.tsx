@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Plus, Pencil, Trash2, Search, Download, Upload, Loader2 } from 'lucide-react';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,9 @@ const Vehicles = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [creating, setCreating] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const importRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const fetchVehicles = async () => {
@@ -46,6 +49,97 @@ const Vehicles = () => {
     `${v.brand} ${v.model}`.toLowerCase().includes(search.toLowerCase())
   );
 
+  const exportVehicles = async () => {
+    setExporting(true);
+    try {
+      const { data: allVehicles } = await supabaseAdmin
+        .from('vehicles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      const { data: allImages } = await supabaseAdmin
+        .from('vehicle_images')
+        .select('*')
+        .order('position', { ascending: true });
+      
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        vehicles: allVehicles || [],
+        vehicle_images: allImages || [],
+      };
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mcd-vehicles-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: `${(allVehicles || []).length} véhicules exportés` });
+    } catch (err: any) {
+      toast({ title: 'Erreur export', description: err.message, variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const importVehicles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data.vehicles || !Array.isArray(data.vehicles)) {
+        throw new Error('Format de fichier invalide');
+      }
+
+      let imported = 0;
+      let skipped = 0;
+
+      for (const v of data.vehicles) {
+        const { id, created_at, updated_at, ...vehicleData } = v;
+        
+        // Check duplicate by source_url
+        if (v.source_url) {
+          const { data: existing } = await supabaseAdmin
+            .from('vehicles')
+            .select('id')
+            .eq('source_url', v.source_url)
+            .maybeSingle();
+          if (existing) { skipped++; continue; }
+        }
+
+        const { data: inserted, error } = await supabaseAdmin
+          .from('vehicles')
+          .insert(vehicleData)
+          .select()
+          .single();
+        
+        if (error || !inserted) { skipped++; continue; }
+
+        // Import images for this vehicle
+        const vehicleImages = (data.vehicle_images || []).filter((img: any) => img.vehicle_id === id);
+        if (vehicleImages.length > 0) {
+          const imagesToInsert = vehicleImages.map((img: any) => ({
+            vehicle_id: inserted.id,
+            image_url: img.image_url,
+            position: img.position || 0,
+          }));
+          await supabaseAdmin.from('vehicle_images').insert(imagesToInsert);
+        }
+        imported++;
+      }
+
+      toast({ title: `Import terminé`, description: `${imported} importés, ${skipped} ignorés (doublons)` });
+      fetchVehicles();
+    } catch (err: any) {
+      toast({ title: 'Erreur import', description: err.message, variant: 'destructive' });
+    } finally {
+      setImporting(false);
+      if (importRef.current) importRef.current.value = '';
+    }
+  };
+
   if (creating || editing) {
     return (
       <VehicleForm
@@ -59,10 +153,27 @@ const Vehicles = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="font-heading text-2xl font-bold">Véhicules</h2>
-        <Button onClick={() => setCreating(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Ajouter
-        </Button>
+        <h2 className="font-heading text-2xl font-bold">Véhicules ({vehicles.length})</h2>
+        <div className="flex gap-2 flex-wrap">
+          <input
+            ref={importRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={importVehicles}
+          />
+          <Button variant="outline" onClick={exportVehicles} disabled={exporting || vehicles.length === 0}>
+            {exporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            Exporter JSON
+          </Button>
+          <Button variant="outline" onClick={() => importRef.current?.click()} disabled={importing}>
+            {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+            Importer JSON
+          </Button>
+          <Button onClick={() => setCreating(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Ajouter
+          </Button>
+        </div>
       </div>
 
       <div className="relative max-w-sm">
