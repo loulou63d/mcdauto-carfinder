@@ -153,10 +153,27 @@ const Vehicles = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="font-heading text-2xl font-bold">Véhicules</h2>
-        <Button onClick={() => setCreating(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Ajouter
-        </Button>
+        <h2 className="font-heading text-2xl font-bold">Véhicules ({vehicles.length})</h2>
+        <div className="flex gap-2 flex-wrap">
+          <input
+            ref={importRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={importVehicles}
+          />
+          <Button variant="outline" onClick={exportVehicles} disabled={exporting || vehicles.length === 0}>
+            {exporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            Exporter JSON
+          </Button>
+          <Button variant="outline" onClick={() => importRef.current?.click()} disabled={importing}>
+            {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+            Importer JSON
+          </Button>
+          <Button onClick={() => setCreating(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Ajouter
+          </Button>
+        </div>
       </div>
 
       <div className="relative max-w-sm">
