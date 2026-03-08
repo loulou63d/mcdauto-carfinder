@@ -49,6 +49,97 @@ const Vehicles = () => {
     `${v.brand} ${v.model}`.toLowerCase().includes(search.toLowerCase())
   );
 
+  const exportVehicles = async () => {
+    setExporting(true);
+    try {
+      const { data: allVehicles } = await supabaseAdmin
+        .from('vehicles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      const { data: allImages } = await supabaseAdmin
+        .from('vehicle_images')
+        .select('*')
+        .order('position', { ascending: true });
+      
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        vehicles: allVehicles || [],
+        vehicle_images: allImages || [],
+      };
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mcd-vehicles-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: `${(allVehicles || []).length} véhicules exportés` });
+    } catch (err: any) {
+      toast({ title: 'Erreur export', description: err.message, variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const importVehicles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data.vehicles || !Array.isArray(data.vehicles)) {
+        throw new Error('Format de fichier invalide');
+      }
+
+      let imported = 0;
+      let skipped = 0;
+
+      for (const v of data.vehicles) {
+        const { id, created_at, updated_at, ...vehicleData } = v;
+        
+        // Check duplicate by source_url
+        if (v.source_url) {
+          const { data: existing } = await supabaseAdmin
+            .from('vehicles')
+            .select('id')
+            .eq('source_url', v.source_url)
+            .maybeSingle();
+          if (existing) { skipped++; continue; }
+        }
+
+        const { data: inserted, error } = await supabaseAdmin
+          .from('vehicles')
+          .insert(vehicleData)
+          .select()
+          .single();
+        
+        if (error || !inserted) { skipped++; continue; }
+
+        // Import images for this vehicle
+        const vehicleImages = (data.vehicle_images || []).filter((img: any) => img.vehicle_id === id);
+        if (vehicleImages.length > 0) {
+          const imagesToInsert = vehicleImages.map((img: any) => ({
+            vehicle_id: inserted.id,
+            image_url: img.image_url,
+            position: img.position || 0,
+          }));
+          await supabaseAdmin.from('vehicle_images').insert(imagesToInsert);
+        }
+        imported++;
+      }
+
+      toast({ title: `Import terminé`, description: `${imported} importés, ${skipped} ignorés (doublons)` });
+      fetchVehicles();
+    } catch (err: any) {
+      toast({ title: 'Erreur import', description: err.message, variant: 'destructive' });
+    } finally {
+      setImporting(false);
+      if (importRef.current) importRef.current.value = '';
+    }
+  };
+
   if (creating || editing) {
     return (
       <VehicleForm
