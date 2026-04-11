@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Plus, Pencil, Trash2, Search, Download, Upload, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Download, Upload, Loader2, ImageDown } from 'lucide-react';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
