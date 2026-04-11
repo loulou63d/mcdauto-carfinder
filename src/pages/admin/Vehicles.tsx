@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Plus, Pencil, Trash2, Search, Download, Upload, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Download, Upload, Loader2, ImageDown } from 'lucide-react';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,8 @@ const Vehicles = () => {
   const [creating, setCreating] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [redownloading, setRedownloading] = useState(false);
+  const [redownloadProgress, setRedownloadProgress] = useState('');
   const importRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -140,6 +142,59 @@ const Vehicles = () => {
     }
   };
 
+  const redownloadAllImages = async () => {
+    setRedownloading(true);
+    setRedownloadProgress('Recherche des images externes...');
+    try {
+      // Get all vehicle_images with external URLs
+      const { data: extImages, error } = await supabaseAdmin
+        .from('vehicle_images')
+        .select('vehicle_id')
+        .not('image_url', 'like', '%supabase%');
+      
+      if (error) throw error;
+      
+      // Get unique vehicle IDs
+      const vehicleIds = [...new Set((extImages || []).map(i => i.vehicle_id))];
+      
+      if (vehicleIds.length === 0) {
+        toast({ title: 'Toutes les images sont déjà locales !' });
+        setRedownloading(false);
+        setRedownloadProgress('');
+        return;
+      }
+
+      let done = 0;
+      let failed = 0;
+
+      for (const vid of vehicleIds) {
+        setRedownloadProgress(`${done + 1}/${vehicleIds.length} véhicules traités...`);
+        try {
+          const { data, error: fnError } = await supabaseAdmin.functions.invoke('download-vehicle-images', {
+            body: { vehicle_id: vid },
+          });
+          if (fnError) {
+            failed++;
+          } else {
+            done++;
+          }
+        } catch {
+          failed++;
+        }
+      }
+
+      toast({
+        title: 'Re-téléchargement terminé',
+        description: `${done} véhicules OK, ${failed} erreurs`,
+      });
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setRedownloading(false);
+      setRedownloadProgress('');
+    }
+  };
+
   if (creating || editing) {
     return (
       <VehicleForm
@@ -169,6 +224,10 @@ const Vehicles = () => {
           <Button variant="outline" onClick={() => importRef.current?.click()} disabled={importing}>
             {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
             Importer JSON
+          </Button>
+          <Button variant="outline" onClick={redownloadAllImages} disabled={redownloading}>
+            {redownloading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageDown className="w-4 h-4 mr-2" />}
+            {redownloading ? redownloadProgress || 'Re-téléchargement...' : 'Re-télécharger images'}
           </Button>
           <Button onClick={() => setCreating(true)}>
             <Plus className="w-4 h-4 mr-2" /> Ajouter
