@@ -103,13 +103,18 @@ Deno.serve(async (req) => {
         .order('position');
 
       if (error) throw error;
+      const existingRowsByPosition = new Map<number, string>();
+      (images || []).forEach((img) => {
+        existingRowsByPosition.set(img.position || 0, img.id);
+      });
+
       urlsToProcess = (images || [])
         .filter((img) => !img.image_url.includes('supabase.co/storage') && !isBlockedImageUrl(img.image_url))
         .map(img => ({ url: img.image_url, position: img.position || 0, dbId: img.id }));
 
       if (urlsToProcess.length === 0 && vehicle?.source_url) {
         const sourceImageUrls = await fetchSourceImageUrls(vehicle.source_url);
-        urlsToProcess = sourceImageUrls.map((url, idx) => ({ url, position: idx }));
+        urlsToProcess = sourceImageUrls.map((url, idx) => ({ url, position: idx, dbId: existingRowsByPosition.get(idx) }));
       }
 
       if (urlsToProcess.length === 0) {
@@ -192,11 +197,11 @@ Deno.serve(async (req) => {
         } else {
           await supabase
             .from('vehicle_images')
-            .upsert({
+            .insert({
               vehicle_id,
               image_url: publicUrl,
               position: item.position,
-            }, { onConflict: 'vehicle_id,position' as never });
+            });
         }
 
         downloaded++;

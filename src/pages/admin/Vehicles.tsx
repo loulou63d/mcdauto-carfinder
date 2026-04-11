@@ -144,18 +144,16 @@ const Vehicles = () => {
 
   const redownloadAllImages = async () => {
     setRedownloading(true);
-    setRedownloadProgress('Recherche des images externes...');
+      setRedownloadProgress('Recherche des véhicules à retraiter...');
     try {
-      // Get all vehicle_images with external URLs
-      const { data: extImages, error } = await supabaseAdmin
-        .from('vehicle_images')
-        .select('vehicle_id')
-        .not('image_url', 'like', '%supabase%');
-      
+      const { data: sourceVehicles, error } = await supabaseAdmin
+        .from('vehicles')
+        .select('id')
+        .not('source_url', 'is', null);
+
       if (error) throw error;
-      
-      // Get unique vehicle IDs
-      const vehicleIds = [...new Set((extImages || []).map(i => i.vehicle_id))];
+
+      const vehicleIds = (sourceVehicles || []).map((vehicle) => vehicle.id);
       
       if (vehicleIds.length === 0) {
         toast({ title: 'Toutes les images sont déjà locales !' });
