@@ -225,6 +225,10 @@ const Vehicles = () => {
             {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
             Importer JSON
           </Button>
+          <Button variant="outline" onClick={redownloadAllImages} disabled={redownloading}>
+            {redownloading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageDown className="w-4 h-4 mr-2" />}
+            {redownloading ? redownloadProgress || 'Re-téléchargement...' : 'Re-télécharger images'}
+          </Button>
           <Button onClick={() => setCreating(true)}>
             <Plus className="w-4 h-4 mr-2" /> Ajouter
           </Button>
