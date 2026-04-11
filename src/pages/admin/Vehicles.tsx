@@ -22,6 +22,8 @@ const Vehicles = () => {
   const [creating, setCreating] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [redownloading, setRedownloading] = useState(false);
+  const [redownloadProgress, setRedownloadProgress] = useState('');
   const importRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
