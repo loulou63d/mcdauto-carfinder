@@ -19,6 +19,35 @@ const BRANDS = [
   "Abarth","Alpine",
 ].sort((a, b) => b.length - a.length);
 
+const BLOCKED_IMAGE_HINTS = [
+  "404-not-found",
+  "not-found",
+  "placeholder",
+  "no-image",
+  "default-image",
+  "default_car",
+  "logo",
+  "favicon",
+  "icon",
+  "ecoprogram",
+  "freedom-mobility",
+];
+
+function isBlockedImageUrl(url: string): boolean {
+  const lower = url.toLowerCase();
+  return BLOCKED_IMAGE_HINTS.some((hint) => lower.includes(hint));
+}
+
+function isNotFoundPage(title: string, markdown: string, html: string): boolean {
+  const combined = `${title}\n${markdown}\n${html}`.toLowerCase();
+  return [
+    "ops, pagina non trovata",
+    "pagina non trovata",
+    "404 not found",
+    "page not found",
+  ].some((needle) => combined.includes(needle));
+}
+
 function detectBrand(title: string): string | null {
   const titleLower = title.toLowerCase();
   for (const brand of BRANDS) {
@@ -135,7 +164,7 @@ function extractArielCarImages(markdown: string, html: string): string[] {
   let match;
   while ((match = imgPattern.exec(allText)) !== null) {
     let imgUrl = match[0].replace(/&amp;/g, "&");
-    if (!seen.has(imgUrl)) {
+    if (!seen.has(imgUrl) && !isBlockedImageUrl(imgUrl)) {
       seen.add(imgUrl);
       images.push(imgUrl);
     }
@@ -146,7 +175,7 @@ function extractArielCarImages(markdown: string, html: string): string[] {
     const mdPattern = /!\[.*?\]\((https?:\/\/[^\s)]+\.(jpg|jpeg|png|webp)[^\s)]*)\)/gi;
     while ((match = mdPattern.exec(markdown)) !== null) {
       const imgUrl = match[1];
-      if (!seen.has(imgUrl) && !imgUrl.includes("logo") && !imgUrl.includes("icon") && !imgUrl.includes("wp-content")) {
+      if (!seen.has(imgUrl) && !isBlockedImageUrl(imgUrl) && !imgUrl.includes("wp-content")) {
         seen.add(imgUrl);
         images.push(imgUrl);
       }
@@ -290,6 +319,13 @@ serve(async (req) => {
     const subtitle = h2Match ? h2Match[1].trim() : "";
 
     const title = rawTitle || subtitle || "Sans titre";
+
+    if (isNotFoundPage(title, markdown, html)) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Source introuvable ou fiche expirée" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // === BRAND ===
     const brand = detectBrand(title);
